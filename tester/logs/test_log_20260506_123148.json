@@ -1,0 +1,59 @@
+[
+  {
+    "sid": "S01",
+    "scenario_id": 1,
+    "round": 1,
+    "tester": "AutoTester",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 6,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "case_solved": false,
+    "response_summary": [
+      {
+        "user": "check dashboard lights",
+        "ai": "Test yanıtı — dry run modu. Her şey normal görünüyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hallucination_detected": false
+      },
+      {
+        "user": "starter motor kontrol et",
+        "ai": "Test yanıtı — dry run modu. Her şey normal görünüyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hallucination_detected": false
+      },
+      {
+        "user": "check headlights",
+        "ai": "Test yanıtı — dry run modu. Her şey normal görünüyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hallucination_detected": false
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Test yanıtı — dry run modu. Her şey normal görünüyor.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hallucination_detected": false
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Test yanıtı — dry run modu. Her şey normal görünüyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hallucination_detected": false
+      },
+      {
+        "user": "check battery terminals",
+        "ai": "Test yanıtı — dry run modu. Her şey normal görünüyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hallucination_detected": false
+      }
+    ]
+  }
+]

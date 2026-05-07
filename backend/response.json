@@ -1,0 +1,1 @@
+{"statusCode": 200, "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}, "body": "{\"response\": \"The garage lights flicker \\u2014 something went wrong. Try again.\", \"messageCount\": 1, \"solved\": false}"}

@@ -1,0 +1,1 @@
+{"statusCode": 200, "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}, "body": "{\"response\": \"You replace the spark plug on cylinder 3. The engine starts and runs smoothly without any roughness or vibrations.\", \"messageCount\": 3, \"solved\": true, \"streakCount\": 1, \"bonusEnergy\": false}"}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "991405137034",
+    "project_id": "mechanic-master-64642",
+    "storage_bucket": "mechanic-master-64642.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:991405137034:android:d3b8f12e600034ab93a173",
+        "android_client_info": {
+          "package_name": "com.autofix.simulator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdUoth5Ox9QOZtrJklSuFQgCKQ5_qEjpE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

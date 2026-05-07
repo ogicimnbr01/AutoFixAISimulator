@@ -1,0 +1,1 @@
+{"statusCode": 200, "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}, "body": "{\"response\": \"You remove the spark plugs: Cylinders 1, 2, and 4 have light tan deposits. Cylinder 3's plug is wet and the tip is black with carbon buildup.\", \"messageCount\": 1, \"solved\": false}"}

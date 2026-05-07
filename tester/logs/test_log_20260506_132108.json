@@ -1,0 +1,200 @@
+[
+  {
+    "sid": "S01",
+    "scenario_id": 1,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Beklenen sonuçla çelişiyor (ipucu: check_dashboard_lights)",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Beklenen sonuçla çelişiyor (ipucu: check_dashboard_lights)",
+        "severity": 3
+      },
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Beklenen sonuçla çelişiyor (ipucu: check_headlights)",
+        "severity": 3
+      }
+    ],
+    "responses": [
+      {
+        "user": "check dashboard lights",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Beklenen sonuçla çelişiyor (ipucu: check_dashboard_lights)"
+      },
+      {
+        "user": "starter motor kontrol et",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check headlights",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Beklenen sonuçla çelişiyor (ipucu: check_headlights)"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery terminals",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S01",
+    "scenario_id": 1,
+    "round": 2,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Beklenen sonuçla çelişiyor (ipucu: check_dashboard_lights)",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Beklenen sonuçla çelişiyor (ipucu: check_dashboard_lights)",
+        "severity": 3
+      },
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Beklenen sonuçla çelişiyor (ipucu: check_headlights)",
+        "severity": 3
+      }
+    ],
+    "responses": [
+      {
+        "user": "check dashboard lights",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Beklenen sonuçla çelişiyor (ipucu: check_dashboard_lights)"
+      },
+      {
+        "user": "starter motor kontrol et",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check headlights",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Beklenen sonuçla çelişiyor (ipucu: check_headlights)"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery terminals",
+        "ai": "Kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  }
+]

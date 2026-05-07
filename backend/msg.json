@@ -1,0 +1,1 @@
+{"statusCode": 200, "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}, "body": "{\"response\": \"You're standing in a garage with a car that needs fixing. What do you want to check?\", \"messageCount\": 2, \"solved\": false, \"blocked\": true}"}
