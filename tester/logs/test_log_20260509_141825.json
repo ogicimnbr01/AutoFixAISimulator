@@ -1,0 +1,942 @@
+[
+  {
+    "sid": "S02",
+    "scenario_id": 2,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+        "severity": 3
+      }
+    ],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "listen to starting",
+        "ai": "Anahtar START konumuna getirildiğinde kaputun altından hızlı bir tıklama sesi duyuyorsun.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "battery kontrol et",
+        "ai": "Akü voltajı 12,4V olarak ölçüldü, bu normal aralıkta.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery voltage",
+        "ai": "Akü voltajı 12,4V olarak ölçüldü, bu normal aralıkta.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternatör arızasızdır, düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Araba bu talimatların dışında %100 sağlamdır. Yapacağın tek şey, sorunu kendinin çözmek ve uygun testleri yapmak.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check dashboard lights",
+        "ai": "Anahtar START konumuna getirildiğinde, gösterge paneli ışıkları parlak ve kranklama girişimi sırasında parlak kalır.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S02",
+    "scenario_id": 2,
+    "round": 2,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+        "severity": 3
+      }
+    ],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "listen to starting",
+        "ai": "Dinliyorsun. Kilitleme anında hızlı bir tıklama sesi duyuyorsun.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "battery kontrol et",
+        "ai": "Akü voltajı 12,4V. Normal aralıkta.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery voltage",
+        "ai": "Akü voltajı 12,4V. Normal aralıkta.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır. Bu bileşen/test bu araçta yok.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternatör arızalı değil. Düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Bu araçta başka bir sorun yok. Test edilen tüm parçalar düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check dashboard lights",
+        "ai": "Kontrol paneli ışıkları anahtarın START pozisyonuna getirildiğinde parlak ve kısa devrede kalır.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S02",
+    "scenario_id": 2,
+    "round": 3,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+        "severity": 3
+      }
+    ],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "listen to starting",
+        "ai": "Anahtar START pozisyonuna getirildiğinde kaputun altından hızlı bir tıklama sesi duyuyorsun.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "battery kontrol et",
+        "ai": "Akü voltajı 12,4V olarak ölçüldü, bu normal aralıkta.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery voltage",
+        "ai": "Akü voltajı 12,4V olarak ölçüldü, bu normal aralıkta.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternatör düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Şu anki durumda, başka bir sorun tespit edilmedi. Araç şu an için %100 sağlamdır.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check dashboard lights",
+        "ai": "Gösterge paneli lambaları, anahtar START pozisyonuna getirildiğinde parlak şekilde yanıyor ve kranklama girişimi sırasında bu parlaklık devam ediyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S02",
+    "scenario_id": 2,
+    "round": 4,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+        "severity": 3
+      }
+    ],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "listen to starting",
+        "ai": "Dinleme sırasında hızlı bir tıklama sesi duyuyorsun. Akü voltajı 12,4V ve bu normal aralıkta. Gösterge paneli lambaları parlak ve krank girişimi sırasında sürekli aydınlanıyor. Marul bağlantıları sağlam ve paslanma belirtisi yok. Yağ seviyesi normal ve dipstick temiz yağ işareti doğru noktada göster",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "battery kontrol et",
+        "ai": "Akü voltajı 12,4V ve bu normal aralıkta. Bağlantılar sağlam ve paslanma belirtisi yok. Akü düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery voltage",
+        "ai": "Akü voltajı 12,4V ve bu normal aralıkta. Bağlantılar sağlam ve paslanma belirtisi yok. Akü düzgün çalışıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır. Bu bileşene erişim sağlayamam.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternatör düzgün çalışıyor. Herhangi bir arıza belirtisi yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Şu anki şikayetler dışında, araç %100 sağlam. Gözlemlediğin sorunlar haricinde başka bir arıza belirtisi yok.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check dashboard lights",
+        "ai": "Gösterge paneli lambaları parlak ve krank girişimi sırasında sürekli aydınlanıyor. Gösterge paneli lambaları düzgün çalışıyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S02",
+    "scenario_id": 2,
+    "round": 5,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+        "severity": 3
+      }
+    ],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "listen to starting",
+        "ai": "Anahtar START konumuna getirildiğinde kaputun altından hızlı bir tıklama sesi duyuyorsunuz.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "battery kontrol et",
+        "ai": "Akü, 12,4V okuyor - bu normal aralıkta.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery voltage",
+        "ai": "Akü voltajı 12,4V olarak ölçüldü, bu normal aralıkta.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj basıncı ölçücü bulunmamaktadır.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternatör arızalı değil, düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Bu araçta başka bir sorun bulunmamaktadır. Her şey düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check dashboard lights",
+        "ai": "Krank girişimi sırasında gösterge tablosu lambaları parlak ve parlak kalıyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S02",
+    "scenario_id": 2,
+    "round": 6,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+        "severity": 3
+      }
+    ],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "listen to starting",
+        "ai": "Anahtar START konumuna getirildiğinde, kaputun altından hızlı bir tıklama sesi duyuyorsunuz.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "battery kontrol et",
+        "ai": "Pil 12,4V gösteriyor — bu normal aralıkta.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery voltage",
+        "ai": "Pilin voltajı 12,4V, bu normal aralıkta.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternatör düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Şu anda başka bir sorun belirtmiyorsunuz. Yukarıdaki testler ve gözlemler ışığında başka bir arıza belirtisi görmüyorum.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check dashboard lights",
+        "ai": "Gösterge tablosundaki ışıklar, anahtar START konumuna getirildiğinde parlak geliyor ve sönmüyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S02",
+    "scenario_id": 2,
+    "round": 7,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+        "severity": 3
+      }
+    ],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "listen to starting",
+        "ai": "Anahtar START pozisyonuna getirildiğinde kaputun altından hızlı bir tıklama sesi duyuyorsun.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "battery kontrol et",
+        "ai": "Akü, 12,4V okuyor — bu normal aralıkta.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery voltage",
+        "ai": "Akü voltajı 12,4V ve bu normal aralıkta.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternatör düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Bu araçta ek bir sorun bulunmuyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check dashboard lights",
+        "ai": "Kontrol paneli ışıkları, anahtar START pozisyonuna getirildiğinde parlak ve parlak kalıyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S02",
+    "scenario_id": 2,
+    "round": 8,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+        "severity": 3
+      }
+    ],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "listen to starting",
+        "ai": "Anahtar START pozisyonuna getirildiğinde kaputun altından hızlı bir tıklama sesi duyuyorsun.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "battery kontrol et",
+        "ai": "Akü 12,4V gösteriyor - bu normal aralıkta.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery voltage",
+        "ai": "Akü voltajı 12,4V'dir, bu normal aralıkta.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır. Bu araçta turboşarj testi yapılamaz.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternatör düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Bu araçta ek bir arıza tespit edilmedi. Her şey düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check dashboard lights",
+        "ai": "Krank deneme sırasında göstergeler parlak bir şekilde yanıyor ve sönmüyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S02",
+    "scenario_id": 2,
+    "round": 9,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+        "severity": 3
+      }
+    ],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "listen to starting",
+        "ai": "Anahtar START pozisyonuna getirildiğinde kaputun altından hızlı bir tıklama sesi duyuyorsun.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "battery kontrol et",
+        "ai": "Akü voltajı 12,4V ölçülüyor — bu normal aralıkta.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery voltage",
+        "ai": "Akü voltajı 12,4V ölçülüyor — bu normal aralıkta.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternatör düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Şu an için her şey normal görünüyor. Ancak sorunun hâlâ devam ettiğinden, başka testler yapman gerekebilir.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check dashboard lights",
+        "ai": "Kontrol paneli lambaları, krank çekme girişimi sırasında parlak kalır ve aydınlanır.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S02",
+    "scenario_id": 2,
+    "round": 10,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+        "severity": 3
+      }
+    ],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "listen to starting",
+        "ai": "Dinledim, anahtar çavıl çavıl çevirildiğinde kaputun altından hızlı bir tıklama sesi geliyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "battery kontrol et",
+        "ai": "Akü voltajı 12,4V olarak ölçüldü, bu normal aralıkta.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery voltage",
+        "ai": "Akü voltajı 12,4V olarak ölçüldü, bu normal aralıkta.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır. Farklı bir test yapmak istiyorsan bana bildir.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternatör arızalı değil, düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Bu araçta başka bir sorun bulunmuyor. Tüm kontrol işlemleri normal çıktı.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check dashboard lights",
+        "ai": "Anahtar çavıl çavıl çevirildiğinde göstergeler parlak ve aydınlanıyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  }
+]

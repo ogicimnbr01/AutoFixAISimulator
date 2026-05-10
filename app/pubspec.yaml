@@ -30,8 +30,13 @@ dependencies:
   # Play Games / Game Center
   games_services: ^3.0.0
   # Monetization
-  purchases_flutter: ^10.0.1
+  purchases_flutter: ^10.0.2
+  purchases_ui_flutter: ^10.0.2
   google_mobile_ads: ^5.1.0
+  firebase_analytics: ^12.3.0
+  google_sign_in: ^6.2.1
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -41,4 +46,8 @@ dev_dependencies:
   riverpod_generator: ^2.6.3
 
 flutter:
+  generate: true
   uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/images/cars/

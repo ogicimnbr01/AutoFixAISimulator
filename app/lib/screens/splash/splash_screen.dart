@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 
 class SplashScreen extends StatefulWidget {
   final VoidCallback onComplete;
@@ -65,14 +66,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 child: const Icon(Icons.build_circle, size: 64, color: Colors.white),
               ),
               const SizedBox(height: 32),
-              const Text(
-                'SANAYİ USTASI',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: AppTheme.textPrimary, letterSpacing: 4),
+              Text(
+                S.of(context)?.splashTitle ?? 'SANAYİ USTASI',
+                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: AppTheme.textPrimary, letterSpacing: 4),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Garajın Seni Bekliyor',
-                style: TextStyle(fontSize: 16, color: AppTheme.textSecondary, letterSpacing: 2),
+              Text(
+                S.of(context)?.splashSubtitle ?? 'Garajın Seni Bekliyor',
+                style: const TextStyle(fontSize: 16, color: AppTheme.textSecondary, letterSpacing: 2),
               ),
               const SizedBox(height: 48),
               const SizedBox(

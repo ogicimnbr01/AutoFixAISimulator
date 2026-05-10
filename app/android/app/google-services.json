@@ -7,12 +7,25 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:991405137034:android:d3b8f12e600034ab93a173",
+        "mobilesdk_app_id": "1:991405137034:android:426664fe155fadaf93a173",
         "android_client_info": {
-          "package_name": "com.autofix.simulator"
+          "package_name": "com.umutgames.autofix_ai_simulator"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "991405137034-if3r95n9a2jg42egoghgolevsaf1f66m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.umutgames.autofix_ai_simulator",
+            "certificate_hash": "46eba768a619c62b81c22ca578c5b149ddef07fc"
+          }
+        },
+        {
+          "client_id": "991405137034-0ve0600euems66emn8g8duaqb62g9738.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCdUoth5Ox9QOZtrJklSuFQgCKQ5_qEjpE"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "991405137034-0ve0600euems66emn8g8duaqb62g9738.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

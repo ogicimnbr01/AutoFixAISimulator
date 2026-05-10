@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import 'paywall_screen.dart';
 
 class FOMOPopup extends StatefulWidget {
@@ -107,9 +108,9 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
             const SizedBox(height: 16),
             
             // Headline
-            const Text(
-              'GİZLİ TEKLİF',
-              style: TextStyle(
+            Text(
+              S.of(context)?.fomoPopupTitle ?? 'GİZLİ TEKLİF',
+              style: const TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
                 color: Colors.white,
@@ -131,9 +132,9 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
                   ),
                   child: Column(
                     children: [
-                      const Text(
-                        '1 Haftalık Sınırsız Enerji\n🎁 +5 İpucu Hediye!',
-                        style: TextStyle(
+                      Text(
+                        S.of(context)?.fomoOffer ?? '1 Haftalık Sınırsız Enerji\n🎁 +5 İpucu Hediye!',
+                        style: const TextStyle(
                           fontSize: 16,
                           color: AppTheme.danger,
                           fontWeight: FontWeight.bold,
@@ -185,9 +186,9 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
                           BoxShadow(color: AppTheme.success.withValues(alpha: 0.4), blurRadius: 8, spreadRadius: 1)
                         ],
                       ),
-                      child: const Text(
-                        '%80 İNDİRİM!',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                      child: Text(
+                        S.of(context)?.fomoDiscount ?? '%80 İNDİRİM!',
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
                       ),
                     ),
                   ),
@@ -203,7 +204,7 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
                 const Icon(Icons.people_alt_outlined, color: AppTheme.textSecondary, size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  '$_visitors kişi teklifi inceliyor',
+                  S.of(context)?.fomoViewers(_visitors.toString()) ?? '$_visitors kişi teklifi inceliyor',
                   style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
                 ),
               ],
@@ -247,9 +248,9 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
                   elevation: 8,
                   shadowColor: AppTheme.danger.withValues(alpha: 0.5),
                 ),
-                child: const Text(
-                  'TÜKENMEDEN AL',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, letterSpacing: 1),
+                child: Text(
+                  S.of(context)?.fomoBuy ?? 'TÜKENMEDEN AL',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, letterSpacing: 1),
                 ),
               ),
             ),
@@ -258,9 +259,9 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
             // Dismiss
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text(
-                'Fırsatı Kaçır ve Normal Devam Et',
-                style: TextStyle(color: AppTheme.textMuted, decoration: TextDecoration.underline),
+              child: Text(
+                S.of(context)?.fomoSkip ?? 'Fırsatı Kaçır ve Normal Devam Et',
+                style: const TextStyle(color: AppTheme.textMuted, decoration: TextDecoration.underline),
               ),
             ),
           ],

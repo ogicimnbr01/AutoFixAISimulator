@@ -88,11 +88,11 @@
   - [x] Flutter: FOMO popup ilk 3 gün gösterilmez
   - [x] Flutter: Gün 4-7 geçiş uyarı banner'ı ("Pro'ya geç, sınırsız kalsın")
 
-## Faz 4: IAP, Reklamlar & RevenueCat (devam ediyor)
-- [ ] RevenueCat kurulumu
-- [ ] **Abonelikler:**
-  - [ ] Pro Weekly ($2.99): Sınırsız enerji + reklam yok + sınırsız ipucu
-  - [ ] Pro Monthly ($6.99): Aynı + özel senaryolar + detaylı arıza açıklaması
+## Faz 4: IAP, Reklamlar & RevenueCat ✅
+- [x] RevenueCat kurulumu
+- [x] **Abonelikler:**
+  - [x] Pro Weekly ($2.99): Sınırsız enerji + reklam yok + sınırsız ipucu
+  - [x] Pro Monthly ($6.99): Aynı + özel senaryolar + detaylı arıza açıklaması
 - [x] **Consumable İpucu Paketleri (hint_store_sheet.dart):**
   - [x] 🧰 Küçük Tamir Çantası: 3 ipucu — 29.99 ₺
   - [x] 🔧 Usta Çantası: 10 ipucu — 69.99 ₺
@@ -105,18 +105,22 @@
 - [x] **Rewarded Ads:**
   - [x] Google AdMob entegrasyonu (admob_service.dart — rewarded ad servisi)
   - [x] "Reklam İzle → Hemen Devam Et" butonu (cooldown ekranında)
-  - [ ] Sunucu tarafında reklam izleme doğrulaması
+  - [x] AdMob Server-Side Verification (SSV) — `GET /webhook/admob-ssv`
 - [x] Paywall ekranı tasarımı (premium hissiyat, decoy pricing)
 - [x] FOMO Popup (Gizli Teklif — 1 hafta sınırsız enerji + 5 ipucu hediye, %80 indirim, fake sayaç)
-- [ ] Sunucu tarafı doğrulama (Lambda webhook)
+- [x] Sunucu tarafı doğrulama (Lambda webhook — RevenueCat + AdMob SSV)
+- [x] **Güvenlik Sıkılaştırmaları:**
+  - [x] RevenueCat Webhook Idempotency (Transactions tablosu + TTL 7 gün)
+  - [x] Şikayet (Report) sistemi — DynamoDB Reports tablosu + Flutter UI + Lambda
+  - [x] Geçersiz userId / custom_data edge case handling (sessiz 200 dönüş)
 
 ## Faz 5: Lansman (3-5 gün)
-- [ ] ASO (İngilizce açıklamalar, anahtar kelimeler)
-- [ ] Firebase Analytics entegrasyonu
+- [x] ASO (İngilizce açıklamalar, anahtar kelimeler)
+- [x] Firebase Analytics entegrasyonu
 - [ ] Beta testi (TestFlight + Play Console Internal)
 - [ ] Mağaza görselleri ve ekran görüntüleri
-- [ ] Gizlilik Politikası + Kullanım Şartları sayfası
-- [ ] Apple AI guideline uyum kontrolü
+- [x] Gizlilik Politikası + Kullanım Şartları sayfası (AWS Bedrock / Nova Lite açıkça belirtildi)
+- [x] Apple AI guideline uyum kontrolü (Report butonu + 3 katmanlı filtre)
 - [ ] Review'a gönderim
 
 ## Lansman Sonrası

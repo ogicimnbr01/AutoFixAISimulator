@@ -9,7 +9,7 @@ SCENARIOS = [
     {
         "id": 1,
         "difficulty": "Easy",
-        "vehicle": "2002 Toyota Corolla 1.6, Gasoline, Manual",
+        "vehicle": "2002 Japon Sedan 1.6, Benzin, Manuel",
         "complaint": "The car won't start at all. When I turn the key, nothing happens — no sound, no lights, nothing.",
         "root_cause": "Dead battery (battery has reached end of life)",
         "correct_repair": "Replace the battery with a new one",
@@ -26,7 +26,7 @@ SCENARIOS = [
     {
         "id": 2,
         "difficulty": "Easy",
-        "vehicle": "2006 Ford Focus 1.6 TDCi, Diesel, Manual",
+        "vehicle": "2006 Amerikan Hatchback 1.6, Dizel, Manuel",
         "complaint": "When I turn the key, I hear a clicking sound but the engine doesn't turn over.",
         "root_cause": "Faulty starter motor (solenoid engaging but motor not spinning)",
         "correct_repair": "Replace the starter motor",
@@ -43,7 +43,7 @@ SCENARIOS = [
     {
         "id": 3,
         "difficulty": "Easy",
-        "vehicle": "2010 Volkswagen Polo 1.4, Gasoline, Automatic",
+        "vehicle": "2008 Alman Hatchback 1.4, Benzin, Otomatik",
         "complaint": "My left headlight isn't working. The right one is fine.",
         "root_cause": "Blown fuse for the left headlight circuit",
         "correct_repair": "Replace the blown fuse (#14, 15A)",
@@ -60,7 +60,7 @@ SCENARIOS = [
     {
         "id": 4,
         "difficulty": "Easy",
-        "vehicle": "2008 Hyundai Accent 1.5 CRDi, Diesel, Manual",
+        "vehicle": "2010 Fransız Sedan 1.5, Dizel, Manuel",
         "complaint": "My windshield wipers don't move at all when I switch them on. The washer fluid squirts fine though.",
         "root_cause": "Wiper motor failure",
         "correct_repair": "Replace the wiper motor",
@@ -77,11 +77,11 @@ SCENARIOS = [
     {
         "id": 5,
         "difficulty": "Easy",
-        "vehicle": "2012 Renault Clio 1.5 dCi, Diesel, Manual",
+        "vehicle": "2004 Alman Hatchback 1.6, Dizel, Manuel",
         "complaint": "The AC blows air but it's not cold at all. It used to work fine last summer.",
         "root_cause": "AC refrigerant leak (system is empty)",
         "correct_repair": "Fix the leaking AC line fitting and recharge the refrigerant",
-        "protected_normal": ["AC compressor", "AC condenser", "cabin filter", "blend door", "blower motor", "serpentine belt"],
+        "protected_normal": ["AC compressor", "AC condenser", "cabin filter", "blend door", "blower motor", "serpentine belt", "turbocharger", "turbo", "turbo pressure"],
         "key_clues": {
             "test_ac": "AC blows room-temperature air on all fan speeds. Temperature dial position makes no difference.",
             "check_compressor": "With the AC on and hood open, the AC compressor clutch is NOT engaging — the pulley spins freely but the center hub doesn't lock in.",
@@ -95,7 +95,7 @@ SCENARIOS = [
     {
         "id": 6,
         "difficulty": "Medium",
-        "vehicle": "2005 Opel Astra 1.6, Gasoline, Manual",
+        "vehicle": "2015 Kore Hatchback 1.4, Benzin, Manuel",
         "complaint": "The engine temperature gauge goes into the red after about 15 minutes of driving. I can see steam sometimes.",
         "root_cause": "Thermostat stuck in closed position",
         "correct_repair": "Replace the thermostat",
@@ -112,7 +112,7 @@ SCENARIOS = [
     {
         "id": 7,
         "difficulty": "Medium",
-        "vehicle": "1998 Fiat Palio 1.6, LPG, Manual",
+        "vehicle": "1998 İtalyan Hatchback 1.6, LPG, Manuel",
         "complaint": "The car struggles to start in the mornings and shakes badly at idle once it does start.",
         "root_cause": "Fouled spark plug on cylinder 3 (ignition system fault)",
         "correct_repair": "Replace the spark plug on cylinder 3",
@@ -129,7 +129,7 @@ SCENARIOS = [
     {
         "id": 8,
         "difficulty": "Medium",
-        "vehicle": "2011 Honda Civic 1.8 i-VTEC, Gasoline, Automatic",
+        "vehicle": "2012 Japon Sedan 1.6, Benzin, Otomatik",
         "complaint": "The gear shifts feel very harsh and jerky, especially from 1st to 2nd. It used to shift smooth as butter.",
         "root_cause": "Worn clutch plates in automatic transmission (low/degraded ATF fluid)",
         "correct_repair": "Drain and replace the automatic transmission fluid (ATF)",
@@ -146,7 +146,7 @@ SCENARIOS = [
     {
         "id": 9,
         "difficulty": "Medium",
-        "vehicle": "2014 Kia Ceed 1.6 GDI, Gasoline, Manual",
+        "vehicle": "2009 Fransız Hatchback 1.4, Benzin, Manuel",
         "complaint": "There's a squealing noise from the front wheels when I press the brakes, especially at low speeds.",
         "root_cause": "Front brake pads worn down to the wear indicator",
         "correct_repair": "Replace the front brake pads",
@@ -163,7 +163,7 @@ SCENARIOS = [
     {
         "id": 10,
         "difficulty": "Medium",
-        "vehicle": "2009 Peugeot 308 1.6 HDi, Diesel, Manual",
+        "vehicle": "2007 Japon Hatchback 1.5, Dizel, Manuel",
         "complaint": "The check engine light came on yesterday. The car feels a bit sluggish and uses more fuel than usual.",
         "root_cause": "Faulty oxygen (lambda) sensor — downstream O2 sensor",
         "correct_repair": "Replace the downstream O2 sensor (Bank 1 Sensor 2)",

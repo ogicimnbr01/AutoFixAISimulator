@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/providers.dart';
+import '../../l10n/app_localizations.dart';
 import '../leaderboard/leaderboard_screen.dart';
 import '../paywall/paywall_screen.dart';
 import '../paywall/fomo_popup.dart';
@@ -19,10 +20,12 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   DateTime? _fomoOfferEndTime;
+  int _randomTipIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    _randomTipIndex = math.Random().nextInt(6);
     // Occasional Special Offer Popup
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkOccasionalOffer();
@@ -59,9 +62,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           children: [
             const Icon(Icons.workspace_premium, color: AppTheme.warning, size: 64),
             const SizedBox(height: 16),
-            const Text(
-              'GİZLİ TEKLİF!',
-              style: TextStyle(
+            Text(
+              S.of(context)?.fomoTitle ?? 'GİZLİ TEKLİF!',
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
                 color: AppTheme.warning,
@@ -69,10 +72,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'Sadece şu an için geçerli! Sınırsız enerji ve tüm ustalık özellikleri seni bekliyor. Bu fırsatı kaçırma!',
+            Text(
+              S.of(context)?.fomoBody ?? 'Sadece şu an için geçerli! Sınırsız enerji ve tüm ustalık özellikleri seni bekliyor. Bu fırsatı kaçırma!',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white70, fontSize: 14),
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -86,12 +89,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Navigator.pop(ctx);
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const PaywallScreen()));
               },
-              child: const Text('FIRSATI YAKALA', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+              child: Text(S.of(context)?.upgradeNow ?? 'FIRSATI YAKALA', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
             ),
             const SizedBox(height: 12),
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Belki Sonra', style: TextStyle(color: AppTheme.textMuted)),
+              child: Text(S.of(context)?.cancel ?? 'Belki Sonra', style: const TextStyle(color: AppTheme.textMuted)),
             )
           ],
         ),
@@ -102,6 +105,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(userProfileProvider);
+    final loc = S.of(context);
     final showFomoBanner = _fomoOfferEndTime != null && DateTime.now().isBefore(_fomoOfferEndTime!);
 
     return Stack(
@@ -122,7 +126,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('AutoFix AI', style: Theme.of(context).textTheme.headlineLarge),
-                      Text('Garaj seni bekliyor, usta.', style: Theme.of(context).textTheme.bodyMedium),
+                      Text(loc?.tabGarage ?? 'Garaj seni bekliyor, usta.', style: Theme.of(context).textTheme.bodyMedium),
                     ],
                   ),
                 ),
@@ -185,34 +189,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const SizedBox(height: 28),
 
             // Section Title
-            Text('Yeni Vaka Seç', style: Theme.of(context).textTheme.headlineMedium),
+            Text(loc?.tabGarage ?? 'Yeni Vaka Seç', style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 14),
 
             // Difficulty Cards
             _DifficultyCard(
-              title: 'Kolay',
-              subtitle: 'Akü, marş motoru, bujiler',
+              title: loc?.difficultyEasy ?? 'Kolay',
+              subtitle: loc?.difficultyEasySub ?? 'Akü, marş motoru, bujiler',
               icon: Icons.speed,
               color: AppTheme.success,
-              scenarios: '5 vaka',
+              scenarios: loc?.casesCount ?? '5 vaka',
               onTap: () => _handleGameStart('Easy'),
             ),
             const SizedBox(height: 12),
             _DifficultyCard(
-              title: 'Orta',
-              subtitle: 'LPG, yakıt pompası, sensörler',
+              title: loc?.difficultyMedium ?? 'Orta',
+              subtitle: loc?.difficultyMediumSub ?? 'LPG, yakıt pompası, sensörler',
               icon: Icons.trending_up,
               color: AppTheme.warning,
-              scenarios: '5 vaka',
+              scenarios: loc?.casesCount ?? '5 vaka',
               onTap: () => _handleGameStart('Medium'),
             ),
             const SizedBox(height: 12),
             _DifficultyCard(
-              title: 'Zor',
-              subtitle: 'Conta, turbo, şanzıman',
+              title: loc?.difficultyHard ?? 'Zor',
+              subtitle: loc?.difficultyHardSub ?? 'Conta, turbo, şanzıman',
               icon: Icons.whatshot,
               color: AppTheme.danger,
-              scenarios: '5 vaka',
+              scenarios: loc?.casesCount ?? '5 vaka',
               onTap: () => _handleGameStart('Hard'),
             ),
             const SizedBox(height: 28),
@@ -231,14 +235,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: AppTheme.accent.withValues(alpha: 0.2)),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.tips_and_updates, color: AppTheme.accent, size: 24),
-                  SizedBox(width: 12),
+                  const Icon(Icons.tips_and_updates, color: AppTheme.accent, size: 24),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'İpucu: Önce müşteriyi dinle, sonra gözle. Teşhis koymadan tamir yapma!',
-                      style: TextStyle(fontSize: 13, color: AppTheme.accent),
+                      [
+                        S.of(context)?.tip1,
+                        S.of(context)?.tip2,
+                        S.of(context)?.tip3,
+                        S.of(context)?.tip4,
+                        S.of(context)?.tip5,
+                        S.of(context)?.tip6
+                      ][_randomTipIndex] ?? '',
+                      style: const TextStyle(fontSize: 13, color: AppTheme.accent),
                     ),
                   ),
                 ],
@@ -313,11 +324,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${profile.energy} Enerji', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.white)),
+                Text('${profile.energy} ${S.of(context)?.energy ?? 'Enerji'}', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.white)),
                 Text(
                   profile.energy > 0
-                      ? 'Garaja gir ve tamir et!'
-                      : 'Enerji bitti — reklam izle veya bekle',
+                      ? (S.of(context)?.backToGarage ?? 'Garaja gir ve tamir et!')
+                      : (S.of(context)?.noEnergy ?? 'Enerji bitti — reklam izle veya bekle'),
                   style: const TextStyle(fontSize: 14, color: Colors.white70),
                 ),
               ],
@@ -372,10 +383,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         children: [
           const Icon(Icons.error_outline, color: AppTheme.danger, size: 32),
           const SizedBox(width: 12),
-          const Expanded(child: Text('Bağlantı kurulamadı', style: TextStyle(color: AppTheme.danger))),
+          Expanded(child: Text(S.of(context)?.error ?? 'Bağlantı kurulamadı', style: const TextStyle(color: AppTheme.danger))),
           TextButton(
             onPressed: () => ref.read(userProfileProvider.notifier).load(),
-            child: const Text('Tekrar Dene', style: TextStyle(color: AppTheme.danger)),
+            child: Text(S.of(context)?.retry ?? 'Tekrar Dene', style: const TextStyle(color: AppTheme.danger)),
           ),
         ],
       ),
@@ -401,7 +412,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Seri: $streakMod/3', style: Theme.of(context).textTheme.titleMedium),
+                Text(S.of(context)?.streakProgress(streakMod, 3) ?? 'Seri: $streakMod/3', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 6),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4),
@@ -422,7 +433,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               color: AppTheme.primary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Text('🎁 +1 Enerji', style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.w600, fontSize: 12)),
+            child: Text(S.of(context)?.bonusEnergyShort ?? '🎁 +1 Enerji', style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.w600, fontSize: 12)),
           ),
         ],
       ),
@@ -507,16 +518,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const SizedBox(height: 24),
             const Text('🎁', style: TextStyle(fontSize: 48)),
             const SizedBox(height: 16),
-            const Text('Günlük Bonus', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+            Text(S.of(context)?.dailyBonus ?? 'Günlük Bonus', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
             const SizedBox(height: 8),
-            const Text('Her gün giriş yap, bonus kazan!', style: TextStyle(color: AppTheme.textSecondary)),
+            Text(S.of(context)?.dailyBonusReward ?? 'Her gün giriş yap, bonus kazan!', style: const TextStyle(color: AppTheme.textSecondary)),
             const SizedBox(height: 24),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _BonusItem(icon: Icons.bolt, label: '+1 Enerji', color: AppTheme.primary),
-                SizedBox(width: 20),
-                _BonusItem(icon: Icons.lightbulb, label: '+1 İpucu', color: AppTheme.accent),
+                _BonusItem(icon: Icons.bolt, label: S.of(context)?.bonusEnergy ?? '+1 Enerji', color: AppTheme.primary),
+                const SizedBox(width: 20),
+                _BonusItem(icon: Icons.lightbulb, label: S.of(context)?.bonusHint ?? '+1 İpucu', color: AppTheme.accent),
               ],
             ),
             const SizedBox(height: 24),
@@ -528,11 +539,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Navigator.pop(ctx);
                   final success = await ref.read(userProfileProvider.notifier).claimLoginBonus();
                   messenger.showSnackBar(SnackBar(
-                    content: Text(success ? '🎁 Bonus alındı! +1 Enerji, +1 İpucu' : 'Bonus zaten alınmış'),
+                    content: Text(success ? (S.of(context)?.dailyBonusSuccess ?? '🎁 Bonus alındı!') : (S.of(context)?.dailyBonusAlready ?? 'Bonus zaten alınmış')),
                     backgroundColor: success ? AppTheme.success : AppTheme.warning,
                   ));
                 },
-                child: const Text('Bonus Al!'),
+                child: Text(S.of(context)?.claimBonus ?? 'Bonus Al!'),
               ),
             ),
             const SizedBox(height: 16),
@@ -548,10 +559,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bgCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('🎬 Reklam İzle'),
-        content: const Text('30 saniyelik reklam izle, +1 enerji kazan!'),
+        title: Text('🎬 ${S.of(context)?.watchAd ?? 'Reklam İzle'}'),
+        content: Text(S.of(context)?.watchAdReward ?? '30 saniyelik reklam izle, +1 enerji kazan!'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('İptal')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(S.of(context)?.cancel ?? 'İptal')),
           ElevatedButton(
             onPressed: () async {
               final messenger = ScaffoldMessenger.of(context);
@@ -565,17 +576,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 // 2. Grant Reward
                 final success = await ref.read(userProfileProvider.notifier).claimAdReward('energy');
                 messenger.showSnackBar(SnackBar(
-                  content: Text(success ? '🎬 +1 Enerji kazandın!' : 'Ödül API hatası'),
+                  content: Text(success ? (S.of(context)?.adEnergySuccess ?? '🎬 +1 Enerji kazandın!') : (S.of(context)?.adApiFail ?? 'Ödül API hatası')),
                   backgroundColor: success ? AppTheme.success : AppTheme.danger,
                 ));
               } else {
-                messenger.showSnackBar(const SnackBar(
-                  content: Text('Reklam yüklenemedi veya yarıda kesildi.'),
+                messenger.showSnackBar(SnackBar(
+                  content: Text(S.of(context)?.adLoadFail ?? 'Reklam yüklenemedi veya yarıda kesildi.'),
                   backgroundColor: AppTheme.danger,
                 ));
               }
             },
-            child: const Text('İzle'),
+            child: Text(S.of(context)?.watchAdButton ?? 'İzle'),
           ),
         ],
       ),

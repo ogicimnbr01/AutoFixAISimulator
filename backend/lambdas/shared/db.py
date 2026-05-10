@@ -13,6 +13,8 @@ TABLE_USERS = os.environ.get("TABLE_USERS", "MechanicMaster_Users")
 TABLE_SESSIONS = os.environ.get("TABLE_SESSIONS", "MechanicMaster_Sessions")
 TABLE_DAILY_RESETS = os.environ.get("TABLE_DAILY_RESETS", "MechanicMaster_DailyResets")
 TABLE_LEADERBOARD = os.environ.get("TABLE_LEADERBOARD", "MechanicMaster_Leaderboard")
+TABLE_REPORTS = os.environ.get("TABLE_REPORTS", "MechanicMaster_Reports")
+TABLE_TRANSACTIONS = os.environ.get("TABLE_TRANSACTIONS", "MechanicMaster_Transactions")
 
 
 def _now_iso():
@@ -43,6 +45,8 @@ def get_or_create_user(user_id: str) -> dict:
         "subscription": "free",
         "createdAt": _now_iso(),
         "lastLoginDate": _today_str(),
+        "languageCode": "tr",
+        "languageSource": "profile",
     }
     table.put_item(Item=user)
     return user
@@ -89,6 +93,36 @@ def update_user(user_id: str, updates: dict):
         ExpressionAttributeValues=expr_values,
         ExpressionAttributeNames=expr_names,
     )
+
+
+def delete_user_data(user_id: str):
+    """Delete all data for a user across all tables."""
+    # 1. Delete main user profile
+    dynamodb.Table(TABLE_USERS).delete_item(Key={"userId": user_id})
+
+    # 2. Delete daily resets — key is userId_date (e.g. uid#2026-05-10)
+    # We need to scan/query by prefix since we don't know the exact dates
+    daily_table = dynamodb.Table(TABLE_DAILY_RESETS)
+    result = daily_table.scan(
+        FilterExpression="begins_with(userId_date, :uid)",
+        ExpressionAttributeValues={":uid": f"{user_id}#"},
+        ProjectionExpression="userId_date",
+    )
+    for item in result.get("Items", []):
+        daily_table.delete_item(Key={"userId_date": item["userId_date"]})
+
+    # 3. Delete leaderboard entries across all periods
+    lb_table = dynamodb.Table(TABLE_LEADERBOARD)
+    lb_result = lb_table.scan(
+        FilterExpression="#uid = :uid",
+        ExpressionAttributeNames={"#uid": "userId"},
+        ExpressionAttributeValues={":uid": user_id},
+        ProjectionExpression="#uid, period, score_userId",
+    )
+    for item in lb_result.get("Items", []):
+        lb_table.delete_item(
+            Key={"period": item["period"], "score_userId": item["score_userId"]}
+        )
 
 
 # ============== SESSIONS ==============
@@ -250,3 +284,38 @@ def get_leaderboard(period: str, limit: int = 100) -> list:
             "repPoints": int(item.get("repPoints", 0)),
         })
     return results
+
+# ============== REPORTS ==============
+
+def create_report(user_id: str, session_id: str, message_content: str, reason: str):
+    table = dynamodb.Table(TABLE_REPORTS)
+    report_id = str(uuid.uuid4())
+    table.put_item(Item={
+        "reportId": report_id,
+        "userId": user_id,
+        "sessionId": session_id,
+        "messageContent": message_content,
+        "reason": reason,
+        "createdAt": _now_iso(),
+    })
+
+# ============== TRANSACTIONS ==============
+
+def check_transaction(transaction_id: str) -> bool:
+    """Idempotency check: Returns True if this is a NEW transaction, False if already processed."""
+    table = dynamodb.Table(TABLE_TRANSACTIONS)
+    import time
+    expire_at = int(time.time()) + (7 * 24 * 3600)  # 7 days TTL
+    
+    try:
+        table.put_item(
+            Item={
+                "transactionId": transaction_id,
+                "expiresAt": expire_at,
+                "createdAt": _now_iso()
+            },
+            ConditionExpression="attribute_not_exists(transactionId)"
+        )
+        return True
+    except dynamodb.meta.client.exceptions.ConditionalCheckFailedException:
+        return False

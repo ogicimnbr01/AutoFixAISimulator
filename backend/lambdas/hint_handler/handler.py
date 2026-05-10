@@ -39,8 +39,9 @@ def lambda_handler(event, context):
         return api_response(400, {"error": "invalid_session"})
 
     # Build hint prompt
+    lang_code = body.get("lang", user.get("languageCode", "tr"))
     scenario = get_scenario_by_id(session["scenarioId"])
-    hint_prompt = build_hint_system_prompt(scenario)
+    hint_prompt = build_hint_system_prompt(scenario, lang_code=lang_code)
 
     # Prepare messages for hint context
     hint_msgs = [{"role": m["role"], "content": [{"text": m["content"]}]} for m in session["messages"]]

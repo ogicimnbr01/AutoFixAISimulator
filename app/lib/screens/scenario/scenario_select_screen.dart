@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../game/game_screen.dart';
 
 /// Scenarios data — matches backend scenarios.py
 const _scenarios = [
   // Easy (1-5)
-  {'id': 1, 'vehicle': '2002 Toyota Corolla 1.6', 'complaint': 'Araba hiç çalışmıyor, anahtar çevirince ses yok.', 'difficulty': 'Easy'},
-  {'id': 2, 'vehicle': '2006 Ford Focus 1.6 TDCi', 'complaint': 'Anahtar çevirince tıklama sesi var ama motor dönmüyor.', 'difficulty': 'Easy'},
-  {'id': 3, 'vehicle': '2008 VW Golf 1.4 TSI', 'complaint': 'Motor çalışıyor ama rölantide sallantı ve titreşim.', 'difficulty': 'Easy'},
-  {'id': 4, 'vehicle': '2010 Renault Megane 1.5 dCi', 'complaint': 'Araç çalışıyor ama direksiyon çevirince gıcırtı sesi.', 'difficulty': 'Easy'},
-  {'id': 5, 'vehicle': '2004 Opel Astra 1.6', 'complaint': 'Motor ısındıktan sonra stop ediyor.', 'difficulty': 'Easy'},
+  {'id': 1, 'vehicle': '2002 Japon Sedan 1.6', 'complaint': 'Araba hiç çalışmıyor, anahtar çevirince ses yok.', 'difficulty': 'Easy'},
+  {'id': 2, 'vehicle': '2006 Amerikan Hatchback 1.6', 'complaint': 'Anahtar çevirince tıklama sesi var ama motor dönmüyor.', 'difficulty': 'Easy'},
+  {'id': 3, 'vehicle': '2008 Alman Hatchback 1.4', 'complaint': 'Sol far çalışmıyor, sağ far sorunsuz.', 'difficulty': 'Easy'},
+  {'id': 4, 'vehicle': '2010 Fransız Sedan 1.5', 'complaint': 'Silecekler hiç hareket etmiyor, cam suyu fışkırıyor.', 'difficulty': 'Easy'},
+  {'id': 5, 'vehicle': '2004 Alman Hatchback 1.6', 'complaint': 'Klima hava üflüyor ama hiç soğutmuyor.', 'difficulty': 'Easy'},
   // Medium (6-10)
-  {'id': 6, 'vehicle': '2015 Hyundai i20 1.4', 'complaint': 'Araç sarsarak gidiyor, hızlanmada güç kaybı var.', 'difficulty': 'Medium'},
-  {'id': 7, 'vehicle': '1998 Fiat Palio 1.6 LPG', 'complaint': 'Sabahları zor çalışıyor, rölantide sallanıyor.', 'difficulty': 'Medium'},
-  {'id': 8, 'vehicle': '2012 Honda Civic 1.6', 'complaint': 'Fren pedalı yumuşak, durma mesafesi uzadı.', 'difficulty': 'Medium'},
-  {'id': 9, 'vehicle': '2009 Peugeot 207 1.4 HDi', 'complaint': 'Egzozdan beyaz duman çıkıyor.', 'difficulty': 'Medium'},
-  {'id': 10, 'vehicle': '2007 Nissan Note 1.5 dCi', 'complaint': 'Klima açınca motor neredeyse stop edecek.', 'difficulty': 'Medium'},
+  {'id': 6, 'vehicle': '2015 Kore Hatchback 1.4', 'complaint': 'Motor harareti 15 dakikada kırmızıya çıkıyor.', 'difficulty': 'Medium'},
+  {'id': 7, 'vehicle': '1998 İtalyan Hatchback 1.6', 'complaint': 'Sabahları zor çalışıyor, rölantide sallanıyor.', 'difficulty': 'Medium'},
+  {'id': 8, 'vehicle': '2012 Japon Sedan 1.6', 'complaint': 'Vites geçişleri, özellikle 1-2 arası çok sert ve sarsıntılı.', 'difficulty': 'Medium'},
+  {'id': 9, 'vehicle': '2009 Fransız Hatchback 1.4', 'complaint': 'Düşük hızda frene basınca ön tekerlerden tiz bir gıcırtı geliyor.', 'difficulty': 'Medium'},
+  {'id': 10, 'vehicle': '2007 Japon Hatchback 1.5', 'complaint': 'Gaza basınca devir artıyor ama araç hızlanmıyor (bağırıyor ama gitmiyor).', 'difficulty': 'Medium'},
   // Hard (11-15)
-  {'id': 11, 'vehicle': '2005 BMW 320d E46', 'complaint': 'Hızlanırken düdük sesi, güç kaybı.', 'difficulty': 'Hard'},
-  {'id': 12, 'vehicle': '2011 Mercedes C200 CDI', 'complaint': 'Motor ısındığında antifriz kokusu.', 'difficulty': 'Hard'},
-  {'id': 13, 'vehicle': '2003 Audi A4 1.8T', 'complaint': 'Vites geçişleri sert, 3. viteste takılma.', 'difficulty': 'Hard'},
-  {'id': 14, 'vehicle': '2014 Volvo S60 D3', 'complaint': 'Stop-start çalışmıyor, akü ikaz lambası.', 'difficulty': 'Hard'},
-  {'id': 15, 'vehicle': '2016 Skoda Octavia 1.6 TDI', 'complaint': 'DPF lambası yanıyor, güç kısıtlaması.', 'difficulty': 'Hard'},
+  {'id': 11, 'vehicle': '2005 Premium Alman Sedan 2.0', 'complaint': 'Motor uyarı lambası yanıyor ve araç 3000 deviri geçmiyor.', 'difficulty': 'Hard'},
+  {'id': 12, 'vehicle': '2011 Premium Alman Sedan 2.1', 'complaint': 'Motor suyuna yağ karışmış, antifriz kabı tahin gibi olmuş.', 'difficulty': 'Hard'},
+  {'id': 13, 'vehicle': '2003 Premium Alman Sedan 1.8', 'complaint': 'Ön camdan ve sunroof çevresinden yağmurlu havalarda su alıyor.', 'difficulty': 'Hard'},
+  {'id': 14, 'vehicle': '2014 Premium İsveç Sedan 2.0', 'complaint': 'Direksiyon çok ağırlaştı, döndürmek neredeyse imkansız.', 'difficulty': 'Hard'},
+  {'id': 15, 'vehicle': '2016 Çek Sedan 1.6', 'complaint': 'Hız sabitleyici ve şerit takip asistanı devre dışı kaldı uyarısı.', 'difficulty': 'Hard'},
 ];
 
 class ScenarioSelectScreen extends StatelessWidget {
@@ -32,7 +33,7 @@ class ScenarioSelectScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final scenarios = _scenarios.where((s) => s['difficulty'] == difficulty).toList();
     final diffColor = difficulty == 'Easy' ? AppTheme.success : difficulty == 'Medium' ? AppTheme.warning : AppTheme.danger;
-    final diffLabel = difficulty == 'Easy' ? 'Kolay' : difficulty == 'Medium' ? 'Orta' : 'Zor';
+    final diffLabel = difficulty == 'Easy' ? (S.of(context)?.difficultyEasy ?? 'Kolay') : difficulty == 'Medium' ? (S.of(context)?.difficultyMedium ?? 'Orta') : (S.of(context)?.difficultyHard ?? 'Zor');
 
     return Scaffold(
       appBar: AppBar(
@@ -46,7 +47,7 @@ class ScenarioSelectScreen extends StatelessWidget {
               child: Text(diffLabel, style: TextStyle(color: diffColor, fontWeight: FontWeight.w700, fontSize: 14)),
             ),
             const SizedBox(width: 8),
-            const Text('Vakalar', style: TextStyle(fontSize: 18)),
+            Text(S.of(context)?.casesTitle ?? 'Vakalar', style: const TextStyle(fontSize: 18)),
           ],
         ),
       ),
@@ -72,6 +73,23 @@ class ScenarioSelectScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Car Image
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          'assets/images/cars/scenario_${s['id']}.jpg',
+                          width: double.infinity,
+                          height: 140,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            width: double.infinity,
+                            height: 140,
+                            color: diffColor.withValues(alpha: 0.1),
+                            child: Icon(Icons.directions_car, size: 64, color: diffColor.withValues(alpha: 0.5)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
                       Row(
                         children: [
                           Container(
@@ -92,14 +110,17 @@ class ScenarioSelectScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('${s['vehicle']}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                                Text(
+                                  _getLocalizedVehicle(context, s['id'] as int) ?? '${s['vehicle']}',
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)
+                                ),
                               ],
                             ),
                           ),
-                          const Icon(Icons.play_circle_fill, color: AppTheme.primary, size: 32),
+                          const Icon(Icons.play_circle_fill, color: AppTheme.primary, size: 36),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -107,12 +128,13 @@ class ScenarioSelectScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text('🧑‍🔧 ', style: TextStyle(fontSize: 16)),
                             Expanded(
                               child: Text(
-                                '"${s['complaint']}"',
-                                style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary, fontStyle: FontStyle.italic),
+                                  '"${_getLocalizedComplaint(context, s['id'] as int) ?? s['complaint']}"',
+                                style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary, height: 1.3, fontStyle: FontStyle.italic),
                               ),
                             ),
                           ],
@@ -127,5 +149,49 @@ class ScenarioSelectScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  String? _getLocalizedVehicle(BuildContext context, int id) {
+    final loc = S.of(context);
+    switch (id) {
+      case 1: return loc?.case1Vehicle;
+      case 2: return loc?.case2Vehicle;
+      case 3: return loc?.case3Vehicle;
+      case 4: return loc?.case4Vehicle;
+      case 5: return loc?.case5Vehicle;
+      case 6: return loc?.case6Vehicle;
+      case 7: return loc?.case7Vehicle;
+      case 8: return loc?.case8Vehicle;
+      case 9: return loc?.case9Vehicle;
+      case 10: return loc?.case10Vehicle;
+      case 11: return loc?.case11Vehicle;
+      case 12: return loc?.case12Vehicle;
+      case 13: return loc?.case13Vehicle;
+      case 14: return loc?.case14Vehicle;
+      case 15: return loc?.case15Vehicle;
+      default: return null;
+    }
+  }
+
+  String? _getLocalizedComplaint(BuildContext context, int id) {
+    final loc = S.of(context);
+    switch (id) {
+      case 1: return loc?.case1Complaint;
+      case 2: return loc?.case2Complaint;
+      case 3: return loc?.case3Complaint;
+      case 4: return loc?.case4Complaint;
+      case 5: return loc?.case5Complaint;
+      case 6: return loc?.case6Complaint;
+      case 7: return loc?.case7Complaint;
+      case 8: return loc?.case8Complaint;
+      case 9: return loc?.case9Complaint;
+      case 10: return loc?.case10Complaint;
+      case 11: return loc?.case11Complaint;
+      case 12: return loc?.case12Complaint;
+      case 13: return loc?.case13Complaint;
+      case 14: return loc?.case14Complaint;
+      case 15: return loc?.case15Complaint;
+      default: return null;
+    }
   }
 }

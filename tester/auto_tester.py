@@ -22,12 +22,19 @@ import boto3, openpyxl
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend', 'lambdas', 'shared'))
 from scenarios import SCENARIOS, get_scenario_by_id
-from prompts import build_game_system_prompt, sanitize_input, validate_output
+from prompts import build_game_system_prompt, sanitize_input, validate_output, validate_language
 
 BEDROCK_REGION = "us-east-1"
 MODEL_ID = "us.amazon.nova-lite-v1:0"
 XLSX_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'autofix_qa_tracker.xlsx')
 SCENARIO_TO_SID = {i: f"S{str(i).zfill(2)}" for i in range(1, 16)}
+
+# Kabul eşikleri — POST_TEST_FIXES.md'den
+THRESHOLDS = {
+    "S05": 0.8, "S15": 0.8, "S03": 0.9,
+    "S02": 1.0, "S10": 1.0, "S04": 1.0,
+    "default": 1.0,
+}
 
 
 # ═══════════════════════════════════════
@@ -100,7 +107,8 @@ TR_POSITIVE = [
     "sorun yok", "normal", "sağlam", "düzgün", "problem yok", "arıza yok",
     "hasar yok", "iyi durumda", "temiz", "sızıntı yok", "kaçak yok",
     "çalışıyor", "doğru çalışıyor", "sorunsuz", "her şey normal",
-    "düzgün çalışıyor", "normal görünüyor",
+    "düzgün çalışıyor", "normal görünüyor", "işlevsel", "arızalı değil",
+    "sızıntısı yok", "kaçak bulunmuyor", "sorun bulunmuyor", "arızasız"
 ]
 
 TR_ADVICE = [
@@ -113,9 +121,15 @@ TR_REFUSE = [
     "söyleyemem", "usta sensin", "komut ver", "ben bir araba",
     "sana ne yapacağını", "kararını sen ver", "test et",
 ]
+def parse_numeric(value: str) -> float:
+    """12,4 / 12.4 / 12,4V / 12.4В → 12.4"""
+    cleaned = re.sub(r'[^\d.,]', '', value)
+    if not cleaned:
+        return 0.0
+    return float(cleaned.replace(',', '.'))
 
 
-def detect_hallucination(ai_response, scenario, msg_data) -> dict:
+def detect_hallucination(ai_response, scenario, msg_data, lang_code="tr") -> dict:
     resp = ai_response.lower()
     intent = msg_data["intent"]
     result = {"detected": False, "type": None, "detail": None, "severity": 0}
@@ -136,7 +150,7 @@ def detect_hallucination(ai_response, scenario, msg_data) -> dict:
         if expected:
             # BİRİMLE BİRLİKTE sayıları çıkar (ör: "9.2V", "150PSI", "22mm")
             # Sadece aynı birimdeki sayıları karşılaştır — bağlamsız karşılaştırma yapma
-            unit_pattern = r'([\d.]+)\s*(V|PSI|psi|mm|km|ml|bar|ohm|amp|RPM|rpm|°C|°F)\b'
+            unit_pattern = r'([\d.,]+)\s*(V|PSI|psi|mm|km|ml|bar|ohm|amp|RPM|rpm|°C|°F)\b'
             exp_with_units = re.findall(unit_pattern, expected, re.IGNORECASE)
             resp_with_units = re.findall(unit_pattern, ai_response, re.IGNORECASE)
 
@@ -145,8 +159,8 @@ def detect_hallucination(ai_response, scenario, msg_data) -> dict:
                     for resp_val_str, resp_unit in resp_with_units:
                         if exp_unit.lower() == resp_unit.lower():
                             try:
-                                exp_val = float(exp_val_str)
-                                resp_val = float(resp_val_str)
+                                exp_val = parse_numeric(exp_val_str)
+                                resp_val = parse_numeric(resp_val_str)
                                 if exp_val > 0 and abs(exp_val - resp_val) / max(exp_val, 0.01) > 0.20:
                                     return {"detected": True, "type": "Uydurma Parça",
                                             "detail": f"Yanlış ölçüm: beklenen {exp_val_str}{exp_unit}, AI '{resp_val_str}{resp_unit}' dedi",
@@ -220,12 +234,11 @@ def detect_hallucination(ai_response, scenario, msg_data) -> dict:
                 return {"detected": True, "type": "Uydurma Parça",
                         "detail": f"'{part}' arızalı gösterildi", "severity": 3}
 
-    # ─── 8. DİL KARIŞIMI ───
-    en_words = ["the ", "is ", "you should", "i recommend", "check the",
-                "replace the", "problem is", "because ", "damaged", "broken"]
-    if sum(1 for w in en_words if w in resp) >= 3:
+    # ─── 8. DİL KARIŞIMI (çoklu dil desteği) ───
+    is_lang_valid, _ = validate_language(ai_response, lang_code)
+    if not is_lang_valid:
         return {"detected": True, "type": "Dil Karışımı",
-                "detail": "İngilizce yanıt", "severity": 1}
+                "detail": f"Dil karışımı tespit edildi (hedef: {lang_code})", "severity": 1}
 
     return result
 
@@ -254,13 +267,13 @@ def call_bedrock(client, system_prompt, messages, dry_run=False):
 # TEK TEST OTURUMU
 # ═══════════════════════════════════════
 
-def run_single_test(client, scenario, round_num, tester, dry_run=False):
+def run_single_test(client, scenario, round_num, tester, dry_run=False, lang_code="tr"):
     sid = SCENARIO_TO_SID[scenario["id"]]
-    system_prompt = build_game_system_prompt(scenario)
+    system_prompt = build_game_system_prompt(scenario, lang_code=lang_code)
     test_msgs = get_test_messages(scenario)
 
     conversation, hallucinations, all_responses = [], [], []
-    blocked_count = 0
+    partial_events = []  # {type: PARTIAL_LAMBDA|PARTIAL_TIMEOUT|PARTIAL_EMPTY}
 
     for msg_data in test_msgs:
         user_msg = msg_data["message"]
@@ -269,24 +282,45 @@ def run_single_test(client, scenario, round_num, tester, dry_run=False):
         if not is_safe:
             conversation += [{"role": "user", "content": user_msg},
                              {"role": "assistant", "content": checked}]
-            blocked_count += 1
             all_responses.append({"user": user_msg, "ai": checked,
                                   "intent": msg_data["intent"], "blocked": True})
             continue
 
         conversation.append({"role": "user", "content": user_msg})
         ai_raw = call_bedrock(client, system_prompt, conversation, dry_run)
+
+        # --- Partial olay tespiti ---
+        if ai_raw.startswith("[BEDROCK_ERROR"):
+            partial_events.append({"type": "PARTIAL_TIMEOUT", "detail": ai_raw[:100]})
+            conversation.append({"role": "assistant", "content": "Yanıt alınamadı."})
+            all_responses.append({"user": user_msg, "ai": ai_raw,
+                                  "intent": msg_data["intent"], "blocked": False,
+                                  "partial": "PARTIAL_TIMEOUT", "hallucination": {"detected": False}})
+            continue
+
+        if not ai_raw or not ai_raw.strip():
+            partial_events.append({"type": "PARTIAL_EMPTY", "detail": "Boş yanıt"})
+            conversation.append({"role": "assistant", "content": "Yanıt alınamadı."})
+            all_responses.append({"user": user_msg, "ai": "(boş yanıt)",
+                                  "intent": msg_data["intent"], "blocked": False,
+                                  "partial": "PARTIAL_EMPTY", "hallucination": {"detected": False}})
+            continue
+
         ai_clean = validate_output(ai_raw, scenario)
         was_filtered = ai_clean != ai_raw
+        if was_filtered:
+            partial_events.append({"type": "PARTIAL_LAMBDA", "detail": ai_clean[:60]})
+
         ai_clean = ai_clean.replace("[CASE_SOLVED]", "").strip()
         conversation.append({"role": "assistant", "content": ai_clean})
 
-        hal = detect_hallucination(ai_clean, scenario, msg_data)
+        hal = detect_hallucination(ai_clean, scenario, msg_data, lang_code)
         all_responses.append({
             "user": user_msg, "ai": ai_clean,
             "ai_raw": ai_raw if was_filtered else None,
             "intent": msg_data["intent"], "blocked": False,
             "filtered": was_filtered, "hallucination": hal,
+            "partial": "PARTIAL_LAMBDA" if was_filtered else None,
         })
         if hal["detected"]:
             hallucinations.append(hal)
@@ -297,15 +331,29 @@ def run_single_test(client, scenario, round_num, tester, dry_run=False):
     has_hal = len(hallucinations) > 0
     worst = max(hallucinations, key=lambda h: h["severity"]) if hallucinations else None
 
+    # Sonuç belirleme — granüler PARTIAL tipleri
+    if has_hal:
+        sonuc = "FAIL"
+    elif partial_events:
+        p_types = [p["type"] for p in partial_events]
+        if "PARTIAL_TIMEOUT" in p_types:
+            sonuc = "PARTIAL_TIMEOUT"
+        elif "PARTIAL_EMPTY" in p_types:
+            sonuc = "PARTIAL_EMPTY"
+        else:
+            sonuc = "PARTIAL_LAMBDA"
+    else:
+        sonuc = "PASS"
+
     return {
         "sid": sid, "scenario_id": scenario["id"], "round": round_num,
-        "tester": tester,
-        "sonuc": "FAIL" if has_hal else ("PARTIAL" if blocked_count else "PASS"),
+        "tester": tester, "sonuc": sonuc,
         "mesaj_sayisi": len(test_msgs),
         "halucinasyon": "Evet" if has_hal else "Hayır",
         "halucinasyon_tipi": worst["type"] if worst else "Yok",
         "yanlis_parca": worst["detail"] if worst else "",
         "hallucinations": hallucinations,
+        "partial_events": partial_events,
         "responses": all_responses,
     }
 
@@ -390,6 +438,7 @@ def main():
     parser = argparse.ArgumentParser(description="AutoFix AI Otomatik Test v2")
     parser.add_argument("--scenario", type=str)
     parser.add_argument("--rounds", type=int, default=10)
+    parser.add_argument("--lang", type=str, default="tr", help="Dil kodu: tr, en, ru, zh")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -397,7 +446,7 @@ def main():
         num = int(args.scenario.upper().replace("S", ""))
         s = get_scenario_by_id(num)
         if not s:
-            print(f"Senaryo bulunamadı: {args.scenario}")
+            print(f"Senaryo bulunamadi: {args.scenario}")
             sys.exit(1)
         scenarios = [s]
     else:
@@ -405,36 +454,44 @@ def main():
 
     total = len(scenarios) * args.rounds
     print("=" * 60)
-    print("  🔧 AutoFix AI — Halüsinasyon Testi v2")
+    print("  AutoFix AI -- Halusinasyon Testi v2")
     print("=" * 60)
     print(f"  Senaryo: {len(scenarios)} | Tur: {args.rounds} | Toplam: {total}")
-    print(f"  Model: {MODEL_ID} | Dry: {'Evet' if args.dry_run else 'Hayır'}")
-    print(f"  Mesaj/test: 8 (3 ipucu + 5 tuzak)")
-    print(f"  Başlangıç: {datetime.now().strftime('%H:%M:%S')}")
+    print(f"  Model: {MODEL_ID} | Dry: {'Evet' if args.dry_run else 'Hayir'}")
+    print(f"  Dil: {args.lang} | Mesaj/test: 8 (3 ipucu + 5 tuzak)")
+    print(f"  Baslangic: {datetime.now().strftime('%H:%M:%S')}")
     print("=" * 60)
 
     client = None if args.dry_run else boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
     all_results = []
-    stats = {"total": 0, "pass": 0, "fail": 0, "partial": 0, "hal": 0}
+    stats = {"total": 0, "pass": 0, "fail": 0, "partial": 0, "hal": 0,
+             "partial_lambda": 0, "partial_timeout": 0, "partial_empty": 0}
 
     for scenario in scenarios:
         sid = SCENARIO_TO_SID[scenario["id"]]
-        print(f"\n{'─'*50}")
-        print(f"  📋 {sid}: {scenario['vehicle'][:40]}")
-        print(f"     Arıza: {scenario['root_cause'][:50]}")
+        print(f"\n{'---'*17}")
+        print(f"  {sid}: {scenario['vehicle'][:40]}")
+        print(f"     Ariza: {scenario['root_cause'][:50]}")
 
         for r in range(1, args.rounds + 1):
             stats["total"] += 1
-            result = run_single_test(client, scenario, r, "AutoTester_v2", args.dry_run)
+            result = run_single_test(client, scenario, r, "AutoTester_v2", args.dry_run, lang_code=args.lang)
             all_results.append(result)
 
-            stats["pass" if result["sonuc"] == "PASS" else
-                  "fail" if result["sonuc"] == "FAIL" else "partial"] += 1
+            if result["sonuc"] == "PASS":
+                stats["pass"] += 1
+            elif result["sonuc"] == "FAIL":
+                stats["fail"] += 1
+            else:
+                stats["partial"] += 1
+                pk = result["sonuc"].lower()
+                if pk in stats:
+                    stats[pk] += 1
             if result["halucinasyon"] == "Evet":
                 stats["hal"] += 1
 
-            icon = {"PASS": "✅", "FAIL": "❌", "PARTIAL": "⚠️"}[result["sonuc"]]
-            hal_str = f" 🤖 {result['halucinasyon_tipi']}: {result['yanlis_parca'][:40]}" if result["halucinasyon"] == "Evet" else ""
+            icon = "[PASS]" if result["sonuc"] == "PASS" else "[FAIL]" if result["sonuc"] == "FAIL" else "[WARN]"
+            hal_str = f" HAL {result['halucinasyon_tipi']}: {result['yanlis_parca'][:40]}" if result["halucinasyon"] == "Evet" else ""
             print(f"  R{r:02d}: {icon} {result['sonuc']}{hal_str}")
 
             write_result_to_xlsx(result)
@@ -443,27 +500,52 @@ def main():
 
     # RAPOR
     print(f"\n{'='*60}")
-    print("  📊 SONUÇ RAPORU")
+    print("  SONUC RAPORU")
     print(f"{'='*60}")
-    print(f"  Toplam: {stats['total']} | ✅ {stats['pass']} | ❌ {stats['fail']} | ⚠️ {stats['partial']}")
-    print(f"  🤖 Halüsinasyon: {stats['hal']}")
+    print(f"  Toplam: {stats['total']} | PASS: {stats['pass']} | FAIL: {stats['fail']} | PARTIAL: {stats['partial']}")
+    if stats["partial"]:
+        print(f"  Partial: Lambda={stats['partial_lambda']} | Timeout={stats['partial_timeout']} | Empty={stats['partial_empty']}")
+    print(f"  Halusinasyon: {stats['hal']}")
     if stats["total"]:
-        print(f"  Başarı: {stats['pass']/stats['total']*100:.1f}% | Hal: {stats['hal']/stats['total']*100:.1f}%")
+        print(f"  Basari: {stats['pass']/stats['total']*100:.1f}% | Hal: {stats['hal']/stats['total']*100:.1f}%")
 
     print(f"\n  {'Senaryo':<6} {'PASS':<5} {'FAIL':<5} {'HAL':<5} {'Oran'}")
-    print(f"  {'─'*35}")
+    print(f"  {'---'*12}")
     for sc in scenarios:
         sid = SCENARIO_TO_SID[sc["id"]]
         sr = [r for r in all_results if r["sid"] == sid]
         sp = sum(1 for r in sr if r["sonuc"] == "PASS")
         sf = sum(1 for r in sr if r["sonuc"] == "FAIL")
         sh = sum(1 for r in sr if r["halucinasyon"] == "Evet")
-        flag = " 🚩" if sh else ""
+        flag = " !!!" if sh else ""
         print(f"  {sid:<6} {sp:<5} {sf:<5} {sh:<5} {sp/len(sr)*100:.0f}%{flag}")
 
-    print(f"\n  📁 Log: {log_path}")
-    print(f"  📊 XLSX: {XLSX_PATH}")
-    print(f"  ⏱️ Bitiş: {datetime.now().strftime('%H:%M:%S')}")
+    # KABUL KRITERLERI
+    print(f"\n  {'---'*17}")
+    print(f"  KABUL KRITERLERI")
+    print(f"  {'---'*17}")
+    all_accepted = True
+    for sc in scenarios:
+        sid = SCENARIO_TO_SID[sc["id"]]
+        sr = [r for r in all_results if r["sid"] == sid]
+        sp = sum(1 for r in sr if r["sonuc"] == "PASS")
+        rate = sp / len(sr) if sr else 0
+        threshold = THRESHOLDS.get(sid, THRESHOLDS["default"])
+        if rate >= threshold:
+            status = "KABUL"
+        else:
+            status = "TEKRAR DUZELT"
+            all_accepted = False
+        print(f"  {sid}: {sp}/{len(sr)} ({rate*100:.0f}%) | Esik: {threshold*100:.0f}% -> {status}")
+
+    if all_accepted:
+        print(f"\n  TUM SENARYOLAR KABUL EDILDI -- LANSMANA HAZIR")
+    else:
+        print(f"\n  BAZI SENARYOLAR ESIGIN ALTINDA -- LANSМАН ENGELLEYICI")
+
+    print(f"\n  Log: {log_path}")
+    print(f"  XLSX: {XLSX_PATH}")
+    print(f"  Bitis: {datetime.now().strftime('%H:%M:%S')}")
     print("=" * 60)
 
 

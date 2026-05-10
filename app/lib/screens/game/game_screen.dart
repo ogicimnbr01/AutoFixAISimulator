@@ -5,6 +5,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/api/api_client.dart';
 import '../../providers/providers.dart';
 import '../../core/services/achievements_service.dart';
+import '../../l10n/app_localizations.dart';
 import 'hint_store_sheet.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
@@ -53,15 +54,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       setState(() {
         _sessionId = res['sessionId'];
         _scenario = res['scenario'];
-        _messages.add({'role': 'system', 'content': '🧑‍🔧 Müşteri: "${_scenario!['complaint']}"'});
+        final complaint = _getLocalizedComplaint(context, widget.scenarioId) ?? _scenario!['complaint'];
+        _messages.add({'role': 'system', 'content': S.of(context)?.customerComplaint(complaint) ?? '🧑‍🔧 Müşteri: "$complaint"'});
         _isLoading = false;
       });
     } on ApiException catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        String errorMsg = 'Hata: $e';
+        String errorMsg = '${S.of(context)?.error ?? 'Hata'}: $e';
         if (e.error == 'no_energy') {
-          errorMsg = '⚡ Enerji bitti! Reklam izle veya bekle.';
+          errorMsg = S.of(context)?.noEnergy ?? '⚡ Enerji bitti! Reklam izle veya bekle.';
         }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(errorMsg), backgroundColor: AppTheme.danger),
@@ -72,7 +74,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hata: $e'), backgroundColor: AppTheme.danger),
+          SnackBar(content: Text('${S.of(context)?.error ?? 'Hata'}: $e'), backgroundColor: AppTheme.danger),
         );
         Navigator.pop(context);
       }
@@ -91,7 +93,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     _scrollToBottom();
 
     try {
-      final res = await _api.sendMessage(_sessionId!, text);
+      final lang = Localizations.localeOf(context).languageCode;
+      final res = await _api.sendMessage(_sessionId!, text, lang: lang);
       setState(() {
         _messages.add({'role': 'assistant', 'content': res['response']});
         _messageCount = res['messageCount'] ?? _messageCount + 1;
@@ -129,14 +132,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         setState(() => _isLoading = false);
       } else {
         setState(() {
-          _messages.add({'role': 'assistant', 'content': '⚡ Garajın şartelleri attı. Tekrar dene.'});
+          _messages.add({'role': 'assistant', 'content': S.of(context)?.fallbackError ?? '⚡ Garajın şartelleri attı. Tekrar dene.'});
           _isLoading = false;
         });
       }
       _scrollToBottom();
     } catch (e) {
       setState(() {
-        _messages.add({'role': 'assistant', 'content': '⚡ Garajın şartelleri attı. Tekrar dene.'});
+        _messages.add({'role': 'assistant', 'content': S.of(context)?.fallbackError ?? '⚡ Garajın şartelleri attı. Tekrar dene.'});
         _isLoading = false;
       });
       _scrollToBottom();
@@ -173,13 +176,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bgCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(children: [Icon(Icons.lightbulb, color: AppTheme.warning), SizedBox(width: 8), Text('İpucu Zamanı!')]),
-        content: const Text('15 mesajı geçtin ama çözememedin. Ustaya danışmak ister misin?'),
+        title: Row(children: [const Icon(Icons.lightbulb, color: AppTheme.warning), const SizedBox(width: 8), Text(S.of(context)?.hintTimeTitle ?? 'İpucu Zamanı!')]),
+        content: Text(S.of(context)?.hintTimeMessage ?? '15 mesajı geçtin ama çözememedin. Ustaya danışmak ister misin?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Hayır')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(S.of(context)?.no ?? 'Hayır')),
           ElevatedButton(
             onPressed: () { Navigator.pop(ctx); _handleHintRequest(); },
-            child: const Text('İpucu Al'),
+            child: Text(S.of(context)?.getHint ?? 'İpucu Al'),
           ),
         ],
       ),
@@ -188,6 +191,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   /// Check hint credits before requesting — show FOMO if empty
   void _handleHintRequest() {
+    if (_isLoading) return; // Prevent double-taps
     final profile = ref.read(userProfileProvider).valueOrNull;
     if (profile == null) return;
 
@@ -222,15 +226,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           children: [
             const Icon(Icons.lightbulb, color: AppTheme.warning, size: 56),
             const SizedBox(height: 16),
-            const Text(
-              'İpuçların Bitti!',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: AppTheme.warning),
+            Text(
+              S.of(context)?.hintsEmpty ?? 'İpuçların Bitti!',
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: AppTheme.warning),
             ),
             const SizedBox(height: 10),
-            const Text(
-              'Ustanın bilgeliğine ihtiyacın var ama ipucu hakkın kalmadı! Hemen ipucu satın al ve vakayı çöz.',
+            Text(
+              S.of(context)?.hintsEmptyMessage ?? 'Ustanın bilgeliğine ihtiyacın var ama ipucu hakkın kalmadı! Hemen ipucu satın al ve vakayı çöz.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white70, fontSize: 14),
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
             ),
             const SizedBox(height: 8),
             Container(
@@ -239,9 +243,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 color: AppTheme.danger.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text(
-                '💡 3 ipucu sadece 29.99 ₺!',
-                style: TextStyle(color: AppTheme.danger, fontWeight: FontWeight.w700, fontSize: 13),
+              child: Text(
+                S.of(context)?.hintsPromo ?? '💡 3 ipucu sadece 29.99 ₺!',
+                style: const TextStyle(color: AppTheme.danger, fontWeight: FontWeight.w700, fontSize: 13),
               ),
             ),
             const SizedBox(height: 20),
@@ -258,13 +262,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   Navigator.pop(ctx);
                   showHintStoreSheet(context);
                 },
-                child: const Text('İPUCU MAĞAZASI', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+                child: Text(S.of(context)?.hintStore ?? 'İPUCU MAĞAZASI', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
               ),
             ),
             const SizedBox(height: 8),
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Kendi Başıma Devam Et', style: TextStyle(color: AppTheme.textMuted)),
+              child: Text(S.of(context)?.continueAlone ?? 'Kendi Başıma Devam Et', style: const TextStyle(color: AppTheme.textMuted)),
             ),
           ],
         ),
@@ -276,14 +280,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     if (_sessionId == null || _solved) return;
     setState(() => _isLoading = true);
     try {
-      final res = await _api.requestHint(_sessionId!);
+      final lang = Localizations.localeOf(context).languageCode;
+      final res = await _api.requestHint(_sessionId!, lang: lang);
       // Consume a hint credit (unless Pro)
       final profile = ref.read(userProfileProvider).valueOrNull;
       if (profile != null && !profile.isPro) {
         ref.read(userProfileProvider.notifier).consumeHint();
       }
       setState(() {
-        _messages.add({'role': 'hint', 'content': '💡 Usta: ${res['hint']}'});
+        _messages.add({'role': 'hint', 'content': '💡 ${S.of(context)?.master ?? 'Usta'}: ${res['hint']}'});
         _isLoading = false;
       });
       _scrollToBottom();
@@ -291,7 +296,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('İpucu hatası: $e'), backgroundColor: AppTheme.danger),
+          SnackBar(content: Text('${S.of(context)?.hintError ?? 'İpucu hatası'}: $e'), backgroundColor: AppTheme.danger),
         );
       }
     }
@@ -303,17 +308,17 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bgCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('🏳️ Teslim Ol?'),
-        content: const Text('Seri puanın kırılmaz, ama bu vaka çözülmüş sayılmaz. Devam etmek istediğine emin misin?'),
+        title: Text(S.of(context)?.giveUpTitle ?? '🏳️ Teslim Ol?'),
+        content: Text(S.of(context)?.giveUpMessage ?? 'Seri puanın kırılmaz, ama bu vaka çözülmüş sayılmaz. Devam etmek istediğine emin misin?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Devam Et')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(S.of(context)?.continueButton ?? 'Devam Et')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.danger),
             onPressed: () {
               Navigator.pop(ctx);
               Navigator.pop(context);
             },
-            child: const Text('Teslim Ol'),
+            child: Text(S.of(context)?.giveUpButton ?? 'Teslim Ol'),
           ),
         ],
       ),
@@ -332,6 +337,47 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     });
   }
 
+  void _showReportDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppTheme.bgCard,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(S.of(context)?.reportTitle ?? '🚨 Şikayet Et'),
+        content: Text(S.of(context)?.reportMessage ?? 'AI tarafından üretilen rahatsız edici veya uygunsuz bir mesajı rapor etmek üzeresiniz. Bu oturum incelenmek üzere kaydedilecektir.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(S.of(context)?.cancel ?? 'İptal')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.danger),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              
+              if (_sessionId != null && _messages.isNotEmpty) {
+                // Find last assistant message
+                final lastAiMessage = _messages.lastWhere(
+                  (m) => m['role'] == 'assistant' || m['role'] == 'hint', 
+                  orElse: () => {'content': 'No AI message found'}
+                );
+                
+                try {
+                  await _api.reportMessage(_sessionId!, lastAiMessage['content']!);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context)?.reportSuccess ?? 'Şikayetiniz alınmıştır. İncelenecektir.'), backgroundColor: AppTheme.success));
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context)?.reportFailed ?? 'Şikayet gönderilemedi.'), backgroundColor: AppTheme.danger));
+                  }
+                }
+              }
+            },
+            child: Text(S.of(context)?.send ?? 'Gönder'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -343,16 +389,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         title: Column(
           children: [
             Text(
-              _scenario?['vehicle'] ?? 'Yükleniyor...',
+              _getLocalizedVehicle(context, widget.scenarioId) ?? _scenario?['vehicle'] ?? (S.of(context)?.loading ?? 'Yükleniyor...'),
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
             ),
             Text(
               _solved
-                  ? '✅ Vaka Çözüldü!'
+                  ? (S.of(context)?.caseSolved ?? '✅ Vaka Çözüldü!')
                   : _isCooldown
-                      ? '⏰ Cooldown: $_cooldownRemaining'
-                      : '$_messageCount/$_messageLimit mesaj',
+                      ? (S.of(context)?.cooldownLabel(_cooldownRemaining) ?? '⏰ Cooldown: $_cooldownRemaining')
+                      : (S.of(context)?.messageCount(_messageCount, _messageLimit) ?? '$_messageCount/$_messageLimit mesaj'),
               style: TextStyle(
                 fontSize: 12,
                 color: _solved ? AppTheme.success : _isCooldown ? AppTheme.warning : AppTheme.textSecondary,
@@ -361,12 +407,17 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.report_problem_outlined, color: AppTheme.textMuted, size: 22),
+            onPressed: _showReportDialog,
+            tooltip: S.of(context)?.reportTitle ?? 'Şikayet Et',
+          ),
           if (!_solved && !_isCooldown) ...[
             // Give up
             IconButton(
               icon: const Icon(Icons.flag_outlined, color: AppTheme.textMuted, size: 22),
               onPressed: _showGiveUp,
-              tooltip: 'Teslim Ol',
+              tooltip: S.of(context)?.giveUpButton ?? 'Teslim Ol',
             ),
           ],
         ],
@@ -420,7 +471,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                     style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppTheme.warning),
                   ),
                   const SizedBox(height: 4),
-                  Text('$_messageLimit mesaj limitine ulaştın', style: const TextStyle(color: AppTheme.textSecondary)),
+                  Text(S.of(context)?.cooldownMessage(_messageLimit) ?? '$_messageLimit mesaj limitine ulaştın', style: const TextStyle(color: AppTheme.textSecondary)),
                   const SizedBox(height: 16),
                   Row(
                     children: [
@@ -441,8 +492,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                                     _messageLimit += 18;
                                     _cooldownTimer?.cancel();
                                   });
-                                  messenger.showSnackBar(const SnackBar(
-                                    content: Text('🎬 Cooldown sıfırlandı! Devam et.'),
+                                  messenger.showSnackBar(SnackBar(
+                                    content: Text(S.of(context)?.cooldownCleared ?? '🎬 Cooldown sıfırlandı! Devam et.'),
                                     backgroundColor: AppTheme.success,
                                   ));
                                 } else {
@@ -450,7 +501,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                                     _cooldownEnd = newEnd;
                                   });
                                   messenger.showSnackBar(SnackBar(
-                                    content: Text('🎬 1 Saat düştü! Kalan: $_cooldownRemaining'),
+                                    content: Text(S.of(context)?.cooldownAdSuccess(_cooldownRemaining) ?? '🎬 1 Saat düştü! Kalan: $_cooldownRemaining'),
                                     backgroundColor: AppTheme.success,
                                   ));
                                 }
@@ -458,7 +509,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                             }
                           },
                           icon: const Icon(Icons.play_circle_outline),
-                          label: const Text('Reklam İzle → Devam Et'),
+                          label: Text(S.of(context)?.watchAdContinue ?? 'Reklam İzle → Devam Et'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.warning,
                             foregroundColor: Colors.black,
@@ -471,7 +522,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   const SizedBox(height: 8),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Garaja Dön', style: TextStyle(color: AppTheme.textMuted)),
+                    child: Text(S.of(context)?.backToGarage ?? 'Garaja Dön', style: const TextStyle(color: AppTheme.textMuted)),
                   ),
                 ],
               ),
@@ -487,10 +538,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               ),
               child: Column(
                 children: [
-                  const Text('🏆 Tamir Başarılı!', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white)),
+                  Text(S.of(context)?.repairSuccess ?? '🏆 Tamir Başarılı!', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white)),
                   const SizedBox(height: 6),
                   Text(
-                    'Seri: $_streakCount | +1 Ün Puanı${_bonusEnergy ? ' | 🎁 +1 Bonus Enerji!' : ''}',
+                    '${S.of(context)?.seriesInfo(_streakCount) ?? 'Seri: $_streakCount | +1 Ün Puanı'}${_bonusEnergy ? (S.of(context)?.bonusEnergyTag ?? ' | 🎁 +1 Bonus Enerji!') : ''}',
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                   const SizedBox(height: 14),
@@ -499,7 +550,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                     child: ElevatedButton.icon(
                       onPressed: () => Navigator.pop(context),
                       icon: const Icon(Icons.garage),
-                      label: const Text('Garaja Dön'),
+                      label: Text(S.of(context)?.backToGarage ?? 'Garaja Dön'),
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: AppTheme.success),
                     ),
                   ),
@@ -531,8 +582,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       child: TextField(
                         controller: _controller,
                         onSubmitted: (_) => _sendMessage(),
-                        decoration: const InputDecoration(
-                          hintText: 'Kontrol et, test et, tamir et...',
+                        decoration: InputDecoration(
+                          hintText: S.of(context)?.chatPlaceholder ?? 'Kontrol et, test et, tamir et...',
                           filled: true,
                           fillColor: AppTheme.bgSurface,
                         ),
@@ -586,36 +637,45 @@ class _MessageBubble extends StatelessWidget {
     Color bgColor;
     Color textColor;
     if (isUser) {
-      bgColor = AppTheme.primary.withValues(alpha: 0.12);
+      bgColor = AppTheme.primary.withValues(alpha: 0.15);
       textColor = AppTheme.primary;
     } else if (isSystem) {
-      bgColor = AppTheme.warning.withValues(alpha: 0.08);
+      bgColor = AppTheme.warning.withValues(alpha: 0.1);
       textColor = AppTheme.textPrimary;
     } else if (isHint) {
-      bgColor = AppTheme.accent.withValues(alpha: 0.08);
+      bgColor = AppTheme.accent.withValues(alpha: 0.12);
       textColor = AppTheme.accent;
     } else {
-      bgColor = AppTheme.bgSurface;
+      // AI / Master message
+      bgColor = AppTheme.bgSurface.withValues(alpha: 0.6);
       textColor = AppTheme.textPrimary;
     }
 
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.82),
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.78),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: isUser ? const Radius.circular(16) : const Radius.circular(4),
-            bottomRight: isUser ? const Radius.circular(4) : const Radius.circular(16),
+            topLeft: const Radius.circular(20),
+            topRight: const Radius.circular(20),
+            bottomLeft: isUser ? const Radius.circular(20) : const Radius.circular(6),
+            bottomRight: isUser ? const Radius.circular(6) : const Radius.circular(20),
           ),
-          border: isSystem ? Border.all(color: AppTheme.warning.withValues(alpha: 0.2)) : null,
+          border: isSystem ? Border.all(color: AppTheme.warning.withValues(alpha: 0.3), width: 1) : null,
         ),
-        child: Text(message['content']!, style: TextStyle(fontSize: 15, height: 1.45, color: textColor)),
+        child: Text(
+          message['content']!,
+          style: TextStyle(
+            fontSize: 15,
+            height: 1.5,
+            color: textColor,
+            fontWeight: isUser ? FontWeight.w500 : FontWeight.normal,
+          ),
+        ),
       ),
     );
   }
@@ -633,12 +693,12 @@ class _TypingIndicator extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(color: AppTheme.bgSurface, borderRadius: BorderRadius.circular(16)),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.primary)),
-            SizedBox(width: 10),
-            Text('İnceleniyor...', style: TextStyle(color: AppTheme.textSecondary, fontSize: 14)),
+            const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.primary)),
+            const SizedBox(width: 10),
+            Text(S.of(context)?.analyzing ?? 'İnceleniyor...', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14)),
           ],
         ),
       ),
@@ -741,7 +801,7 @@ class _AnimatedHintButtonState extends State<_AnimatedHintButton>
                   const SizedBox(width: 4),
                   // "Yardım" label
                   Text(
-                    'Yardım',
+                    S.of(context)?.helpButton ?? 'Yardım',
                     style: TextStyle(
                       color: hasCredits ? Colors.black87 : AppTheme.textMuted,
                       fontWeight: FontWeight.w700,
@@ -774,5 +834,49 @@ class _AnimatedHintButtonState extends State<_AnimatedHintButton>
         },
       ),
     );
+  }
+}
+
+String? _getLocalizedVehicle(BuildContext context, int id) {
+  final loc = S.of(context);
+    switch (id) {
+      case 1: return loc?.case1Vehicle;
+      case 2: return loc?.case2Vehicle;
+      case 3: return loc?.case3Vehicle;
+      case 4: return loc?.case4Vehicle;
+      case 5: return loc?.case5Vehicle;
+      case 6: return loc?.case6Vehicle;
+      case 7: return loc?.case7Vehicle;
+      case 8: return loc?.case8Vehicle;
+      case 9: return loc?.case9Vehicle;
+      case 10: return loc?.case10Vehicle;
+      case 11: return loc?.case11Vehicle;
+      case 12: return loc?.case12Vehicle;
+      case 13: return loc?.case13Vehicle;
+      case 14: return loc?.case14Vehicle;
+      case 15: return loc?.case15Vehicle;
+      default: return null;
+    }
+  }
+
+  String? _getLocalizedComplaint(BuildContext context, int id) {
+    final loc = S.of(context);
+    switch (id) {
+      case 1: return loc?.case1Complaint;
+      case 2: return loc?.case2Complaint;
+      case 3: return loc?.case3Complaint;
+      case 4: return loc?.case4Complaint;
+      case 5: return loc?.case5Complaint;
+      case 6: return loc?.case6Complaint;
+      case 7: return loc?.case7Complaint;
+      case 8: return loc?.case8Complaint;
+      case 9: return loc?.case9Complaint;
+      case 10: return loc?.case10Complaint;
+      case 11: return loc?.case11Complaint;
+      case 12: return loc?.case12Complaint;
+      case 13: return loc?.case13Complaint;
+      case 14: return loc?.case14Complaint;
+      case 15: return loc?.case15Complaint;
+    default: return null;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/api/api_client.dart';
+export 'purchases_provider.dart';
 
 /// Singleton API client provider
 final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
@@ -56,6 +57,22 @@ class UserProfile {
     installDate: json['installDate'],
   );
 
+  Map<String, dynamic> toJson() => {
+    'displayName': displayName,
+    'energy': energy,
+    'streakCount': streakCount,
+    'hintCredits': hintCredits,
+    'totalRepairs': totalRepairs,
+    'subscription': subscription,
+    'todayCasesPlayed': todayCasesPlayed,
+    'loginBonusClaimed': loginBonusClaimed,
+    'dailyHintClaimed': dailyHintClaimed,
+    'fomoPurchased': fomoPurchased,
+    'maxEnergy': maxEnergy,
+    'daysSinceInstall': daysSinceInstall,
+    'installDate': installDate,
+  };
+
   /// Whether user has any hint credits available (purchased or daily)
   bool get hasHints => hintCredits > 0;
 
@@ -106,6 +123,35 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
       await _api.claimAdReward(type, sessionId: sessionId);
       await load();
       return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> updateDisplayName(String newName) async {
+    try {
+      final res = await _api.updateProfile(newName);
+      if (res['success'] == true) {
+        state.whenData((profile) {
+          state = AsyncValue.data(UserProfile(
+            displayName: newName,
+            energy: profile.energy,
+            streakCount: profile.streakCount,
+            hintCredits: profile.hintCredits,
+            totalRepairs: profile.totalRepairs,
+            subscription: profile.subscription,
+            todayCasesPlayed: profile.todayCasesPlayed,
+            loginBonusClaimed: profile.loginBonusClaimed,
+            dailyHintClaimed: profile.dailyHintClaimed,
+            fomoPurchased: profile.fomoPurchased,
+            maxEnergy: profile.maxEnergy,
+            daysSinceInstall: profile.daysSinceInstall,
+            installDate: profile.installDate,
+          ));
+        });
+        return true;
+      }
+      return false;
     } catch (e) {
       return false;
     }
@@ -186,6 +232,26 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
         loginBonusClaimed: profile.loginBonusClaimed,
         dailyHintClaimed: profile.dailyHintClaimed,
         fomoPurchased: true,
+        maxEnergy: profile.maxEnergy,
+        daysSinceInstall: profile.daysSinceInstall,
+        installDate: profile.installDate,
+      ));
+    });
+  }
+
+  void markProPurchased() {
+    state.whenData((profile) {
+      state = AsyncValue.data(UserProfile(
+        displayName: profile.displayName,
+        energy: profile.energy,
+        streakCount: profile.streakCount,
+        hintCredits: profile.hintCredits,
+        totalRepairs: profile.totalRepairs,
+        subscription: 'pro',
+        todayCasesPlayed: profile.todayCasesPlayed,
+        loginBonusClaimed: profile.loginBonusClaimed,
+        dailyHintClaimed: profile.dailyHintClaimed,
+        fomoPurchased: profile.fomoPurchased,
         maxEnergy: profile.maxEnergy,
         daysSinceInstall: profile.daysSinceInstall,
         installDate: profile.installDate,

@@ -3,62 +3,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/providers.dart';
 
-/// Hint packages available for purchase
-class HintPackage {
-  final String id;
-  final String name;
+// Instead of hardcoding everything, we use RevenueCat packages.
+// We map RevenueCat package identifiers to these UI properties.
+class HintStoreItem {
   final String emoji;
   final int amount;
-  final String price;
-  final String unitPrice;
+  final String unitPriceSuffix;
   final bool isTarget;
 
-  const HintPackage({
-    required this.id,
-    required this.name,
+  const HintStoreItem({
     required this.emoji,
     required this.amount,
-    required this.price,
-    required this.unitPrice,
+    required this.unitPriceSuffix,
     this.isTarget = false,
   });
 }
 
-const _hintPackages = [
-  HintPackage(
-    id: 'hint_3',
-    name: 'Küçük Tamir Çantası',
-    emoji: '🧰',
-    amount: 3,
-    price: '29.99 ₺',
-    unitPrice: '~10 ₺/adet',
-  ),
-  HintPackage(
-    id: 'hint_10',
-    name: 'Usta Çantası',
-    emoji: '🔧',
-    amount: 10,
-    price: '69.99 ₺',
-    unitPrice: '~7 ₺/adet',
-  ),
-  HintPackage(
-    id: 'hint_25',
-    name: 'Patron Çantası',
-    emoji: '⭐',
-    amount: 25,
-    price: '129.99 ₺',
-    unitPrice: '~5.2 ₺/adet',
-    isTarget: true,
-  ),
-  HintPackage(
-    id: 'hint_50',
-    name: 'Sınırsız Usta',
-    emoji: '🔥',
-    amount: 50,
-    price: '199.99 ₺',
-    unitPrice: '~4 ₺/adet',
-  ),
-];
+const _hintMetadata = {
+  'hints_3': HintStoreItem(emoji: '🧰', amount: 3, unitPriceSuffix: '/adet'),
+  'hints_10': HintStoreItem(emoji: '🔧', amount: 10, unitPriceSuffix: '/adet'),
+  'hints_25': HintStoreItem(emoji: '⭐', amount: 25, unitPriceSuffix: '/adet', isTarget: true),
+  'hints_50': HintStoreItem(emoji: '🔥', amount: 50, unitPriceSuffix: '/adet'),
+};
 
 /// Show the hint store as a bottom sheet
 Future<void> showHintStoreSheet(BuildContext context) {
@@ -98,17 +64,43 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
     super.dispose();
   }
 
-  void _onPurchase(HintPackage package) {
-    // In a real app, this would call RevenueCat: Purchases.purchasePackage(package)
-    ref.read(userProfileProvider.notifier).addHintCredits(package.amount);
-
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('🎉 ${package.amount} ipucu eklendi! Şimdi ustaya danış.'),
-        backgroundColor: AppTheme.success,
-      ),
+  void _onPurchase(Package package) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator(color: AppTheme.warning)),
     );
+
+    final success = await RevenueCatService.purchasePackage(package);
+    
+    if (mounted) Navigator.pop(context); // close loading
+
+    if (success) {
+      // Refresh profile to pull the new hint credits from the backend
+      // (Assuming a webhook adds the hints to DynamoDB, or we do it optimistically)
+      final meta = _hintMetadata[package.identifier];
+      if (meta != null) {
+        ref.read(userProfileProvider.notifier).addHintCredits(meta.amount);
+      } else {
+        await ref.read(userProfileProvider.notifier).load();
+      }
+
+      if (mounted) {
+        Navigator.pop(context); // close sheet
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('🎉 İpuçları eklendi! Şimdi ustaya danış.'),
+            backgroundColor: AppTheme.success,
+          ),
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Satın alma başarısız veya iptal edildi.'), backgroundColor: AppTheme.danger),
+        );
+      }
+    }
   }
 
   @override
@@ -195,17 +187,28 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
           ),
           const SizedBox(height: 20),
 
-          // Package cards
+          // Package cards via RevenueCat Offerings
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: _hintPackages.map((pkg) {
-                final isSelected = _selectedPackageId == pkg.id;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: _buildPackageCard(pkg, isSelected),
+            child: ref.watch(offeringsProvider).when(
+              loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.warning)),
+              error: (err, st) => Text('Hata: $err', style: const TextStyle(color: AppTheme.danger)),
+              data: (offerings) {
+                final offering = offerings?.all['hints'];
+                if (offering == null || offering.availablePackages.isEmpty) {
+                  return const Text('İpucu paketleri bulunamadı', style: TextStyle(color: Colors.white70));
+                }
+
+                return Column(
+                  children: offering.availablePackages.map((pkg) {
+                    final isSelected = _selectedPackageId == pkg.identifier;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _buildPackageCard(pkg, isSelected),
+                    );
+                  }).toList(),
                 );
-              }).toList(),
+              },
             ),
           ),
           const SizedBox(height: 16),
@@ -216,10 +219,21 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
             child: AnimatedBuilder(
               animation: _glowController,
               builder: (context, child) {
-                final selectedPkg = _hintPackages.firstWhere(
-                  (p) => p.id == _selectedPackageId,
-                  orElse: () => _hintPackages[2],
-                );
+                final offeringsAsync = ref.read(offeringsProvider).valueOrNull;
+                final pkgs = offeringsAsync?.all['hints']?.availablePackages;
+                
+                Package? selectedPkg;
+                if (pkgs != null && pkgs.isNotEmpty) {
+                  selectedPkg = pkgs.firstWhere(
+                    (p) => p.identifier == _selectedPackageId,
+                    orElse: () => pkgs.first,
+                  );
+                }
+
+                final btnText = selectedPkg != null 
+                    ? 'Satın Al — ${selectedPkg.storeProduct.localizedPriceString}'
+                    : 'Paket Bekleniyor...';
+
                 return Container(
                   width: double.infinity,
                   height: 56,
@@ -236,7 +250,7 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
                     ],
                   ),
                   child: ElevatedButton(
-                    onPressed: () => _onPurchase(selectedPkg),
+                    onPressed: selectedPkg == null ? null : () => _onPurchase(selectedPkg),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.warning,
                       foregroundColor: Colors.black,
@@ -246,7 +260,7 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
                       elevation: 0,
                     ),
                     child: Text(
-                      '${selectedPkg.amount} İpucu Al — ${selectedPkg.price}',
+                      btnText,
                       style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w900,
@@ -276,9 +290,13 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
     );
   }
 
-  Widget _buildPackageCard(HintPackage pkg, bool isSelected) {
+  Widget _buildPackageCard(Package pkg, bool isSelected) {
+    // Default metadata if ID doesn't match our predefined list
+    final meta = _hintMetadata[pkg.identifier] ?? HintStoreItem(emoji: '📦', amount: 1, unitPriceSuffix: '');
+    final name = pkg.storeProduct.title.replaceAll(RegExp(r'\(.*\)'), '').trim(); // Remove "(App Name)"
+
     return GestureDetector(
-      onTap: () => setState(() => _selectedPackageId = pkg.id),
+      onTap: () => setState(() => _selectedPackageId = pkg.identifier),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -324,7 +342,7 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
                 const SizedBox(width: 14),
 
                 // Emoji
-                Text(pkg.emoji, style: const TextStyle(fontSize: 28)),
+                Text(meta.emoji, style: const TextStyle(fontSize: 28)),
                 const SizedBox(width: 12),
 
                 // Info
@@ -333,7 +351,7 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        pkg.name,
+                        name,
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
@@ -342,7 +360,7 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${pkg.amount} ipucu • ${pkg.unitPrice}',
+                        '${meta.amount} ipucu',
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppTheme.textSecondary,
@@ -354,7 +372,7 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
 
                 // Price
                 Text(
-                  pkg.price,
+                  pkg.storeProduct.localizedPriceString,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
@@ -365,7 +383,7 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
             ),
 
             // "EN ÇOK SATAN" tag for target package
-            if (pkg.isTarget)
+            if (meta.isTarget)
               Positioned(
                 top: -22,
                 right: 8,

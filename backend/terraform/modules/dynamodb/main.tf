@@ -89,6 +89,50 @@ resource "aws_dynamodb_table" "leaderboard" {
   tags = { Name = "${local.prefix}_Leaderboard" }
 }
 
+# --- Reports Table ---
+resource "aws_dynamodb_table" "reports" {
+  name         = "${local.prefix}_Reports"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "reportId"
+
+  attribute {
+    name = "reportId"
+    type = "S"
+  }
+
+  attribute {
+    name = "userId"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "userId-index"
+    hash_key        = "userId"
+    projection_type = "ALL"
+  }
+
+  tags = { Name = "${local.prefix}_Reports" }
+}
+
+# --- Transactions Table ---
+resource "aws_dynamodb_table" "transactions" {
+  name         = "${local.prefix}_Transactions"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "transactionId"
+
+  attribute {
+    name = "transactionId"
+    type = "S"
+  }
+
+  ttl {
+    attribute_name = "expiresAt"
+    enabled        = true
+  }
+
+  tags = { Name = "${local.prefix}_Transactions" }
+}
+
 # --- Outputs ---
 output "users_table_name" { value = aws_dynamodb_table.users.name }
 output "users_table_arn" { value = aws_dynamodb_table.users.arn }
@@ -101,3 +145,9 @@ output "daily_resets_table_arn" { value = aws_dynamodb_table.daily_resets.arn }
 
 output "leaderboard_table_name" { value = aws_dynamodb_table.leaderboard.name }
 output "leaderboard_table_arn" { value = aws_dynamodb_table.leaderboard.arn }
+
+output "reports_table_name" { value = aws_dynamodb_table.reports.name }
+output "reports_table_arn" { value = aws_dynamodb_table.reports.arn }
+
+output "transactions_table_name" { value = aws_dynamodb_table.transactions.name }
+output "transactions_table_arn" { value = aws_dynamodb_table.transactions.arn }

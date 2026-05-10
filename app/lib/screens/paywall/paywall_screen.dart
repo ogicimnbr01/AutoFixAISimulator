@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/providers.dart';
 import 'package:lottie/lottie.dart';
+import '../../l10n/app_localizations.dart';
 
 class PaywallScreen extends ConsumerStatefulWidget {
   final bool isFomo;
@@ -15,19 +16,66 @@ class PaywallScreen extends ConsumerStatefulWidget {
 class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   String _selectedPackage = 'monthly';
 
-  void _onPurchase() {
-    // In a real app, this calls RevenueCat: Purchases.purchasePackage(package)
-    if (widget.isFomo) {
-      ref.read(userProfileProvider.notifier).markFomoPurchased();
+  void _onPurchase() async {
+    final offeringsAsync = ref.read(offeringsProvider);
+    final offerings = offeringsAsync.value;
+    if (offerings == null) return;
+
+    final offering = widget.isFomo ? offerings.all['fomo'] : offerings.current;
+    if (offering == null) return;
+
+    // Map _selectedPackage to actual Package
+    Package? packageToBuy;
+    if (_selectedPackage == 'weekly') packageToBuy = offering.weekly;
+    if (_selectedPackage == 'monthly') packageToBuy = offering.monthly;
+    if (_selectedPackage == 'yearly') packageToBuy = offering.annual;
+
+    if (packageToBuy == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Paket bulunamadı!'), backgroundColor: AppTheme.danger),
+      );
+      return;
     }
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Satın alma başarılı! Pro özellikler açıldı.'),
-        backgroundColor: AppTheme.success,
-      ),
+
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator(color: AppTheme.warning)),
     );
-    Navigator.of(context).popUntil((route) => route.isFirst);
+
+    final success = await RevenueCatService.purchasePackage(packageToBuy);
+    
+    // Hide loading
+    if (mounted) Navigator.pop(context);
+
+    if (success) {
+      if (widget.isFomo) {
+        ref.read(userProfileProvider.notifier).markFomoPurchased();
+      } else {
+        ref.read(userProfileProvider.notifier).markProPurchased();
+      }
+      
+      // Refresh profile and customer info from backend just in case
+      ref.read(userProfileProvider.notifier).load();
+      ref.invalidate(customerInfoProvider);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(S.of(context)?.paywallSuccess ?? 'Satın alma başarılı! Pro özellikler açıldı.'),
+            backgroundColor: AppTheme.success,
+          ),
+        );
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Satın alma iptal edildi veya başarısız oldu.'), backgroundColor: AppTheme.danger),
+        );
+      }
+    }
   }
 
   @override
@@ -61,7 +109,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                         icon: const Icon(Icons.close, color: Colors.white54),
                         onPressed: () => Navigator.pop(context),
                       ),
-                      const Text('PRO TAMİRCİ', style: TextStyle(color: AppTheme.warning, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                      Text(S.of(context)?.paywallTitle ?? 'PRO TAMİRCİ', style: const TextStyle(color: AppTheme.warning, fontWeight: FontWeight.bold, letterSpacing: 2)),
                       const SizedBox(width: 48), // Balance
                     ],
                   ),
@@ -72,9 +120,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 const SizedBox(height: 16),
                 
                 // Title
-                const Text(
-                  'Garajın Yeni Patronu Ol!',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white),
+                Text(
+                  S.of(context)?.paywallHero ?? 'Garajın Yeni Patronu Ol!',
+                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
@@ -84,47 +132,76 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Column(
                     children: [
-                      _buildFeatureRow(Icons.bolt, 'Sınırsız Enerji (Beklemek yok)'),
+                      _buildFeatureRow(Icons.bolt, S.of(context)?.paywallFeature1 ?? 'Sınırsız Enerji (Beklemek yok)'),
                       const SizedBox(height: 8),
-                      _buildFeatureRow(Icons.lightbulb, 'Her vaka için sınırsız ipucu'),
+                      _buildFeatureRow(Icons.lightbulb, S.of(context)?.paywallFeature2 ?? 'Her vaka için sınırsız ipucu'),
                       const SizedBox(height: 8),
-                      _buildFeatureRow(Icons.block, 'Tüm Reklamları Kaldır'),
+                      _buildFeatureRow(Icons.block, S.of(context)?.paywallFeature3 ?? 'Tüm Reklamları Kaldır'),
                     ],
                   ),
                 ),
                 const SizedBox(height: 32),
                 
-                // --- DECOY PRICING STRATEGY ---
-                
-                // 1. Weekly (The Decoy)
-                _buildPackageCard(
-                  id: 'weekly',
-                  title: 'Haftalık Plan',
-                  price: '249.99 ₺',
-                  subtitle: 'Kısa süreli ustalık',
-                  isSelected: _selectedPackage == 'weekly',
-                ),
-                const SizedBox(height: 16),
-                
-                // 2. Monthly (The Target)
-                _buildPackageCard(
-                  id: 'monthly',
-                  title: 'Aylık Plan',
-                  price: '399.99 ₺',
-                  subtitle: 'Sadece 13 ₺ / Gün',
-                  tag: 'EN ÇOK SATAN — %61 KÂR',
-                  isSelected: _selectedPackage == 'monthly',
-                  isTarget: true,
-                ),
-                const SizedBox(height: 16),
-                
-                // 3. Yearly (The Anchor)
-                _buildPackageCard(
-                  id: 'yearly',
-                  title: 'Yıllık Plan',
-                  price: '1999.00 ₺',
-                  subtitle: 'Uzun vadeli yatırım',
-                  isSelected: _selectedPackage == 'yearly',
+                // --- LOAD REVENUECAT PRICES ---
+                ref.watch(offeringsProvider).when(
+                  loading: () => const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: CircularProgressIndicator(color: AppTheme.warning),
+                    ),
+                  ),
+                  error: (err, st) => Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text('Fiyatlar yüklenemedi: $err', style: const TextStyle(color: AppTheme.danger)),
+                  ),
+                  data: (offerings) {
+                    if (offerings == null) return const Text('Fiyatlar bulunamadı');
+                    
+                    final offering = widget.isFomo ? offerings.all['fomo'] : offerings.current;
+                    if (offering == null) return const Text('Teklif bulunamadı');
+
+                    final weekly = offering.weekly;
+                    final monthly = offering.monthly;
+                    final yearly = offering.annual;
+
+                    return Column(
+                      children: [
+                        if (weekly != null) ...[
+                          _buildPackageCard(
+                            id: 'weekly',
+                            title: S.of(context)?.weeklyPlan ?? 'Haftalık Plan',
+                            price: weekly.storeProduct.localizedPriceString,
+                            subtitle: S.of(context)?.weeklyPlanSub ?? 'Kısa süreli ustalık',
+                            isSelected: _selectedPackage == 'weekly',
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        
+                        if (monthly != null) ...[
+                          _buildPackageCard(
+                            id: 'monthly',
+                            title: S.of(context)?.monthlyPlan ?? 'Aylık Plan',
+                            price: monthly.storeProduct.localizedPriceString,
+                            subtitle: S.of(context)?.monthlyPlanSub ?? 'Sadece birkaç kahve parası',
+                            tag: S.of(context)?.monthlyPlanTag ?? 'EN ÇOK SATAN',
+                            isSelected: _selectedPackage == 'monthly',
+                            isTarget: true,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+
+                        if (yearly != null && !widget.isFomo) ...[
+                          _buildPackageCard(
+                            id: 'yearly',
+                            title: S.of(context)?.yearlyPlan ?? 'Yıllık Plan',
+                            price: yearly.storeProduct.localizedPriceString,
+                            subtitle: S.of(context)?.yearlyPlanSub ?? 'Uzun vadeli yatırım',
+                            isSelected: _selectedPackage == 'yearly',
+                          ),
+                        ],
+                      ],
+                    );
+                  },
                 ),
                 
                 const Spacer(),
@@ -143,25 +220,25 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         elevation: 8,
                       ),
-                      child: const Text(
-                        'ŞİMDİ YÜKSELT',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1),
+                      child: Text(
+                        S.of(context)?.upgradeNow ?? 'ŞİMDİ YÜKSELT',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1),
                       ),
                     ),
                   ),
                 ),
                 
                 // Legal links
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 24.0),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 24.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Terms of Use', style: TextStyle(color: Colors.white38, fontSize: 12, decoration: TextDecoration.underline)),
-                      SizedBox(width: 16),
-                      Text('Privacy Policy', style: TextStyle(color: Colors.white38, fontSize: 12, decoration: TextDecoration.underline)),
-                      SizedBox(width: 16),
-                      Text('Restore', style: TextStyle(color: Colors.white38, fontSize: 12, decoration: TextDecoration.underline)),
+                      Text(S.of(context)?.termsOfUse ?? 'Terms of Use', style: const TextStyle(color: Colors.white38, fontSize: 12, decoration: TextDecoration.underline)),
+                      const SizedBox(width: 16),
+                      Text(S.of(context)?.privacyPolicy ?? 'Privacy Policy', style: const TextStyle(color: Colors.white38, fontSize: 12, decoration: TextDecoration.underline)),
+                      const SizedBox(width: 16),
+                      Text(S.of(context)?.restore ?? 'Restore', style: const TextStyle(color: Colors.white38, fontSize: 12, decoration: TextDecoration.underline)),
                     ],
                   ),
                 ),

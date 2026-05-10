@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/providers.dart';
+import '../../l10n/app_localizations.dart';
 
 class LeaderboardScreen extends ConsumerStatefulWidget {
   const LeaderboardScreen({super.key});
@@ -12,11 +13,15 @@ class LeaderboardScreen extends ConsumerStatefulWidget {
 
 class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
   int _selectedTab = 0;
-  final _tabs = ['Haftalık', 'Aylık', 'Yıllık'];
   final _periods = ['weekly', 'monthly', 'yearly'];
 
   @override
   Widget build(BuildContext context) {
+    final _tabs = [
+      S.of(context)?.weeklyTab ?? 'Haftalık',
+      S.of(context)?.monthlyTab ?? 'Aylık',
+      S.of(context)?.yearlyTab ?? 'Yıllık'
+    ];
     final leaderboard = ref.watch(leaderboardProvider(_periods[_selectedTab]));
 
     return SafeArea(
@@ -29,7 +34,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
               children: [
                 const Icon(Icons.emoji_events, color: AppTheme.warning, size: 28),
                 const SizedBox(width: 12),
-                Text('Sıralama Tablosu', style: Theme.of(context).textTheme.headlineLarge),
+                Text(S.of(context)?.tabLeaderboard ?? 'Sıralama Tablosu', style: Theme.of(context).textTheme.headlineLarge),
               ],
             ),
           ),
@@ -84,26 +89,26 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                   children: [
                     const Icon(Icons.wifi_off, color: AppTheme.textMuted, size: 48),
                     const SizedBox(height: 12),
-                    Text('Sıralama yüklenemedi', style: TextStyle(color: AppTheme.textSecondary)),
+                    Text(S.of(context)?.error ?? 'Sıralama yüklenemedi', style: TextStyle(color: AppTheme.textSecondary)),
                     const SizedBox(height: 8),
                     TextButton(
                       onPressed: () => ref.invalidate(leaderboardProvider(_periods[_selectedTab])),
-                      child: const Text('Tekrar Dene'),
+                      child: Text(S.of(context)?.retry ?? 'Tekrar Dene'),
                     ),
                   ],
                 ),
               ),
               data: (rankings) {
                 if (rankings.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.emoji_events_outlined, color: AppTheme.textMuted, size: 64),
-                        SizedBox(height: 12),
-                        Text('Henüz kimse sıralamaya girmedi', style: TextStyle(color: AppTheme.textSecondary)),
-                        SizedBox(height: 4),
-                        Text('İlk sen ol! 🔧', style: TextStyle(color: AppTheme.textMuted)),
+                        const Icon(Icons.emoji_events_outlined, color: AppTheme.textMuted, size: 64),
+                        const SizedBox(height: 12),
+                        Text(S.of(context)?.leaderboardEmpty ?? 'Henüz kimse sıralamaya girmedi', style: const TextStyle(color: AppTheme.textSecondary)),
+                        const SizedBox(height: 4),
+                        Text(S.of(context)?.leaderboardBeFirst ?? 'İlk sen ol! 🔧', style: const TextStyle(color: AppTheme.textMuted)),
                       ],
                     ),
                   );

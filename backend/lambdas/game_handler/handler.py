@@ -13,7 +13,7 @@ from db import (get_or_create_user, update_user, create_session,
                 get_session, update_session, get_daily_reset,
                 update_daily_reset, add_leaderboard_point)
 from prompts import (build_game_system_prompt, build_hint_system_prompt,
-                     sanitize_input, validate_output)
+                     sanitize_input, validate_output, validate_language)
 from scenarios import get_scenario_by_id, get_scenarios_by_difficulty
 from response import api_response
 
@@ -142,8 +142,11 @@ def handle_message(event, user_id):
         })
 
     # Build prompt and call AI
+    user = get_or_create_user(user_id)
+    lang_code = body.get("langCode", user.get("languageCode", "tr"))
+    
     scenario = get_scenario_by_id(int(session["scenarioId"]))
-    system_prompt = build_game_system_prompt(scenario)
+    system_prompt = build_game_system_prompt(scenario, lang_code=lang_code)
 
     # Memory pruning: first message + last 5
     all_msgs = session["messages"] + [{"role": "user", "content": user_message}]
@@ -172,7 +175,11 @@ def handle_message(event, user_id):
         ai_text = "Garajın şartelleri attı — tekrar dene."
 
     # === LAYER 3: Output Validation ===
-    ai_text = validate_output(ai_text, scenario)
+    is_lang_valid, lang_msg = validate_language(ai_text, lang_code)
+    if not is_lang_valid:
+        ai_text = lang_msg
+    else:
+        ai_text = validate_output(ai_text, scenario)
 
     # Check [CASE_SOLVED]
     case_solved = "[CASE_SOLVED]" in ai_text

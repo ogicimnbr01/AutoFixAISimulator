@@ -44,6 +44,8 @@ module "iam" {
     module.dynamodb.sessions_table_arn,
     module.dynamodb.daily_resets_table_arn,
     module.dynamodb.leaderboard_table_arn,
+    module.dynamodb.reports_table_arn,
+    module.dynamodb.transactions_table_arn,
   ]
 }
 
@@ -57,6 +59,8 @@ module "lambda" {
     sessions     = module.dynamodb.sessions_table_name
     daily_resets = module.dynamodb.daily_resets_table_name
     leaderboard  = module.dynamodb.leaderboard_table_name
+    reports      = module.dynamodb.reports_table_name
+    transactions = module.dynamodb.transactions_table_name
   }
 }
 

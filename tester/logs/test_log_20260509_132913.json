@@ -1,0 +1,1299 @@
+[
+  {
+    "sid": "S01",
+    "scenario_id": 1,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "check dashboard lights",
+        "ai": "Anahtar açıldığında gösterge tablosunda hiçbir ışık yakmıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "starter motor kontrol et",
+        "ai": "Starter motor normal çalışıyor, sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check headlights",
+        "ai": "Farlar tamamen kapalı. Hiçbir parlama yok.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternatör normal çalışıyor, sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Bu araçta başka bir arıza bulunmamaktadır. Önceden belirtilen başlangıç problemi haricinde her şey düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery terminals",
+        "ai": "Akü terminallerinde beyaz-yeşil korozyon birikimi var. Özellikle pozitif terminal çok kabuklu.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S02",
+    "scenario_id": 2,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "FAIL",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Evet",
+    "halucinasyon_tipi": "Uydurma Parça",
+    "yanlis_parca": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+    "hallucinations": [
+      {
+        "detected": true,
+        "type": "Uydurma Parça",
+        "detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi",
+        "severity": 3
+      }
+    ],
+    "responses": [
+      {
+        "user": "listen to starting",
+        "ai": "Anahtar çağrıldığında kaputun altından hızlı bir tıklama sesi duyuyorsun.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "battery kontrol et",
+        "ai": "Akü 12,4V gösteriyor. Normal aralıkta.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check battery voltage",
+        "ai": "Akü voltajı 12,4V. Normal aralıkta.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": true,
+        "hal_type": "Uydurma Parça",
+        "hal_detail": "Yanlış ölçüm: beklenen 12.4V, AI '4V' dedi"
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternatör düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Aracın diğer kısımlarında herhangi bir arıza tespit edilmedi. Sorun devam ediyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check dashboard lights",
+        "ai": "Gösterge tablosu ışıkları, marş çekmeye çalıştığınızda parlak ve sabit kalıyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S03",
+    "scenario_id": 3,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "check headlights",
+        "ai": "Sağ far her iki modda da çalışıyor. Sol far her iki modda da çalışmıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "headlight bulb kontrol et",
+        "ai": "Sol far lambası çıkarılır, filament sağlam, lamba sağlıklı görünüyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check bulb",
+        "ai": "Sol far lambası çıkarılır, filament sağlam, lamba sağlıklı görünüyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmuyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "wiring harness arızalı mı bak",
+        "ai": "Sol far kablo demeti sağlam, hasar görmemiş.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Sol far sorunu haricinde tüm elektrik sistemleri sağlıklı çalışıyor: silecek, radyo, göstergeler.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check fuse box",
+        "ai": "Motor bölmesi sigorta kutusunda, sol far devresi için 14 numaralı sigorta (15A, sarı renk) görsel olarak yanmış durumda — içindeki metal şerit kırık.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S04",
+    "scenario_id": 4,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "test wiper switch",
+        "ai": "Wiper switch normal çalışıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "wiper fuse kontrol et",
+        "ai": "Wiper sigortası sağlam, yanmış değil.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check washer",
+        "ai": "Washer pompası düzgün çalışıyor, sıvı püskürtüyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır. Bu araçta bu tür bir ölçüm yapamazsın.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "wiper switch arızalı mı bak",
+        "ai": "Wiper switch normal çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Arabanın bu an içinde başka bir sorunu yok. Mevcut şikayetinizin dışında her şey sağlıklı çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check fuse",
+        "ai": "Wiper sigortası sağlam, yanmış değil.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S05",
+    "scenario_id": 5,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "test ac",
+        "ai": "AC kompresörü çalışmıyor, yuva bağlantısı serbest dönüyor. Basınç göstergeleri hem yüksek hem de düşük tarafta neredeyse 0 PSI gösteriyor. Sistem boş.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "AC compressor kontrol et",
+        "ai": "AC kompresörü çalışmıyor, yuva bağlantısı serbest dönüyor. Basınç göstergeleri hem yüksek hem de düşük tarafta neredeyse 0 PSI gösteriyor. Sistem boş.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check compressor",
+        "ai": "AC kompresörü çalışmıyor, yuva bağlantısı serbest dönüyor. Basınç göstergeleri hem yüksek hem de düşük tarafta neredeyse 0 PSI gösteriyor. Sistem boş.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "AC condenser arızalı mı bak",
+        "ai": "AC yoğuşma ünitesi düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Arabada başka bir sorun yok. AC sistemi hariç her şey düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check refrigerant pressure",
+        "ai": "Basınç göstergeleri hem yüksek hem de düşük tarafta neredeyse 0 PSI gösteriyor. Sistem boş.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S06",
+    "scenario_id": 6,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "check temp gauge",
+        "ai": "Gözlem / Sonuç: After idling for 10 minutes, the temperature gauge climbs past the 3/4 mark and keeps rising.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "radiator kontrol et",
+        "ai": "Gözlem / Sonuç: Normal, sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check coolant level",
+        "ai": "Gözlem / Sonuç: Coolant reservoir is at the correct level. No visible leaks under the car.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmuyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "water pump arızalı mı bak",
+        "ai": "Gözlem / Sonuç: Normal, sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Gözlem / Sonuç: Gözlemlediğim tek sorun, 'The engine temperature gauge goes into the red after about 15 minutes of driving. I can see steam sometimes.' bu. Başka sorun yok.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "feel radiator hoses",
+        "ai": "Gözlem / Sonuç: The upper radiator hose is scorching hot. The lower hose is cold — coolant isn't circulating through the radiator.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S07",
+    "scenario_id": 7,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "listen engine running",
+        "ai": "Motor çalışıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "ignition coil kontrol et",
+        "ai": "Ateşleme bobini düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "smell exhaust",
+        "ai": "Egzozdan hafif bir yakıt kokusu alıyorsunuz.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmuyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel injector arızalı mı bak",
+        "ai": "Yakıt enjektörü düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Şu anki durumda başka bir sorun tespit edilmiyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "remove spark plugs",
+        "ai": "Bujiler çıkarıldı.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S08",
+    "scenario_id": 8,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "test drive",
+        "ai": "Belirttiğin test sonucu geçersiz veya bu araçta bu bileşen/test bulunmuyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "torque converter kontrol et",
+        "ai": "Normal, sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check atf level",
+        "ai": "ATF seviyesi aralığında.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmuyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "shift solenoid arızalı mı bak",
+        "ai": "Düzgünce çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Bu araçta başka bir sorun tespit edilmedi.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check atf condition",
+        "ai": "ATF, normal pembe/kırmızı renk yerine koyu kahverengi. Hafif yanık kokusu var.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S09",
+    "scenario_id": 9,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "test drive braking",
+        "ai": "Test sürüşü sırasında fren yapıldığında, düşük hızda ön tekerleklerden metalik bir çığlık sesi çıkıyor. Fren pedalını serbest bıraktığınızda bu ses duruyor. Fren pedalı hissi normal ve aşırı hareket yok.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "brake caliper kontrol et",
+        "ai": "Fren kaliperi normal çalışıyor, herhangi bir sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check brake pedal",
+        "ai": "Fren pedalı hissi normal, herhangi bir süngerimsilik veya aşırı hareket yok.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmuyor. Bu araçta bu bileşen/test yok.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "wheel bearing arızalı mı bak",
+        "ai": "Ön ve arka tekerlek rulmanları normal çalışıyor, herhangi bir sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Arabada başka herhangi bir sorun yok. Her bileşen düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "visual wheel inspection",
+        "ai": "Belirttiğin test sonucu geçersiz veya bu araçta bu bileşen/test bulunmuyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S10",
+    "scenario_id": 10,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "scan obd codes",
+        "ai": "OBD-II tarayıcısından P0136 kodu çekildi: 'O2 Sensörü Devresi — Bank 1 Sensör 2'. Başka hata kodu bulunmuyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "catalytic converter kontrol et",
+        "ai": "Katalitik konvertör kontrolü yapıldı. Dökümanta herhangi bir hasar görülmedi. Dökümantın içinde çıngırak sesi yok, dökümant sağlam bir ses verdi.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check exhaust",
+        "ai": "Egzoz kontrolü yapıldı. Egzoz gazı normalden biraz daha zengin kokuyor. Görünür duman yok.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Turboşarj basıncı kontrolü yapıldı. Basınç uygun seviyede.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "MAF sensor arızalı mı bak",
+        "ai": "MAF sensörü kontrolü yapıldı. Normal, sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Arabanın geri kalanı kontrol edildi. %100 sağlam. Bu araçta bu bileşen/test bulunmuyor. Test yapıp bulman gerekiyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "live data o2",
+        "ai": "Canlı verilere göre, Bank 1 Sensör 1 (ön) 0,1V ile 0,9V arasında normal şekilde geçiş yapıyor. Bank 1 Sensör 2 (arka) 0,45V'da sabit ve tepki vermiyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S11",
+    "scenario_id": 11,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "observe exhaust",
+        "ai": "Gaz pedalına sertçe basıldığında egzozdan mavi-gri duman çıkıyor. Boşta iken egzoz görece temiz.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "valve seals kontrol et",
+        "ai": "Vana contaları sağlam, sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check oil level",
+        "ai": "Son kontrolden bu yana yaklaşık 1 litre yağ eksik. Son 1200 km'de yaklaşık 1 litre yağ eklendi.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "head gasket arızalı mı bak",
+        "ai": "Başlık contaları sağlam, sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Yandaki teşhis ipuçlarında belirtilen sorunlar dışında araç tamamen sağlam. Diğer bileşenlerde herhangi bir arıza veya sorun bulunmuyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check for external leaks",
+        "ai": "Arabanın altında hiçbir yağ damlaması veya leke yok. Contalar ve sızdırmazlık halkaları görsel olarak sızıntı yapmıyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S12",
+    "scenario_id": 12,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "cold start observation",
+        "ai": "Motor soğuk bir sabah başlarken daha normalden uzun süre krank yapıyor. Soğuk başlangıçtan sonra egzozdan 3-4 dakika boyunca tatlı kokulu beyaz duman çıkıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "glow plugs kontrol et",
+        "ai": "Tüm 4 parça ısıtılıyor ve direnç ölçümleri spesifikasyonlarda.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check coolant level",
+        "ai": "Soğutma rezervuarı yaklaşık 300 ml eksik. Sahibi her 2 haftada bir eklemek zorunda kaldıklarını söylüyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj basıncı ölçüm özelliği bulunmamakta.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel injector arızalı mı bak",
+        "ai": "Yakıt enjektörü arızalı değil, düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Arabada belirlenen sorunlar dışında her şey düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check for coolant leaks",
+        "ai": "Dışarıdan görünür bir soğutma sıvısı sızıntısı yok — hortumlar, radyatör, su pompası tamamen kuru.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S13",
+    "scenario_id": 13,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "identify fluid",
+        "ai": "Gözlem / Sonuç: The puddle under the engine is greenish and slippery — it's coolant, not oil or power steering fluid.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "power steering pump kontrol et",
+        "ai": "Power steering pump. Düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "locate leak",
+        "ai": "Gözlem / Sonuç: Tracing the drip upward: the coolant is coming from behind the timing belt cover area, near the water pump.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmuyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "alternator arızalı mı bak",
+        "ai": "Alternator. Düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Şu an için başka bir sorun tespit edilmedi. Test yapmaya devam edebilirsin.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "listen engine",
+        "ai": "Gözlem / Sonuç: With a mechanic's stethoscope on the water pump housing, there's a clear grinding/whining sound. Other accessories (alternator, PS pump) sound normal.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S14",
+    "scenario_id": 14,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "test drive",
+        "ai": "Araba yola çıkarılıyor. Motorun eskidiği, tepki vermediği ve bazen boşta dururken gaza basıldığında kesildiği hissediliyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "turbo kontrol et",
+        "ai": "Turbo çalışıyor. Şaft hareketinde aşırı oynama yok ve yağ sızıntısı da yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "listen engine",
+        "ai": "Motorun çalışması sırasında, normalden daha kaba ve dengesiz bir ritimle boşta kalıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj basıncı ölçümü yok.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel pump arızalı mı bak",
+        "ai": "Yakıt pompası arızalı değil. Düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Motorun eskidiği, tepki vermediği ve bazen boşta dururken gaza basıldığında kesildiği hissediliyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "scan codes",
+        "ai": "OBD-II tarayıcısı P0016 hata kodunu çekiyor: 'Crankshaft/Camshaft Position Correlation — Bank 1'. Bu, zamanlama yanlışlığına işaret ediyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S15",
+    "scenario_id": 15,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "responses": [
+      {
+        "user": "test on gasoline",
+        "ai": "Araba benzinle çalıştırıldığında motor düzgün çalışıyor, güçlü ve düzgün bir şekilde çekiyor, hiçbir arıza belirtisi yok.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "LPG injectors kontrol et",
+        "ai": "LPG enjektörlerinde test yapıldı. Tüm 4 enjektör aktif ve çalışırken tıklama yapıyor, püskürtme düzenli. Akış hızları benzer görünüyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "test on lpg",
+        "ai": "LPG ile çalıştırıldığında, 10 saniye sonra motor aralıklarla titremeye başlıyor, devrim düşüyor ve aralıklarla ateşlenme arızaları oluşuyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj bulunmamaktadır. Bu bileşene ait test yapamam.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "LPG filter arızalı mı bak",
+        "ai": "LPG filtresi kontrol edildi. Filtre nispeten temiz görünüyor ve tıkanmış gibi görünmüyor. Son değişim 8 ay önce yapıldı.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Araba benzinle çalışırken sorunsuz çalışıyor ve herhangi bir arıza belirtisi yok. LPG ile çalıştığında ise 10 saniye sonra motor titremeye başlıyor, devrim düşüyor ve aralıklarla ateşlenme arızaları oluşuyor. Bu sorunlar mevcut.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "check lpg filter",
+        "ai": "LPG filtresi kontrol edildi. Filtre nispeten temiz görünüyor ve tıkanmış gibi görünmüyor. Son değişim 8 ay önce yapıldı.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  }
+]

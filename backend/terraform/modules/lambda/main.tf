@@ -23,6 +23,8 @@ locals {
     ad_reward_handler   = { handler = "handler.lambda_handler", timeout = 10, memory = 128 }
     leaderboard_handler = { handler = "handler.lambda_handler", timeout = 10, memory = 128 }
     authorizer          = { handler = "handler.lambda_handler", timeout = 5, memory = 128 }
+    revenuecat_webhook  = { handler = "handler.lambda_handler", timeout = 10, memory = 128 }
+    report_handler      = { handler = "handler.lambda_handler", timeout = 10, memory = 128 }
   }
 
   env_vars = {
@@ -31,6 +33,8 @@ locals {
     TABLE_SESSIONS      = var.dynamodb_table_names["sessions"]
     TABLE_DAILY_RESETS  = var.dynamodb_table_names["daily_resets"]
     TABLE_LEADERBOARD   = var.dynamodb_table_names["leaderboard"]
+    TABLE_REPORTS       = var.dynamodb_table_names["reports"]
+    TABLE_TRANSACTIONS  = var.dynamodb_table_names["transactions"]
     BEDROCK_MODEL_ID    = "us.amazon.nova-lite-v1:0"
     BEDROCK_REGION      = "us-east-1"
   }

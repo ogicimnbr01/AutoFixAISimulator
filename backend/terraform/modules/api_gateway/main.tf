@@ -42,9 +42,13 @@ locals {
     "POST /game/message"        = "game_handler"
     "POST /hint"                = "hint_handler"
     "GET /user/profile"         = "user_handler"
+    "PUT /user/profile"         = "user_handler"
+    "POST /user/merge"          = "user_handler"
+    "DELETE /user/profile"      = "user_handler"
     "POST /user/login-bonus"    = "user_handler"
     "POST /ad/reward"           = "ad_reward_handler"
     "GET /leaderboard/{period}" = "leaderboard_handler"
+    "POST /report"              = "report_handler"
   }
 }
 
@@ -97,6 +101,50 @@ resource "aws_lambda_permission" "authorizer" {
   function_name = var.lambda_function_names["authorizer"]
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.main.execution_arn}/authorizers/${aws_apigatewayv2_authorizer.firebase.id}"
+}
+
+# --- RevenueCat Webhook Route (No Auth) ---
+resource "aws_apigatewayv2_integration" "webhook" {
+  api_id                 = aws_apigatewayv2_api.main.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = var.lambda_arns["revenuecat_webhook"]
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "webhook" {
+  api_id    = aws_apigatewayv2_api.main.id
+  route_key = "POST /webhook/revenuecat"
+  target    = "integrations/${aws_apigatewayv2_integration.webhook.id}"
+}
+
+resource "aws_lambda_permission" "webhook" {
+  statement_id  = "AllowAPIGatewayWebhook"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_function_names["revenuecat_webhook"]
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.main.execution_arn}/*/*"
+}
+
+# --- AdMob SSV Webhook Route (No Auth) ---
+resource "aws_apigatewayv2_integration" "admob_ssv" {
+  api_id                 = aws_apigatewayv2_api.main.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = var.lambda_arns["ad_reward_handler"]
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "admob_ssv" {
+  api_id    = aws_apigatewayv2_api.main.id
+  route_key = "GET /webhook/admob-ssv"
+  target    = "integrations/${aws_apigatewayv2_integration.admob_ssv.id}"
+}
+
+resource "aws_lambda_permission" "admob_ssv" {
+  statement_id  = "AllowAPIGatewayAdMobSSV"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_function_names["ad_reward_handler"]
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.main.execution_arn}/*/*"
 }
 
 # --- Output ---

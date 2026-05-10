@@ -3,8 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/app_localizations.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/providers.dart';
+import 'providers/locale_provider.dart';
 import 'screens/splash/splash_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/leaderboard/leaderboard_screen.dart';
@@ -12,6 +15,8 @@ import 'screens/profile/profile_screen.dart';
 import 'core/utils/logger.dart';
 import 'core/services/achievements_service.dart';
 import 'core/services/admob_service.dart';
+import 'core/services/revenuecat_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -30,15 +35,28 @@ void main() async {
   runApp(const ProviderScope(child: AutoFixSimulatorApp()));
 }
 
-class AutoFixSimulatorApp extends StatelessWidget {
+class AutoFixSimulatorApp extends ConsumerWidget {
   const AutoFixSimulatorApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+
     return MaterialApp(
       title: 'AutoFix AI Simulator',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
+
+      // Localization
+      locale: locale,
+      supportedLocales: LocaleNotifier.supportedLocales,
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+
       home: const AppEntry(),
     );
   }
@@ -76,6 +94,13 @@ class _AppEntryState extends ConsumerState<AppEntry> {
         
         // 4. Initialize AdMob
         ref.read(adMobServiceProvider).initialize();
+
+        // 5. Initialize and Login RevenueCat
+        await RevenueCatService.init();
+        final uid = FirebaseAuth.instance.currentUser?.uid;
+        if (uid != null) {
+          await RevenueCatService.logIn(uid);
+        }
       }
     } catch (e, stackTrace) {
       AppLogger.e('Init Error during Authentication or Profile loading', e, stackTrace);
@@ -91,14 +116,14 @@ class _AppEntryState extends ConsumerState<AppEntry> {
   }
 }
 
-class MainShell extends StatefulWidget {
+class MainShell extends ConsumerStatefulWidget {
   const MainShell({super.key});
 
   @override
-  State<MainShell> createState() => _MainShellState();
+  ConsumerState<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends State<MainShell> {
+class _MainShellState extends ConsumerState<MainShell> {
   int _currentIndex = 0;
 
   final _screens = const [
@@ -109,6 +134,7 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = S.of(context);
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
@@ -118,13 +144,14 @@ class _MainShellState extends State<MainShell> {
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (i) => setState(() => _currentIndex = i),
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.garage), label: 'Garaj'),
-            BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: 'Sıralama'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+          items: [
+            BottomNavigationBarItem(icon: const Icon(Icons.garage), label: loc?.tabGarage ?? 'Garaj'),
+            BottomNavigationBarItem(icon: const Icon(Icons.emoji_events), label: loc?.tabLeaderboard ?? 'Sıralama'),
+            BottomNavigationBarItem(icon: const Icon(Icons.person), label: loc?.tabProfile ?? 'Profil'),
           ],
         ),
       ),
     );
   }
 }
+

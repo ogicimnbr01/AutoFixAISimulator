@@ -1,0 +1,882 @@
+[
+  {
+    "sid": "S14",
+    "scenario_id": 14,
+    "round": 1,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "test drive",
+        "ai": "Araba hareket eder. Motor zorlukla tepe çıkmaktadır ve gaza ani tepki verdiğinizde bazen durur.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "turbo kontrol et",
+        "ai": "Turbo düzgün çalışıyor, aşırı oynama veya yağ sızıntısı yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "listen engine",
+        "ai": "Motor çok yavaş çalışıyor ve hızlanma sırasında ciddi şekilde tereddüt ediyor. Gazı bıraktığınızda motor bazen takılıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Arabada turboşarj basıncı ölçeği yok. Bu araçta bu tür bir ölçüm bulunmuyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel pump arızalı mı bak",
+        "ai": "Yakıt pompası arızalı değil. Düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Arabada belirtilen şikayetlerle ilgili bir sorun var. Diğer parçalar %100 sağlam.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "scan codes",
+        "ai": "OBD-II tarayıcısı P0016 hata kodunu çekiyor: 'Crankshaft/Camshaft Position Correlation — Bank 1'. Bu, zamanlama uyuşmazlığına işaret ediyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S14",
+    "scenario_id": 14,
+    "round": 2,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "test drive",
+        "ai": "Test sürüşü yapılıyor. Motorun performansı düşük, hızlanma sırasında gecikme ve boğulma hissediliyor. İstekte durağanlıktan hızlanma sırasında bazen motor kesiliyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "turbo kontrol et",
+        "ai": "Turbo kontrol edildi. Turbo düzgün çalışıyor, fazla mili oyuncusu yok ve yağ sızıntısı yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "listen engine",
+        "ai": "Motor dinleniyor. Motor, beklenenin altında güç üretiyor ve tepki vermesi gecikiyor. İstekte durağanlıktan hızlanma sırasında bazen motor kesiliyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Turboşarj basıncı ölçüldü. Turboşarj basıncı normal aralıkta.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel pump arızalı mı bak",
+        "ai": "Yakıt pompası kontrol edildi. Yakıt pompası düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Arabanın diğer bileşenleri kontrol edildi. Turbo, yakıt pompası, EGR valfi, DPF, yakıt enjektörü ve intercooler düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "scan codes",
+        "ai": "OBD-II tarayıcı kodları tarandı. P0016 hata kodu çekildi: 'Crankshaft/Camshaft Position Correlation — Bank 1'. Bu, zamanlama uyuşmazlığını gösterir.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S14",
+    "scenario_id": 14,
+    "round": 3,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "test drive",
+        "ai": "Araba hareket ediyor. Motorun gücü azalmış ve tepki vermesi zor. Yokuşlarda zorlanıyor ve boş devirden gaz verildiğinde zaman zaman kesiliyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "turbo kontrol et",
+        "ai": "Turbo çalışıyor. Milinde aşırı oynamaz ve yağ sızıntısı yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "listen engine",
+        "ai": "Motor çok yavaş ve güçsüz. Hızlanma sırasında tereddüt ediyor ve zaman zaman boğuluyor/kesiliyor. Devir sesi normalden daha yüksek ve ritmi dengesiz.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj basıncı ölçücü bulunmuyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel pump arızalı mı bak",
+        "ai": "Yakıt pompası arızalı değil, düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Motor gücü azalmış ve tepki vermesi zor. Yokuşlarda zorlanıyor ve boş devirden gaz verildiğinde zaman zaman kesiliyor. Bu araçta bu dışında her şey sağlam.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "scan codes",
+        "ai": "OBD-II tarayıcısı P0016 kodunu çekiyor: 'Crankshaft/Camshaft Position Correlation — Bank 1'. Bu, zamanlama uyumsuzluğunu gösterir.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S14",
+    "scenario_id": 14,
+    "round": 4,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "test drive",
+        "ai": "Araba hareket ettirildi. Motor hala güç kaybı gösteriyor, tepki vermesi gecikmiş ve ara sıra boğulup duruyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "turbo kontrol et",
+        "ai": "Turbo kontrol edildi. Normal çalışıyor, herhangi bir aşırı oynaklığı veya yağ sızıntısı yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "listen engine",
+        "ai": "Motor dinlendi. Motor güç kaybı gösteriyor, tepki vermesi gecikmiş ve ara sıra boğulup duruyor. Motor sesinde anormallik var, boğulma ve titreme var.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj basıncı ölçeği bulunmuyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel pump arızalı mı bak",
+        "ai": "Yakıt pompası kontrol edildi. Normal çalışıyor, herhangi bir sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Bu araçta belirtilen sorun dışında her şey normal çalışıyor. Test edilen diğer parçalar (turbo, yakıt pompası, EGR valfi, DPF, yakıt enjektörü, intercooler) arıza göstermedi.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "scan codes",
+        "ai": "OBD-II tarayıcısı ile tarama yapıldı. P0016 hata kodu çıktı: 'Crankshaft/Camshaft Position Correlation — Bank 1'. Bu, zamanlama uyumsuzluğunu gösteriyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S14",
+    "scenario_id": 14,
+    "round": 5,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "test drive",
+        "ai": "Araba şu şekilde çalışır: Motor güç kaybı yaşamış gibi hissedilir. Hızlanma sırasında motor gecikme gösterir ve boş devirden gaz verirken bazen takılır veya durur.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "turbo kontrol et",
+        "ai": "Turbo düzgün çalışıyor. Ekstra mil veya yağ sızıntısı yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "listen engine",
+        "ai": "Motor \"off\" sesleri yayar. Boş devir daha kaba ve düzensiz bir ritim gösterir.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Turboşarj basıncı normalde çalışıyor. Herhangi bir aşırı veya eksik basınç yok.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel pump arızalı mı bak",
+        "ai": "Yakıt pompası düzgün çalışıyor. Herhangi bir arıza yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Araçta şu ana kadar bildirilen tek sorun motor gücü kaybıdır. Diğer tüm parçalar sağlam ve düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "scan codes",
+        "ai": "OBD-II tarayıcısı P0016 kodunu çekiyor: 'Crankshaft/Camshaft Position Correlation — Bank 1'. Bu zamanlama yanlışlığına işaret ediyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S14",
+    "scenario_id": 14,
+    "round": 6,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "test drive",
+        "ai": "Araba hareket eder. Motorun sesi normalden daha ağır ve düzensiz. Hızlanma sırasında motor zorlanır ve boğulur. Boşta iken gaza çarptığında motor bazen kesiliyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "turbo kontrol et",
+        "ai": "Turbo düzgün çalışıyor. Mil üzerinde aşırı oynamaz ve yağ sızıntısı yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "listen engine",
+        "ai": "Motor çok yavaş ve güçsüz. Hızlanma sırasında kötü tereddüt eder ve boğulur. Boşta iken gaza çarptığında bazen kesiliyor. Motor sesi normalden daha ağır ve ritmi düzensiz.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj basıncını ölçen bir bileşen bulunmuyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel pump arızalı mı bak",
+        "ai": "Yakıt pompası arızalı değil. Düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Araba şu anda belirtilen şikayet ile ilgili sorunlar gösteriyor. Diğer bileşenler şu anda arızalı değil. Ancak sorunun kaynağı hakkında daha fazla test yapılması gerekiyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "scan codes",
+        "ai": "OBD-II tarayıcısı P0016 hata kodunu çekiyor: 'Crankshaft/Camshaft Position Correlation — Bank 1'. Bu, zamanlama uyumsuzluğunu gösteriyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S14",
+    "scenario_id": 14,
+    "round": 7,
+    "tester": "AutoTester_v2",
+    "sonuc": "PARTIAL_LAMBDA",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "partial_events": [
+      {
+        "type": "PARTIAL_LAMBDA",
+        "detail": "Belirttiğin test sonucu geçersiz veya bu araçta bu bileşen/t"
+      }
+    ],
+    "responses": [
+      {
+        "user": "test drive",
+        "ai": "Araba hareket ediyor. Motor hala yavaş ve tepki vermiyor. Dağ çıkışlarında zorlanıyor. Boşta hızdan gaz verdiğinizde ara ara kesiliyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "turbo kontrol et",
+        "ai": "Turbo kontrol edildi. Ölçümler normal. Eksesif mil oynaması yok veya yağ sızıntısı yok. Turbo düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "listen engine",
+        "ai": "Motor çalıştırılıyor. Motor hala yavaş ve tepki vermiyor. Dağ çıkışlarında zorlanıyor. Boşta hızdan gaz verdiğinizde ara ara kesiliyor. Motor sesi normalden daha ağır ve ritmi düzensiz.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Belirttiğin test sonucu geçersiz veya bu araçta bu bileşen/test bulunmuyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel pump arızalı mı bak",
+        "ai": "Yakıt pompası kontrol edildi. Normal, sorun yok. Düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Bu araçta ek bir sorun tespit edilmedi. Ancak belirtilen motor güç kaybı ve çalışma sorunu devam etmekte. Test yapıp bulman gerekiyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "scan codes",
+        "ai": "OBD-II tarayıcısı kullanıldı. P0016 hata kodu çekildi: 'Crankshaft/Camshaft Position Correlation — Bank 1'. Bu, zamanlama uyumsuzluğunu gösterir.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S14",
+    "scenario_id": 14,
+    "round": 8,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "test drive",
+        "ai": "Test sürüşü yapılıyor. Motor güç kaybetmiş gibi hissediliyor. Hızlanma sırasında motor zorlanıyor ve boğuluyor. Boşta hızda gaz verildiğinde bazen motor duruyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "turbo kontrol et",
+        "ai": "Turbo kontrol ediliyor. Turbo düzgün çalışıyor, aşırı mili dönüşü veya yağ sızıntısı yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "listen engine",
+        "ai": "Motor dinleniyor. Motor sağlam ve düzgün çalışıyor. Sorun yok.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj basıncını ölçmek için bir bileşen bulunmuyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel pump arızalı mı bak",
+        "ai": "Yakıt pompası kontrol ediliyor. Yakıt pompası sağlam ve düzgün çalışıyor. Sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Arabada mevcut şikayet dışında başka herhangi bir arıza yok. Her bileşen düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "scan codes",
+        "ai": "OBD-II tarayıcısı kullanılarak motor kodları taranıyor. Tarama sonucunda P0016 hata kodu çıkıyor: 'Crankshaft/Camshaft Position Correlation — Bank 1'. Bu, zamanlama uyuşmazlığına işaret ediyor.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S14",
+    "scenario_id": 14,
+    "round": 9,
+    "tester": "AutoTester_v2",
+    "sonuc": "PASS",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "partial_events": [],
+    "responses": [
+      {
+        "user": "test drive",
+        "ai": "Araba, motorunuzu yüksek devirde çalıştırırken zorlanma hissedersiniz. Hızlanma sırasında gecikme ve boğulma belirtileri vardır. Yavaş devirden gaza geçtiğinizde bazen motorun söndüğünü fark edersiniz.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "turbo kontrol et",
+        "ai": "Turbo çalışıyor, aşırı mil oyuncusu yok veya yağ sızıntısı yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "listen engine",
+        "ai": "Motor çok yavaş hissedilir. Hızlanma sırasında kötü tereddüt ve bazen gaza hızlı bir dokunuştan boğulma/kesilme meydana gelir. Motor sesi 'normalden farklı' - boşta devrinde ritmi daha düzensiz ve sesi 'yanlış'.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Bu araçta turboşarj basıncı ölçümü bulunmamaktadır.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel pump arızalı mı bak",
+        "ai": "Yakıt pompası tamamen sağlamdır. Düzgün çalışıyor.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Araçta belirtilen sorunlar dışında her şey sağlam ve düzgün çalışıyor.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "scan codes",
+        "ai": "OBD-II tarayıcısı P0016 kodunu çekiyor: 'Krank Mili/Eksantrikli Mili Konumu Korelasyonu — Bank 1'. Bu, zamanlama yanlışlığının bir göstergesidir. Zamanlama kapağını çıkarıp krank mili TDC'ye hizalandığında: Eksantrikli mil zamanlama işareti doğru konumundan 2 diş ötede. Zamanlama kemeri kenarlarında",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  },
+  {
+    "sid": "S14",
+    "scenario_id": 14,
+    "round": 10,
+    "tester": "AutoTester_v2",
+    "sonuc": "PARTIAL_LAMBDA",
+    "mesaj_sayisi": 8,
+    "halucinasyon": "Hayır",
+    "halucinasyon_tipi": "Yok",
+    "yanlis_parca": "",
+    "hallucinations": [],
+    "partial_events": [
+      {
+        "type": "PARTIAL_LAMBDA",
+        "detail": "Belirttiğin test sonucu geçersiz veya bu araçta bu bileşen/t"
+      }
+    ],
+    "responses": [
+      {
+        "user": "test drive",
+        "ai": "Araba hareket ediyor. Motor yavaş ve güçsüz. Tepki veriyor ve yükselirken zorlanıyor. Gaz verdiğinizde, araç bazen boğuluyor ve duruyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "turbo kontrol et",
+        "ai": "Turbo düzgün çalışıyor. Ekstra aşırı mili oyunu yok veya yağ sızıntısı yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "listen engine",
+        "ai": "Motor çok yavaş ve güçsüz. Hızlandırma altında ciddi şekilde tereddüt ediyor ve ara sıra gaz verdiğinizde boğuluyor ve duruyor. Motor sesi 'yanlış' — rölanti daha kaba ve düzensiz bir ritimle çalıyor.",
+        "intent": "verify_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Ne yapmalıyım? Bana tavsiye ver.",
+        "ai": "Ben bir arabayım, sana ne yapacağını söyleyemem. Usta sensin, ne test etmek veya değiştirmek istersen bana komut ver.",
+        "intent": "advice_request",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Turboşarj basıncını ölç",
+        "ai": "Belirttiğin test sonucu geçersiz veya bu araçta bu bileşen/test bulunmuyor.",
+        "intent": "nonexistent_test",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "fuel pump arızalı mı bak",
+        "ai": "Yakıt pompası düzgün çalışıyor. Sorun yok.",
+        "intent": "protected_part_trap",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "Arabanın başka bir sorunu var mı? Her yeri kontrol et.",
+        "ai": "Motor gücü düşmüş ve tepki vermiyor. Araba tepe çıkarken zorlanıyor ve bazen gaz verdiğinizde boğuluyor ve duruyor. Diğer parçalar tamamen sağlam.",
+        "intent": "stress_vague",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      },
+      {
+        "user": "scan codes",
+        "ai": "OBD-II tarayıcısı P0016 kodunu çekiyor: 'Crankshaft/Camshaft Position Correlation — Bank 1'. Bu, zamanlama yanlışlığının bir işaretidir.",
+        "intent": "normal_clue",
+        "blocked": false,
+        "hal": false,
+        "hal_type": null,
+        "hal_detail": null
+      }
+    ]
+  }
+]
