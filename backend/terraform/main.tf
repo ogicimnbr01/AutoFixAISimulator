@@ -50,10 +50,11 @@ module "iam" {
 }
 
 module "lambda" {
-  source             = "./modules/lambda"
-  environment        = var.environment
-  lambda_role_arn    = module.iam.lambda_role_arn
-  lambdas_dir        = "${path.root}/../lambdas"
+  source                    = "./modules/lambda"
+  environment               = var.environment
+  lambda_role_arn           = module.iam.lambda_role_arn
+  lambdas_dir               = "${path.root}/../lambdas"
+  revenuecat_webhook_secret = var.revenuecat_webhook_secret
   dynamodb_table_names = {
     users        = module.dynamodb.users_table_name
     sessions     = module.dynamodb.sessions_table_name
@@ -65,8 +66,8 @@ module "lambda" {
 }
 
 module "api_gateway" {
-  source      = "./modules/api_gateway"
-  environment = var.environment
-  lambda_arns = module.lambda.lambda_arns
+  source                = "./modules/api_gateway"
+  environment           = var.environment
+  lambda_arns           = module.lambda.lambda_arns
   lambda_function_names = module.lambda.lambda_function_names
 }

@@ -11,6 +11,13 @@ variable "lambdas_dir" {
   description = "Path to lambdas source directory"
 }
 
+variable "revenuecat_webhook_secret" {
+  type        = string
+  description = "Bearer token expected from RevenueCat webhook requests"
+  default     = ""
+  sensitive   = true
+}
+
 variable "dynamodb_table_names" {
   type = map(string)
 }
@@ -28,15 +35,18 @@ locals {
   }
 
   env_vars = {
-    ENVIRONMENT         = var.environment
-    TABLE_USERS         = var.dynamodb_table_names["users"]
-    TABLE_SESSIONS      = var.dynamodb_table_names["sessions"]
-    TABLE_DAILY_RESETS  = var.dynamodb_table_names["daily_resets"]
-    TABLE_LEADERBOARD   = var.dynamodb_table_names["leaderboard"]
-    TABLE_REPORTS       = var.dynamodb_table_names["reports"]
-    TABLE_TRANSACTIONS  = var.dynamodb_table_names["transactions"]
-    BEDROCK_MODEL_ID    = "us.amazon.nova-lite-v1:0"
-    BEDROCK_REGION      = "us-east-1"
+    ENVIRONMENT                = var.environment
+    TABLE_USERS                = var.dynamodb_table_names["users"]
+    TABLE_SESSIONS             = var.dynamodb_table_names["sessions"]
+    TABLE_DAILY_RESETS         = var.dynamodb_table_names["daily_resets"]
+    TABLE_LEADERBOARD          = var.dynamodb_table_names["leaderboard"]
+    TABLE_REPORTS              = var.dynamodb_table_names["reports"]
+    TABLE_TRANSACTIONS         = var.dynamodb_table_names["transactions"]
+    BEDROCK_MODEL_ID           = "us.amazon.nova-lite-v1:0"
+    BEDROCK_REGION             = "us-east-1"
+    ALLOW_CLIENT_AD_REWARD     = var.environment == "prod" ? "false" : "true"
+    ALLOW_UNVERIFIED_ADMOB_SSV = var.environment == "prod" ? "false" : "true"
+    REVENUECAT_WEBHOOK_SECRET  = var.revenuecat_webhook_secret
   }
 }
 

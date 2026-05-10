@@ -47,7 +47,8 @@ def handle_start(event, user_id):
 
     # Get user and check energy
     user = get_or_create_user(user_id)
-    if user["energy"] <= 0:
+    is_pro = user.get("subscription") == "pro"
+    if not is_pro and user["energy"] <= 0:
         return api_response(403, {"error": "no_energy", "message": "Watch an ad or wait for daily reset."})
 
     # Get scenario
@@ -58,8 +59,10 @@ def handle_start(event, user_id):
     # Create session
     session = create_session(user_id, scenario_id)
 
-    # Deduct energy
-    update_user(user_id, {"energy": user["energy"] - 1})
+    # Deduct energy for free users only. Pro users have unlimited energy.
+    new_energy = user["energy"] if is_pro else user["energy"] - 1
+    if not is_pro:
+        update_user(user_id, {"energy": new_energy})
 
     # Update daily tracking
     daily = get_daily_reset(user_id)
@@ -76,7 +79,8 @@ def handle_start(event, user_id):
             "complaint": scenario["complaint"],
             "difficulty": scenario["difficulty"],
         },
-        "energy": user["energy"] - 1,
+        "energy": new_energy,
+        "isPro": is_pro,
     })
 
 
@@ -179,7 +183,7 @@ def handle_message(event, user_id):
     if not is_lang_valid:
         ai_text = lang_msg
     else:
-        ai_text = validate_output(ai_text, scenario)
+        ai_text = validate_output(ai_text, scenario, lang_code=lang_code)
 
     # Check [CASE_SOLVED]
     case_solved = "[CASE_SOLVED]" in ai_text
@@ -238,4 +242,3 @@ def _parse_body(event):
         except Exception:
             return {}
     return body
-

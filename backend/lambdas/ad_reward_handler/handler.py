@@ -4,6 +4,7 @@ Validates rewarded ad completion and grants energy.
 """
 import json
 import sys
+import os
 
 sys.path.insert(0, "/opt")
 from db import get_or_create_user, update_user
@@ -57,9 +58,11 @@ def handle_admob_ssv(event):
         return api_response(200, {"status": "ignored", "reason": "invalid_user"})
     
     # 2. ECDSA Verification Placeholder
-    # Production: Fetch https://gstatic.com/admob/reward/verifier-keys.json
-    # Verify the signature using key_id and ECDSA SHA-256.
-    is_valid_signature = True # Assume valid for MVP
+    # Production: Fetch Google's AdMob verifier keys and verify signature/key_id.
+    # Until that verifier is implemented, only non-production/demo environments
+    # should allow unverified SSV payloads.
+    allow_unverified_ssv = os.environ.get("ALLOW_UNVERIFIED_ADMOB_SSV", "false").lower() == "true"
+    is_valid_signature = allow_unverified_ssv
     
     if not is_valid_signature:
         print("[ADMOB_SSV] Error: Invalid signature.")
@@ -107,9 +110,14 @@ def handle_client_reward(event):
     body = json.loads(event.get("body", "{}")) if isinstance(event.get("body"), str) else event.get("body", {})
     reward_type = body.get("rewardType", "energy")
     
-    # In a real SSV-enforced environment, we WOULD NOT grant the reward here.
-    # We would just return: return api_response(200, {"message": "Waiting for server verification"})
-    # But since this is a demo, we will do the client-side grant as well.
+    allow_client_grant = os.environ.get("ALLOW_CLIENT_AD_REWARD", "false").lower() == "true"
+    if not allow_client_grant:
+        return api_response(202, {
+            "rewardGranted": False,
+            "pendingVerification": True,
+            "message": "Waiting for server-side ad verification.",
+        })
+
     user = get_or_create_user(user_id)
 
     if reward_type == "energy":
@@ -156,4 +164,3 @@ def handle_client_reward(event):
             return api_response(400, {"error": "no_active_cooldown"})
     else:
         return api_response(400, {"error": "invalid_reward_type"})
-

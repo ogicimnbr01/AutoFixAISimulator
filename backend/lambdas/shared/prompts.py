@@ -54,7 +54,7 @@ def build_game_system_prompt(scenario: dict, lang_code: str = "tr") -> str:
 2. **Rolün:** Sadece eylemin fiziksel sonucunu anlat. Akıl verme, arızanın nedenini asla AÇIKLAMA.
 3. **KOMUTLARI YORUMLAMA:** Oyuncu "motora bakalım", "aküyü inceleyelim", "farı kontrol et" diyorsa, BU BİR KOMUTTUR (tavsiye istemiyordur). Hemen o parçayı kontrol edip durumunu bildir.
 4. **Kısa Yanıtlar:** En fazla 1-3 cümle kullan. Yanıtının sonuna ASLA soru cümlesi ekleme (Örn: "Başka ne istersin?", "Şimdi ne yapalım?" DEME, sadece durumu bildirip sus.)
-5. **Gerçekçilik:** Sadece aşağıdaki "Teşhis İpuçları" bölümündeki arızaları raporla. Araba bunun dışında %100 SAĞLAMDIR. Hayali arıza UYDURMA. Eğer oyuncu senaryoda olmayan bir testi isterse, 'Bu araçta bu bileşen/test bulunmuyor' de.
+5. **Gerçekçilik:** Sadece aşağıdaki "Teşhis İpuçları" bölümündeki arızaları raporla. Araba bunun dışında %100 SAĞLAMDIR. Hayali arıza UYDURMA. Oyuncunun komutunu en yakın test anahtarıyla eşleştir ve SADECE o testin sonucunu anlat. Eşleşen test yoksa, 'Bu araçta bu bileşen/test bulunmuyor' de.
 6. **GÜVENLİK KRİTİK:** Arızanın sebebini ASLA oyuncuya doğrudan söyleme. Oyuncu "sorun ne" diye sorarsa, "Test yapıp bulman gerekiyor." de.
 7. **TAMİR VE DEĞİŞİM EYLEMLERİ:**
    Oyuncu kendi kararıyla bir parçayı tamir etmek veya değiştirmek istediğinde (Örn: "aküyü değiştir", "su pompası tak"):
@@ -62,6 +62,7 @@ def build_game_system_prompt(scenario: dict, lang_code: str = "tr") -> str:
    - Eğer parça "{scenario['correct_repair']}" ile İLGİSİZSE: Değişimin yapıldığını ama '{scenario['complaint']}' sorununun HALA DEVAM ETTİĞİNİ söyle. [CASE_SOLVED] etiketini ASLA ekleme.
 
 ## TEŞHİS İPUÇLARI (Oyuncu test yaparsa raporla)
+Her satırdaki TEST ANAHTARI sadece senin iç eşleştirmen içindir; oyuncuya anahtar adını söyleme.
 {clues_text}
 
 ## SAĞLAM PARÇALAR — DOKUNULMAZ
@@ -176,7 +177,7 @@ def sanitize_input(user_message: str) -> tuple[bool, str]:
 
 # --- Output Validation (Prompt Injection Layer 3) ---
 
-def validate_output(response: str, scenario: dict) -> str:
+def validate_output(response: str, scenario: dict, lang_code: str = "tr") -> str:
     """
     Check AI response for accidental root cause leaks or hallucinations.
     Returns cleaned/overridden response.
@@ -197,19 +198,21 @@ def validate_output(response: str, scenario: dict) -> str:
     root_match_count = sum(1 for w in root_words if w in response_lower)
 
     if has_explanation and root_match_count >= 2:
-        return "Bu konuda anormal bir şey fark etmiyorsun. Farklı bir yaklaşım dene."
+        return _localized_validation_message("generic_normal", lang_code)
 
     # Key clue key'lerinin sızmasını engelle
     for clue_key in scenario["key_clues"].keys():
         if clue_key.lower().replace("_", " ") in response_lower:
-            return "Test sonucunu doğrudan aktaramam. Aracı kendin test et."
+            return _localized_validation_message("direct_test_key", lang_code)
 
     # Sayısal uydurma tespiti
-    suspicious_readings = re.findall(r'\d+\.?\d*\s?(?:psi|bar|rpm|°c|volt|v|amp|ohm|mm|km/h)\b', response_lower)
+    # Normalize readings across EN/TR/RU/ZH formats before comparing:
+    # "9.2V", "9,2 volt", "9,2 В", "9.2伏特" -> "9.2:v"
+    suspicious_readings = _extract_numeric_readings(response_lower)
     if suspicious_readings:
-        clues_str = str(scenario.get("key_clues", {})).lower()
-        if not any(reading in clues_str for reading in suspicious_readings):
-            return "Belirttiğin test sonucu geçersiz veya bu araçta bu bileşen/test bulunmuyor."
+        allowed_readings = _extract_numeric_readings(str(scenario.get("key_clues", {})).lower())
+        if not suspicious_readings.issubset(allowed_readings):
+            return _localized_validation_message("invalid_test", lang_code)
 
     # Layer 3b: Check hallucination on protected parts
     protected = scenario.get("protected_normal", [])
@@ -217,29 +220,142 @@ def validate_output(response: str, scenario: dict) -> str:
         "damaged", "broken", "worn", "leaking", "cracked", "faulty",
         "failed", "defective", "burnt", "corroded", "seized",
         "clogged", "blocked", "torn", "snapped", "bent", "warped",
+        "hasar", "hasarlı", "arızalı", "bozuk", "kırık", "yanmış",
+        "kopuk", "yıpranmış", "aşınmış", "kaçak", "sızıntı", "tıkalı",
+        "поврежден", "повреждён", "сломан", "неисправ", "сгорел",
+        "изношен", "утеч", "засор", "故障", "损坏", "坏", "烧坏",
+        "磨损", "泄漏", "堵塞", "断",
     ]
     # Words that NEGATE a problem (e.g., "no leaks", "not damaged")
-    negation_words = ["no ", "not ", "without ", "free of ", "no visible "]
+    negation_words = [
+        "no ", "not ", "without ", "free of ", "no visible ", "normal", "fine", "intact",
+        "yok", "değil", "degil", "normal", "sağlam", "saglam", "sorunsuz",
+        "görülmüyor", "gorulmuyor", "çalışıyor", "calisiyor",
+        "нет", "не ", "норм", "исправ", "цел", "正常", "没有", "无", "未见",
+    ]
 
     for part in protected:
-        if part.lower() in response_lower:
+        if _mentions_protected_part(response_lower, part):
             for neg in negative_indicators:
                 if neg in response_lower:
-                    # Check if negated: "no damage" is fine, "damage" alone is bad
                     neg_pos = response_lower.index(neg)
-                    context = response_lower[max(0, neg_pos - 15):neg_pos]
+                    context = response_lower[max(0, neg_pos - 25):neg_pos + len(neg) + 25]
                     if not any(nw in context for nw in negation_words):
-                        return f"{part} kontrol ediyorsun — her şey normal görünüyor ve düzgün çalışıyor."
+                        return _localized_validation_message("protected_normal", lang_code, part=part)
 
     return response
+
+
+PROTECTED_PART_ALIASES = {
+    "wiring harness": ["wiring harness", "wiring", "wire", "cable", "kablo", "tesisat", "провод", "проводка", "кабель", "线束", "线路", "电线"],
+    "wiring": ["wiring", "wire", "cable", "kablo", "tesisat", "провод", "проводка", "кабель", "线束", "线路", "电线"],
+    "headlight bulb": ["headlight bulb", "bulb", "filament", "far ampul", "ampul", "filament", "лампа", "лампочка", "нить", "灯泡", "灯丝"],
+    "headlight switch": ["headlight switch", "far anahtar", "far düğme", "выключатель фар", "开关"],
+    "relay": ["relay", "röle", "role", "реле", "继电器"],
+    "battery": ["battery", "akü", "aku", "аккумулятор", "电瓶", "蓄电池"],
+    "alternator": ["alternator", "şarj dinamosu", "sarz dinamosu", "генератор", "发电机"],
+    "starter motor": ["starter motor", "marş motor", "mars motor", "стартер", "起动机"],
+    "fuses": ["fuse", "fuses", "sigorta", "предохранитель", "保险丝"],
+    "wiper fuse": ["wiper fuse", "silecek sigorta", "предохранитель дворников", "雨刷保险丝"],
+    "wiper switch": ["wiper switch", "silecek kol", "silecek düğme", "переключатель дворников", "雨刷开关"],
+}
+
+
+def _mentions_protected_part(response_lower: str, part: str) -> bool:
+    aliases = PROTECTED_PART_ALIASES.get(part.lower(), [part.lower()])
+    return any(alias in response_lower for alias in aliases)
+
+
+VALIDATION_MESSAGES = {
+    "tr": {
+        "generic_normal": "Bu konuda anormal bir şey fark etmiyorsun. Farklı bir yaklaşım dene.",
+        "direct_test_key": "Test sonucunu doğrudan aktaramam. Aracı kendin test et.",
+        "invalid_test": "Belirttiğin test sonucu geçersiz veya bu araçta bu bileşen/test bulunmuyor.",
+        "protected_normal": "{part} kontrol ediliyor. Her şey normal görünüyor ve düzgün çalışıyor.",
+    },
+    "en": {
+        "generic_normal": "You do not notice anything abnormal there. Try a different approach.",
+        "direct_test_key": "I cannot report the internal test key. Test the vehicle yourself.",
+        "invalid_test": "That test result is invalid or this vehicle does not have that component/test.",
+        "protected_normal": "You check the {part}. Everything looks normal and works properly.",
+    },
+    "ru": {
+        "generic_normal": "Здесь ничего необычного не заметно. Попробуй другой подход.",
+        "direct_test_key": "Я не могу сообщить внутренний ключ теста. Проверь автомобиль сам.",
+        "invalid_test": "Этот результат теста недействителен или у этого автомобиля нет такого компонента/теста.",
+        "protected_normal": "Проверяешь {part}. Все выглядит нормально и работает исправно.",
+    },
+    "zh": {
+        "generic_normal": "这里没有发现异常。换个检查方向。",
+        "direct_test_key": "不能直接报告内部测试键。请自己检查车辆。",
+        "invalid_test": "该测试结果无效，或这辆车没有这个部件/测试。",
+        "protected_normal": "你检查了{part}。一切看起来正常，工作正常。",
+    },
+}
+
+
+def _localized_validation_message(key: str, lang_code: str, **kwargs) -> str:
+    lang = "zh" if lang_code.startswith("zh") else lang_code
+    messages = VALIDATION_MESSAGES.get(lang, VALIDATION_MESSAGES["tr"])
+    return messages[key].format(**kwargs)
+
+
+READING_PATTERN = re.compile(
+    r"(?P<number>\d+(?:[\.,]\d+)?)\s*"
+    r"(?P<unit>"
+    r"psi|bar|rpm|°c|celsius|volt|volts|v|amp|amps|ohm|ohms|mm|km/h|kph|"
+    r"вольт(?:а|ов)?|в|бар|об/мин|об\.?/мин|ампер(?:а|ов)?|ом|мм|км/ч|"
+    r"伏特|伏|巴|转/分|转每分|安培|安|欧姆|毫米|公里/小时"
+    r")\b",
+    re.IGNORECASE,
+)
+
+
+UNIT_ALIASES = {
+    "v": {"v", "volt", "volts", "вольт", "вольта", "вольтов", "в", "伏特", "伏"},
+    "bar": {"bar", "бар", "巴"},
+    "psi": {"psi"},
+    "rpm": {"rpm", "об/мин", "об.мин", "об./мин", "转/分", "转每分"},
+    "c": {"°c", "celsius"},
+    "amp": {"amp", "amps", "ампер", "ампера", "амперов", "安培", "安"},
+    "ohm": {"ohm", "ohms", "ом", "欧姆"},
+    "mm": {"mm", "мм", "毫米"},
+    "kmh": {"km/h", "kph", "км/ч", "公里/小时"},
+}
+
+
+def _normalize_unit(unit: str) -> str:
+    normalized = unit.lower().replace(" ", "")
+    for canonical, aliases in UNIT_ALIASES.items():
+        if normalized in aliases:
+            return canonical
+    return normalized
+
+
+def _normalize_number(number: str) -> str:
+    normalized = number.replace(",", ".")
+    try:
+        value = float(normalized)
+    except ValueError:
+        return normalized
+    return f"{value:g}"
+
+
+def _extract_numeric_readings(text: str) -> set[str]:
+    """Extract normalized measurement readings from localized model output."""
+    readings = set()
+    for match in READING_PATTERN.finditer(text):
+        number = _normalize_number(match.group("number"))
+        unit = _normalize_unit(match.group("unit"))
+        readings.add(f"{number}:{unit}")
+    return readings
 
 
 def _format_clues(clues: dict) -> str:
     """Format the key clues dict into a readable string for the prompt."""
     lines = []
     for action, result in clues.items():
-        # Action is hidden, result is the fact
-        lines.append(f"- Gözlem / Sonuç: {result}")
+        lines.append(f"- TEST ANAHTARI: {action} | Gözlem / Sonuç: {result}")
     return "\n".join(lines)
 
 
@@ -268,4 +384,3 @@ def validate_language(response: str, lang_code: str) -> tuple[bool, str]:
         if total > 0 and chinese / total < 0.5:
             return False, "语言混合错误"
     return True, response
-

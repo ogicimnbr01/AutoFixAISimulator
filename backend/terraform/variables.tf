@@ -13,5 +13,12 @@ variable "environment" {
 variable "firebase_project_id" {
   description = "Firebase project ID for token verification"
   type        = string
-  default     = ""  # Set in terraform.tfvars
+  default     = "" # Set in terraform.tfvars
+}
+
+variable "revenuecat_webhook_secret" {
+  description = "Bearer token expected from RevenueCat webhook requests"
+  type        = string
+  default     = ""
+  sensitive   = true
 }

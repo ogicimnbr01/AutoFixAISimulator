@@ -235,36 +235,41 @@ def add_leaderboard_point(user_id: str, display_name: str):
     ]
 
     for period in periods:
-        # Try to update existing entry
-        try:
-            resp = table.update_item(
-                Key={"period": period, "score_userId": f"temp#{user_id}"},
-                UpdateExpression="SET repPoints = if_not_exists(repPoints, :zero) + :one, displayName = :name, userId = :uid",
-                ExpressionAttributeValues={":one": 1, ":zero": 0, ":name": display_name, ":uid": user_id},
-                ReturnValues="UPDATED_NEW",
-            )
-            # Update the sort key with new padded score
-            new_score = int(resp["Attributes"]["repPoints"])
-            padded = str(new_score).zfill(6)
+        existing_entries = _get_user_leaderboard_entries(table, period, user_id)
+        current_score = max([int(item.get("repPoints", 0)) for item in existing_entries] or [0])
+        new_score = current_score + 1
 
-            # Delete old entry and create new with updated sort key
-            table.delete_item(Key={"period": period, "score_userId": f"temp#{user_id}"})
-            table.put_item(Item={
-                "period": period,
-                "score_userId": f"{padded}#{user_id}",
-                "userId": user_id,
-                "displayName": display_name,
-                "repPoints": new_score,
-            })
-        except Exception:
-            # First time entry
-            table.put_item(Item={
-                "period": period,
-                "score_userId": f"000001#{user_id}",
-                "userId": user_id,
-                "displayName": display_name,
-                "repPoints": 1,
-            })
+        # The score is part of the sort key, so old rows must be replaced.
+        # Delete all matching rows to also clean up any duplicates from older versions.
+        for item in existing_entries:
+            table.delete_item(Key={"period": period, "score_userId": item["score_userId"]})
+
+        table.put_item(Item={
+            "period": period,
+            "score_userId": f"{str(new_score).zfill(6)}#{user_id}",
+            "userId": user_id,
+            "displayName": display_name,
+            "repPoints": new_score,
+        })
+
+
+def _get_user_leaderboard_entries(table, period: str, user_id: str) -> list:
+    """Find existing leaderboard rows for a user in one period."""
+    items = []
+    query_kwargs = {
+        "KeyConditionExpression": "period = :p",
+        "FilterExpression": "#uid = :uid",
+        "ExpressionAttributeNames": {"#uid": "userId"},
+        "ExpressionAttributeValues": {":p": period, ":uid": user_id},
+    }
+
+    while True:
+        resp = table.query(**query_kwargs)
+        items.extend(resp.get("Items", []))
+        last_key = resp.get("LastEvaluatedKey")
+        if not last_key:
+            return items
+        query_kwargs["ExclusiveStartKey"] = last_key
 
 
 def get_leaderboard(period: str, limit: int = 100) -> list:

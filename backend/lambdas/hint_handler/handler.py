@@ -30,7 +30,8 @@ def lambda_handler(event, context):
 
     # Check credits
     user = get_or_create_user(user_id)
-    if user["hintCredits"] <= 0:
+    is_pro = user.get("subscription") == "pro"
+    if not is_pro and user["hintCredits"] <= 0:
         return api_response(403, {"error": "no_hints", "message": "No hint credits left. Log in tomorrow or buy a pack."})
 
     # Load session
@@ -63,8 +64,10 @@ def lambda_handler(event, context):
     except Exception:
         hint_text = "Hmm, let me think... Try checking the basics first, kid."
 
-    # Deduct credit
-    update_user(user_id, {"hintCredits": user["hintCredits"] - 1})
+    # Deduct credit for free users only. Pro users have unlimited hints.
+    remaining_credits = user["hintCredits"] if is_pro else user["hintCredits"] - 1
+    if not is_pro:
+        update_user(user_id, {"hintCredits": remaining_credits})
 
     # Add hint to session
     new_messages = session["messages"] + [
@@ -75,6 +78,6 @@ def lambda_handler(event, context):
 
     return api_response(200, {
         "hint": hint_text,
-        "remainingCredits": user["hintCredits"] - 1,
+        "remainingCredits": remaining_credits,
+        "isPro": is_pro,
     })
-

@@ -11,10 +11,12 @@ from response import api_response
 
 def lambda_handler(event, context):
     try:
-        # Check authorization header if you configured a webhook auth token in RevenueCat
-        # auth_header = event.get("headers", {}).get("authorization", "")
-        # if auth_header != "Bearer YOUR_SECRET_TOKEN":
-        #     return api_response(401, {"error": "unauthorized"})
+        webhook_secret = os.environ.get("REVENUECAT_WEBHOOK_SECRET")
+        if webhook_secret:
+            headers = event.get("headers") or {}
+            auth_header = headers.get("authorization") or headers.get("Authorization") or ""
+            if auth_header != f"Bearer {webhook_secret}":
+                return api_response(401, {"error": "unauthorized"})
 
         body = json.loads(event.get("body", "{}"))
         rc_event = body.get("event", {})
