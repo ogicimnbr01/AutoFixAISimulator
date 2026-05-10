@@ -1,5 +1,10 @@
 # Kritik Sorunlar ve Model Notlari
 
+> **AutoFix AI Simulator Başarı Mottosu:**
+> 1. AI'ın tutarlı ve adil kalması.
+> 2. Vakaların eğlenceli, kısa ve öğretici olması.
+> 3. Oyuncuya "ben gerçekten ustalaşıyorum" hissi vermesi.
+
 Bu dosya kod degisikligi degildir; bos vakitte ele alinacak takip listesidir.
 
 ## Kritik Sorunlar

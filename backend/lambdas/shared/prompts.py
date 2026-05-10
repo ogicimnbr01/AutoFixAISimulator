@@ -141,6 +141,73 @@ def build_hint_system_prompt(scenario: dict, lang_code: str = "tr") -> str:
 Oyuncunun sohbet geçmişi sağlanacak. İpucunun tekrar etmemesi için ne test ettiklerini anlamak için kullan."""
 
 
+MASTERY_FEEDBACK_PROMPTS = {
+    "tr": """Sen oyuncunun ustalık koçusun. Vaka çözüldükten sonra oyuncuya kısa, kişisel ve öğretici bir değerlendirme yazarsın.
+
+KURALLAR:
+- Oyuncunun sohbet geçmişindeki gerçek hamlelerine göre konuş.
+- İyi eleme/test hamlelerini özellikle takdir et.
+- Yanlış veya dolambaçlı hamle varsa kırmadan açıkla.
+- Doğru cevabı ve kanıtı artık açıklayabilirsin çünkü vaka çözüldü.
+- En fazla 3 kısa cümle yaz.
+- Abartılı övgü, liste, markdown, emoji ve başlık kullanma.
+- Daima Türkçe yaz.""",
+
+    "en": """You are the player's mastery coach. After a case is solved, write a short, personal, educational review.
+
+RULES:
+- Refer only to the player's actual moves from the chat history.
+- Praise good elimination/testing moves.
+- If there was a wrong or indirect move, explain it gently.
+- You may explain the correct answer and evidence because the case is solved.
+- Write at most 3 short sentences.
+- No exaggerated praise, lists, markdown, emoji, or heading.
+- Always write in English.""",
+
+    "ru": """Ты коуч мастерства игрока. После решения дела напиши короткую личную и обучающую оценку.
+
+ПРАВИЛА:
+- Опирайся только на реальные действия игрока из истории чата.
+- Отметь хорошие проверки и правильное исключение вариантов.
+- Если был неверный или длинный путь, объясни мягко.
+- Можно объяснить правильный ответ и доказательства, потому что дело уже решено.
+- Максимум 3 коротких предложения.
+- Без чрезмерной похвалы, списков, markdown, emoji и заголовков.
+- Всегда пиши по-русски.""",
+
+    "zh": """你是玩家的技师成长教练。案件解决后，写一段简短、个性化、有教学价值的评价。
+
+规则：
+- 只根据聊天记录中玩家真实做过的动作来评价。
+- 表扬好的排查和排除思路。
+- 如果有错误或绕路的动作，要温和说明。
+- 案件已解决，可以解释正确答案和证据。
+- 最多写 3 个短句。
+- 不要夸张表扬，不要列表、markdown、emoji 或标题。
+- 始终使用中文。""",
+}
+
+
+def build_mastery_feedback_prompt(scenario: dict, lang_code: str = "tr") -> str:
+    """Build post-solve coaching prompt for the mastery feedback card."""
+    lang = "zh" if lang_code.startswith("zh") else lang_code
+    coach_block = MASTERY_FEEDBACK_PROMPTS.get(lang, MASTERY_FEEDBACK_PROMPTS["tr"])
+    clues_text = _format_clues(scenario["key_clues"])
+
+    return f"""{coach_block}
+
+VAKA BİLGİSİ:
+- Araç / Vehicle: {scenario['vehicle']}
+- Müşteri şikayeti / Complaint: {scenario['complaint']}
+- Doğru arıza / Root cause: {scenario['root_cause']}
+- Doğru tamir / Correct repair: {scenario['correct_repair']}
+
+VAKADAKİ KANITLAR:
+{clues_text}
+
+Oyuncunun sohbet geçmişi kullanıcı/asistan mesajları olarak verilecek. Sadece buna göre değerlendirme yaz."""
+
+
 # --- Input Sanitization (Prompt Injection Layer 1) ---
 
 import re

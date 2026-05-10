@@ -229,8 +229,11 @@ def run_case(
             },
         )
         failures = [] if status == 200 else [f"message failed with HTTP {status}"]
+        warnings = []
         if status == 200:
             failures.extend(assert_step(step, body))
+            if body.get("solved") is True and not str(body.get("masteryFeedback", "")).strip():
+                warnings.append("solved response did not include masteryFeedback")
 
         step_log = {
             "index": index,
@@ -238,6 +241,7 @@ def run_case(
             "status": status,
             "body": body,
             "failures": failures,
+            "warnings": warnings,
             "ok": not failures,
         }
         case_log["steps"].append(step_log)
@@ -323,6 +327,9 @@ def main() -> int:
 
         if case_log["ok"]:
             print(f"PASS {case['name']}")
+            for step in case_log.get("steps", []):
+                for warning in step.get("warnings", []):
+                    print(f"  WARN Step {step['index']}: {warning}")
         else:
             print(f"FAIL {case['name']}: {case_log.get('error', 'step assertion failed')}")
             for step in case_log.get("steps", []):

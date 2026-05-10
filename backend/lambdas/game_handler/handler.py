@@ -13,7 +13,8 @@ from db import (get_or_create_user, update_user, create_session,
                 get_session, update_session, get_daily_reset,
                 update_daily_reset, add_leaderboard_point)
 from prompts import (build_game_system_prompt, build_hint_system_prompt,
-                     sanitize_input, validate_output, validate_language)
+                     build_mastery_feedback_prompt, sanitize_input,
+                     validate_output, validate_language)
 from scenarios import get_scenario_by_id, get_scenarios_by_difficulty
 from response import api_response
 
@@ -185,8 +186,12 @@ def handle_message(event, user_id):
     else:
         ai_text = validate_output(ai_text, scenario, lang_code=lang_code)
 
-    # Check [CASE_SOLVED]
-    case_solved = "[CASE_SOLVED]" in ai_text
+    # Check [CASE_SOLVED]. The model can describe the correct repair but forget
+    # the marker, so keep a deterministic repair-command guard as backup.
+    case_solved = "[CASE_SOLVED]" in ai_text or _is_correct_repair_command(
+        scenario,
+        user_message,
+    )
     clean_text = ai_text.replace("[CASE_SOLVED]", "").strip()
 
     # Update session
@@ -230,6 +235,14 @@ def handle_message(event, user_id):
         # Leaderboard +1
         add_leaderboard_point(user_id, user["displayName"])
 
+        mastery_feedback = _build_mastery_feedback(
+            scenario=scenario,
+            messages=new_messages,
+            lang_code=lang_code,
+        )
+        if mastery_feedback:
+            response_data["masteryFeedback"] = mastery_feedback
+
     update_session(session_id, session_updates)
     return api_response(200, response_data)
 
@@ -242,3 +255,127 @@ def _parse_body(event):
         except Exception:
             return {}
     return body
+
+
+def _build_mastery_feedback(scenario, messages, lang_code="tr"):
+    """Generate a short post-solve coaching note. Failure should never block gameplay."""
+    if os.environ.get("ENABLE_MASTERY_FEEDBACK", "true").lower() == "false":
+        return None
+
+    try:
+        feedback_messages = _format_feedback_messages(messages)
+        if not feedback_messages:
+            return None
+
+        feedback_prompt = build_mastery_feedback_prompt(scenario, lang_code=lang_code)
+        body = {
+            "system": [{"text": feedback_prompt}],
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [{
+                        "text": "CHAT HISTORY:\n" + feedback_messages,
+                    }],
+                }
+            ],
+            "inferenceConfig": {"maxTokens": 180},
+        }
+        response = bedrock.invoke_model(
+            modelId=os.environ.get("MASTERY_FEEDBACK_MODEL_ID", MODEL_ID),
+            contentType="application/json",
+            accept="application/json",
+            body=json.dumps(body),
+        )
+        result = json.loads(response["body"].read())
+        feedback = result["output"]["message"]["content"][0]["text"].strip()
+        feedback = _clean_mastery_feedback(feedback)
+        if not feedback:
+            return None
+
+        is_lang_valid, _ = validate_language(feedback, lang_code)
+        if not is_lang_valid:
+            return None
+        return feedback
+    except Exception as e:
+        print(f"MASTERY_FEEDBACK_ERROR: {e}")
+        return None
+
+
+def _format_feedback_messages(messages):
+    relevant = [
+        m for m in messages
+        if m.get("role") in ("user", "assistant") and m.get("content")
+    ]
+    relevant = relevant[-10:]
+    return "\n".join(
+        f"{m['role'].upper()}: {m['content'][:500]}"
+        for m in relevant
+    )
+
+
+def _clean_mastery_feedback(feedback):
+    forbidden_prefixes = ("```", "#", "-", "*", "Ustalık Değerlendirmesi:", "Mastery Review:")
+    for prefix in forbidden_prefixes:
+        if feedback.startswith(prefix):
+            feedback = feedback[len(prefix):].strip()
+    feedback = feedback.replace("```", "").strip()
+    if len(feedback) > 700:
+        feedback = feedback[:700].rsplit(" ", 1)[0].strip()
+    return feedback
+
+
+REPAIR_VERBS = [
+    "replace", "change", "fix", "repair", "install", "recharge", "recalibrate",
+    "değiştir", "degistir", "yenile", "tamir", "onar", "tak", "doldur",
+    "kalibre", "ayarla", "şarj et", "sarj et",
+    "замени", "заменить", "поменяй", "поменять", "почини", "починить",
+    "установи", "установить", "заправь", "заправить", "откалибруй",
+    "更换", "换", "修理", "维修", "安装", "加注", "重新加注", "校准",
+]
+
+CORRECT_REPAIR_ALIASES = {
+    1: ["battery", "akü", "aku", "akuyu", "aküyü", "аккумулятор", "电瓶", "蓄电池"],
+    2: ["starter", "starter motor", "marş motor", "mars motor", "стартер", "起动机"],
+    3: ["fuse", "sigorta", "#14", "15a", "15 a", "предохранитель", "保险丝"],
+    4: ["wiper motor", "silecek motor", "мотор дворник", "雨刷电机"],
+    5: ["ac line", "refrigerant", "klima hatt", "klima gaz", "kaçak", "kacak", "хладагент", "кондиционер", "制冷剂", "空调"],
+    6: ["thermostat", "termostat", "термостат", "节温器"],
+    7: ["spark plug", "buji", "cylinder 3", "silindir 3", "3. silindir", "свеч", "цилиндр 3", "火花塞", "3缸"],
+    8: ["atf", "transmission fluid", "şanzıman yağı", "sanziman yagi", "şanzıman sıvısı", "трансмиссион", "atf", "变速箱油"],
+    9: ["brake pad", "balata", "fren balata", "колод", "刹车片"],
+    10: ["o2 sensor", "oxygen sensor", "lambda", "oksijen sensör", "oksijen sensor", "лямбда", "кислород", "氧传感器"],
+    11: ["piston ring", "segman", "cylinder 2", "cylinder 3", "silindir 2", "silindir 3", "поршнев", "кольц", "活塞环"],
+    12: ["head gasket", "conta", "silindir kapak", "проклад", "гбц", "汽缸垫", "缸垫"],
+    13: ["water pump", "su pompa", "devirdaim", "помпа", "водян", "水泵"],
+    14: ["timing belt", "triger", "zamanlama", "sente", "ремень грм", "грм", "正时皮带", "正时"],
+    15: ["lpg ecu", "lpg harita", "lpg kalibr", "gaz ayar", "газов", "lpg", "燃气", "液化气"],
+}
+
+
+def _is_correct_repair_command(scenario, user_message):
+    """Return True when the player's command clearly targets the correct repair."""
+    scenario_id = int(scenario.get("id", 0))
+    normalized = _normalize_repair_text(user_message)
+    if not normalized:
+        return False
+
+    has_repair_intent = any(
+        _normalize_repair_text(verb) in normalized
+        for verb in REPAIR_VERBS
+    )
+    if not has_repair_intent:
+        return False
+
+    aliases = CORRECT_REPAIR_ALIASES.get(scenario_id, [])
+    return any(_normalize_repair_text(alias) in normalized for alias in aliases)
+
+
+def _normalize_repair_text(text):
+    text = (text or "").lower()
+    replacements = {
+        "ı": "i", "İ": "i", "ğ": "g", "ü": "u", "ş": "s", "ö": "o", "ç": "c",
+        "Ğ": "g", "Ü": "u", "Ş": "s", "Ö": "o", "Ç": "c",
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text

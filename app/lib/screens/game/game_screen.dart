@@ -29,6 +29,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   bool _solved = false;
   int _streakCount = 0;
   bool _bonusEnergy = false;
+  String? _masteryFeedback;
   bool _autoHintGiven = false;
   bool _isCooldown = false;
   DateTime? _cooldownEnd;
@@ -118,6 +119,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         _solved = res['solved'] == true;
         if (res['streakCount'] != null) _streakCount = res['streakCount'];
         if (res['bonusEnergy'] == true) _bonusEnergy = true;
+        if (res['masteryFeedback'] is String &&
+            (res['masteryFeedback'] as String).trim().isNotEmpty) {
+          _masteryFeedback = (res['masteryFeedback'] as String).trim();
+        }
         _isLoading = false;
       });
       _scrollToBottom();
@@ -483,6 +488,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final hasDynamicMastery = _masteryFeedback != null;
+    final masteryNote =
+        _masteryFeedback ?? _getMasteryNote(context, widget.scenarioId);
+    final masteryTitle = hasDynamicMastery
+        ? _getCoachTitle(context)
+        : _getMasteryTitle(context);
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -726,6 +738,55 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                     '${S.of(context)?.seriesInfo(_streakCount) ?? 'Seri: $_streakCount | +1 Ün Puanı'}${_bonusEnergy ? (S.of(context)?.bonusEnergyTag ?? ' | 🎁 +1 Bonus Enerji!') : ''}',
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
+                  if (masteryNote != null) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.20),
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.school_outlined,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  masteryTitle,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  masteryNote,
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 13,
+                                    height: 1.35,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 14),
                   SizedBox(
                     width: double.infinity,
@@ -1071,6 +1132,99 @@ class _AnimatedHintButtonState extends State<_AnimatedHintButton>
       ),
     );
   }
+}
+
+String _getMasteryTitle(BuildContext context) {
+  final lang = Localizations.localeOf(context).languageCode;
+  if (lang == 'tr') return 'Ustalık Notu';
+  if (lang == 'ru') return 'Заметка мастера';
+  if (lang == 'zh') return '技师笔记';
+  return 'Mastery Note';
+}
+
+String _getCoachTitle(BuildContext context) {
+  final lang = Localizations.localeOf(context).languageCode;
+  if (lang == 'tr') return 'Usta Yorumu';
+  if (lang == 'ru') return 'Оценка мастера';
+  if (lang == 'zh') return '师傅点评';
+  return 'Master Review';
+}
+
+String? _getMasteryNote(BuildContext context, int id) {
+  final lang = Localizations.localeOf(context).languageCode;
+
+  const notes = {
+    'tr': {
+      1: '9.2V akü voltajı çok düşüktür. Takviye ile çalışması, marş motorundan önce akünün şüpheli olduğunu gösterir.',
+      2: 'Akü güçlü kalırken hızlı tıklama duyuluyorsa güç var ama marş motoru dönemiyordur. Marşa vurunca çalışması bu teşhisi güçlendirir.',
+      3: 'Ampul sağlam ve sağ far çalışıyorsa arıza devrenin besleme tarafındadır. Sigorta kontrolü küçük ama kritik bir testtir.',
+      4: 'Silecek motoruna 12V geliyor ama motor ses vermiyorsa anahtar ve sigortadan çok motorun kendisi suçludur.',
+      5: 'Klima basıncı neredeyse sıfırsa sistem boşalmıştır. Kompresörü değiştirmeden önce kaçak bulup gazı tamamlamak gerekir.',
+      6: 'Üst hortum sıcak, alt hortum soğuksa soğutma sıvısı radyatörden dolaşmıyordur. Kapalı kalan termostat bu tabloyu açıklar.',
+      7: 'Tek silindirde ıslak ve kurumlu buji, ateşlemenin o silindirde kaçırdığını gösterir. Kompresyon sağlamsa buji iyi ilk hamledir.',
+      8: 'Sert vites geçişiyle koyu ve yanık kokulu ATF birleşince sorun genelde elektronik değil bakım ihmalidir.',
+      9: 'Frene basınca gelen metalik tiz ses ve 1 mm balata, aşınma ikazının diske sürttüğünü gösterir.',
+      10: 'P0136 ve sabit 0.45V okuyan downstream O2 sensörü, katalizörden önce sensör devresini şüpheli yapar.',
+      11: 'Islak kompresyon testinde değer yükseliyorsa yağ geçici sızdırmazlık sağlar. Bu, segman aşınmasına güçlü kanıttır.',
+      12: 'Beyaz tatlı duman, su eksiltme ve blok testinde renk değişimi birlikte conta kaçağını işaret eder.',
+      13: 'Yeşil sıvı, pompa çevresinden kaçak ve rulman uğultusu birleşince su pompası hem sızdırıyor hem de mekanik aşınıyordur.',
+      14: 'P0016 kodu ve kaçmış zamanlama işaretleri, güç kaybının turbo değil sente problemi olduğunu gösterir.',
+      15: 'Benzinde sorunsuz, LPG’de tekleme varsa temel motor sağlıklıdır. Harita kalibrasyonu LPG tarafındaki davranışı açıklar.',
+    },
+    'en': {
+      1: 'A 9.2V battery reading is far too low. If a jump start works, suspect the battery before the starter motor.',
+      2: 'Bright lights plus rapid clicking means power is present, but the starter is not turning. Tapping it and then starting confirms the clue.',
+      3: 'If the bulb is intact and the right headlight works, the fault is likely in the supply path. A fuse check is small but decisive.',
+      4: 'When 12V reaches the wiper motor but it stays silent, the switch and fuse are less suspicious than the motor itself.',
+      5: 'Near-zero AC pressure means the system is empty. Find the leak and recharge before blaming the compressor.',
+      6: 'A hot upper hose and cold lower hose means coolant is not circulating through the radiator. A stuck thermostat fits that pattern.',
+      7: 'One wet, carbon-fouled spark plug points to a missed ignition event on that cylinder. Good compression makes the plug the right first fix.',
+      8: 'Harsh shifts plus dark, burnt-smelling ATF usually points to neglected fluid service rather than electronics.',
+      9: 'A metallic squeal under braking and a 1 mm pad means the wear indicator is touching the disc.',
+      10: 'Code P0136 and a downstream O2 sensor stuck at 0.45V make the sensor circuit more likely than the catalytic converter.',
+      11: 'If wet compression raises the reading, oil briefly seals the leak. That is strong evidence for worn piston rings.',
+      12: 'Sweet white smoke, coolant loss, and a positive block test together point to a head gasket leak.',
+      13: 'Green coolant, a leak near the pump, and bearing whine mean the water pump is leaking and mechanically worn.',
+      14: 'P0016 plus misaligned timing marks points away from the turbo and toward a slipped timing belt.',
+      15: 'If gasoline runs smoothly but LPG misfires, the base engine is healthy. LPG fuel-map calibration explains the behavior.',
+    },
+    'ru': {
+      1: '9,2 В для аккумулятора слишком мало. Если с бустером мотор запускается, сначала подозревай аккумулятор, а не стартер.',
+      2: 'Яркие лампы и частые щелчки означают, что питание есть, но стартер не крутит. Запуск после удара по стартеру усиливает диагноз.',
+      3: 'Если лампа целая, а правая фара работает, проблема скорее в питании цепи. Проверка предохранителя здесь решающая.',
+      4: 'Если на мотор дворников приходит 12 В, но он молчит, виноват скорее сам мотор, а не переключатель или предохранитель.',
+      5: 'Почти нулевое давление кондиционера значит, что система пустая. Сначала найди утечку и заправь хладагент.',
+      6: 'Горячий верхний патрубок и холодный нижний показывают, что антифриз не идет через радиатор. Это похоже на закрытый термостат.',
+      7: 'Одна мокрая и закопченная свеча указывает на пропуски в этом цилиндре. При нормальной компрессии свеча — правильный первый ремонт.',
+      8: 'Жесткие переключения вместе с темной ATF с запахом гари чаще говорят о старой жидкости, а не об электронике.',
+      9: 'Металлический писк при торможении и колодка 1 мм означают, что индикатор износа касается диска.',
+      10: 'Код P0136 и нижний O2-датчик, застывший на 0,45 В, сильнее указывают на датчик, чем на катализатор.',
+      11: 'Если мокрый тест компрессии поднимает значения, масло временно уплотняет зазор. Это сильный признак износа колец.',
+      12: 'Сладкий белый дым, уход антифриза и положительный блок-тест вместе указывают на пробой прокладки ГБЦ.',
+      13: 'Зеленая жидкость, течь у помпы и вой подшипника означают, что водяная помпа течет и изношена.',
+      14: 'P0016 и смещенные метки ГРМ уводят диагноз от турбины к перескочившему ремню ГРМ.',
+      15: 'Если на бензине все ровно, а на LPG троит, базовый мотор здоров. Поведение объясняет калибровка карты LPG.',
+    },
+    'zh': {
+      1: '电瓶只有 9.2V 明显过低。搭电后能启动，说明应先怀疑电瓶，而不是起动机。',
+      2: '仪表灯很亮但只有快速咔哒声，说明有电但起动机没有转动。敲击后能启动会强化这个判断。',
+      3: '灯泡完好且右大灯正常时，故障更可能在供电线路。检查保险丝是小动作，但很关键。',
+      4: '雨刷电机插头有 12V 但电机无声，问题更像电机本身，而不是开关或保险丝。',
+      5: '空调压力接近 0 说明系统已经漏空。先找漏点并重新加注，不要急着换压缩机。',
+      6: '上水管热、下水管冷，说明冷却液没有经过散热器循环。卡在关闭位的节温器符合这个现象。',
+      7: '只有一个气缸的火花塞湿黑，说明该缸点火不良。压缩正常时，先换火花塞是合理的。',
+      8: '换挡冲击加上 ATF 颜色深且有焦味，通常是油液保养问题，而不是电子故障。',
+      9: '刹车时金属尖叫且刹车片只剩 1mm，说明磨损报警片正在接触刹车盘。',
+      10: 'P0136 加上下游氧传感器固定在 0.45V，比起三元催化，更指向传感器电路故障。',
+      11: '湿式压缩测试数值升高，说明机油暂时封住了泄漏。这是活塞环磨损的强证据。',
+      12: '甜味白烟、冷却液减少和缸压化学测试变色一起指向汽缸垫泄漏。',
+      13: '绿色冷却液、水泵附近泄漏和轴承啸叫同时出现，说明水泵既漏水又机械磨损。',
+      14: 'P0016 和正时标记错位，说明问题不像涡轮，而是正时皮带跳齿。',
+      15: '汽油模式正常、LPG 模式抖动，说明基础发动机健康。LPG 燃油图校准能解释这个问题。',
+    },
+  };
+
+  return notes[lang]?[id] ?? notes['en']?[id];
 }
 
 String? _getLocalizedVehicle(BuildContext context, int id) {

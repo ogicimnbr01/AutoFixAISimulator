@@ -1,0 +1,177 @@
+{
+  "startedAt": "2026-05-10T17:04:41",
+  "baseUrl": "https://kw9p0x0sz4.execute-api.us-east-1.amazonaws.com",
+  "lang": "tr",
+  "scenarioIds": [
+    1,
+    2,
+    3
+  ],
+  "cases": [
+    {
+      "scenarioId": 1,
+      "name": "S01 - Dead battery",
+      "goal": "Akü ölçümü kabul edilmeli ve akü değişince vaka çözülmeli.",
+      "steps": [
+        {
+          "index": 1,
+          "message": "aküyü ölç",
+          "status": 200,
+          "body": {
+            "response": "Multimetre akü terminallerine bağlandığında 9,2V gösteriyor. Normal 12,6V'nin altında.",
+            "messageCount": 1,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "ok": true
+        },
+        {
+          "index": 2,
+          "message": "aküyü değiştir",
+          "status": 200,
+          "body": {
+            "response": "Akü değiştirildi. Şimdi araba sorunsuz çalışıyor.",
+            "messageCount": 2,
+            "messageLimit": 18,
+            "solved": true,
+            "streakCount": 1,
+            "bonusEnergy": false
+          },
+          "failures": [],
+          "ok": true
+        }
+      ],
+      "ok": true,
+      "start": {
+        "status": 200,
+        "body": {
+          "sessionId": "e35623db-bfca-4a67-9ec9-2d357d8bf53e",
+          "scenario": {
+            "id": 1,
+            "vehicle": "2002 Japon Sedan 1.6, Benzin, Manuel",
+            "complaint": "The car won't start at all. When I turn the key, nothing happens — no sound, no lights, nothing.",
+            "difficulty": "Easy"
+          },
+          "energy": 4,
+          "isPro": false
+        }
+      }
+    },
+    {
+      "scenarioId": 2,
+      "name": "S02 - Starter motor",
+      "goal": "Marş motoru komutları kabul edilmeli ve tamir/değişim çözmeli.",
+      "steps": [
+        {
+          "index": 1,
+          "message": "marş motorunu kontrol et",
+          "status": 200,
+          "body": {
+            "response": "TEST ANAHTARI: listen_to_starting | Gözlem / Sonuç: Gözlem: Anahtarın START konumuna getirilmesiyle, kaputun altından hızlı bir tıklama sesi duyuyorsunuz.",
+            "messageCount": 1,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "ok": true
+        },
+        {
+          "index": 2,
+          "message": "marş motorunu değiştir",
+          "status": 200,
+          "body": {
+            "response": "Marş motoru değiştirildi. Araba artık sorunsuz çalışıyor.",
+            "messageCount": 2,
+            "messageLimit": 18,
+            "solved": true,
+            "streakCount": 2,
+            "bonusEnergy": false
+          },
+          "failures": [],
+          "ok": true
+        }
+      ],
+      "ok": true,
+      "start": {
+        "status": 200,
+        "body": {
+          "sessionId": "8a0f117e-b9c6-4a3a-a85e-43dda4ba7dd8",
+          "scenario": {
+            "id": 2,
+            "vehicle": "2006 Amerikan Hatchback 1.6, Dizel, Manuel",
+            "complaint": "When I turn the key, I hear a clicking sound but the engine doesn't turn over.",
+            "difficulty": "Easy"
+          },
+          "energy": 3,
+          "isPro": false
+        }
+      }
+    },
+    {
+      "scenarioId": 3,
+      "name": "S03 - Left headlight fuse",
+      "goal": "Sağlam parça halüsinasyonu yapmadan sigorta çözümüne gitmeli.",
+      "steps": [
+        {
+          "index": 1,
+          "message": "sağ farı test edelim",
+          "status": 200,
+          "body": {
+            "response": "Sağ far hem kısa hem de uzun ışıkta çalışıyor.",
+            "messageCount": 1,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "ok": true
+        },
+        {
+          "index": 2,
+          "message": "sol far ampulünü kontrol edelim",
+          "status": 200,
+          "body": {
+            "response": "Sol far lambası sağlam görünüyor, iç kısmı bozulmamış.",
+            "messageCount": 2,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "ok": true
+        },
+        {
+          "index": 3,
+          "message": "sol far sigortasını değiştir",
+          "status": 200,
+          "body": {
+            "response": "Sol far sigortası değiştirildi. Sol far artık normal şekilde çalışıyor.",
+            "messageCount": 3,
+            "messageLimit": 18,
+            "solved": true,
+            "streakCount": 3,
+            "bonusEnergy": true
+          },
+          "failures": [],
+          "ok": true
+        }
+      ],
+      "ok": true,
+      "start": {
+        "status": 200,
+        "body": {
+          "sessionId": "63e19146-bac2-4d3b-9a9f-6cabf8c883c3",
+          "scenario": {
+            "id": 3,
+            "vehicle": "2008 Alman Hatchback 1.4, Benzin, Otomatik",
+            "complaint": "My left headlight isn't working. The right one is fine.",
+            "difficulty": "Easy"
+          },
+          "energy": 2,
+          "isPro": false
+        }
+      }
+    }
+  ],
+  "finishedAt": "2026-05-10T17:05:00",
+  "ok": true
+}
