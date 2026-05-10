@@ -980,67 +980,67 @@ abstract class S {
   /// No description provided for @case10Complaint.
   ///
   /// In tr, this message translates to:
-  /// **'Gaza basınca devir artıyor ama araç hızlanmıyor (bağırıyor ama gitmiyor).'**
+  /// **'Motor uyarı lambası yandı. Araç biraz hantal ve yakıtı fazla tüketiyor.'**
   String get case10Complaint;
 
   /// No description provided for @case11Vehicle.
   ///
   /// In tr, this message translates to:
-  /// **'2005 Premium Alman Sedan 2.0'**
+  /// **'2003 BMW 320i E46'**
   String get case11Vehicle;
 
   /// No description provided for @case11Complaint.
   ///
   /// In tr, this message translates to:
-  /// **'Motor uyarı lambası yanıyor ve araç 3000 deviri geçmiyor.'**
+  /// **'Motor yağ yakıyor. 1000 km'de bir yağ ekliyorum ve hızlanırken egzozdan mavi duman çıkıyor.'**
   String get case11Complaint;
 
   /// No description provided for @case12Vehicle.
   ///
   /// In tr, this message translates to:
-  /// **'2011 Premium Alman Sedan 2.1'**
+  /// **'2007 Volkswagen Passat 1.9 TDI'**
   String get case12Vehicle;
 
   /// No description provided for @case12Complaint.
   ///
   /// In tr, this message translates to:
-  /// **'Motor suyuna yağ karışmış, antifriz kabı tahin gibi olmuş.'**
+  /// **'Soğuk sabahlarda zor çalışıyor, çalışınca birkaç dakika beyaz duman atıyor ve su eksiltiyor.'**
   String get case12Complaint;
 
   /// No description provided for @case13Vehicle.
   ///
   /// In tr, this message translates to:
-  /// **'2003 Premium Alman Sedan 1.8'**
+  /// **'2013 Renault Megane 1.5 dCi'**
   String get case13Vehicle;
 
   /// No description provided for @case13Complaint.
   ///
   /// In tr, this message translates to:
-  /// **'Ön camdan ve sunroof çevresinden yağmurlu havalarda su alıyor.'**
+  /// **'Motor tarafından uğultu geliyor ve sabah arabanın altında yeşilimsi sıvı birikintisi gördüm.'**
   String get case13Complaint;
 
   /// No description provided for @case14Vehicle.
   ///
   /// In tr, this message translates to:
-  /// **'2014 Premium İsveç Sedan 2.0'**
+  /// **'2004 Fiat Doblo 1.9 JTD'**
   String get case14Vehicle;
 
   /// No description provided for @case14Complaint.
   ///
   /// In tr, this message translates to:
-  /// **'Direksiyon çok ağırlaştı, döndürmek neredeyse imkansız.'**
+  /// **'Motor çok güç kaybetti. Yokuş çıkmakta zorlanıyor, bazen gaz verince stop ediyor.'**
   String get case14Complaint;
 
   /// No description provided for @case15Vehicle.
   ///
   /// In tr, this message translates to:
-  /// **'2016 Çek Sedan 1.6'**
+  /// **'2010 Hyundai Accent Era 1.5 CRDi'**
   String get case15Vehicle;
 
   /// No description provided for @case15Complaint.
   ///
   /// In tr, this message translates to:
-  /// **'Hız sabitleyici ve şerit takip asistanı devre dışı kaldı uyarısı.'**
+  /// **'Benzinde sorunsuz ama LPG'de tekliyor, güçsüzleşiyor ve gaz yemiyor.'**
   String get case15Complaint;
 
   /// No description provided for @analyzing.

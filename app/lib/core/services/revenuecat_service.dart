@@ -4,7 +4,8 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 class RevenueCatService {
   // TODO: Replace with your actual RevenueCat Public API Keys
-  static const String _appleApiKey = 'appl_YOUR_IOS_KEY'; // TODO: Update when iOS is ready
+  static const String _appleApiKey =
+      'appl_YOUR_IOS_KEY'; // TODO: Update when iOS is ready
   static const String _googleApiKey = 'goog_HawCCKZNzvDgOAsgFcklTVNRrlS';
 
   static Future<void> init() async {
@@ -16,7 +17,7 @@ class RevenueCatService {
     } else {
       configuration = PurchasesConfiguration(_appleApiKey);
     }
-    
+
     await Purchases.configure(configuration);
   }
 
@@ -55,7 +56,7 @@ class RevenueCatService {
       final customerInfo = purchaseResult.customerInfo;
       // For subscriptions, check if 'pro' entitlement is active
       final isPro = customerInfo.entitlements.all['pro']?.isActive ?? false;
-      
+
       // For consumable purchases (hints), the transaction completes successfully,
       // and our backend webhook will add the hint credits via DynamoDB.
       return true;

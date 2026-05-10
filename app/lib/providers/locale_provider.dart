@@ -38,7 +38,8 @@ class LocaleNotifier extends StateNotifier<Locale> {
     await prefs.setString(_key, locale.languageCode);
   }
 
-  String get currentName => localeNames[state.languageCode] ?? state.languageCode;
+  String get currentName =>
+      localeNames[state.languageCode] ?? state.languageCode;
 }
 
 final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {

@@ -482,42 +482,42 @@ class SRu extends S {
 
   @override
   String get case10Complaint =>
-      'Обороты растут при нажатии на газ, но машина почти не ускоряется.';
+      'Загорелся Check Engine. Машина стала вялой и расходует больше топлива.';
 
   @override
-  String get case11Vehicle => '2005 Премиальный немецкий седан 2.0';
+  String get case11Vehicle => '2003 BMW 320i E46';
 
   @override
   String get case11Complaint =>
-      'Горит Check Engine, машина не набирает больше 3000 оборотов.';
+      'Двигатель расходует масло. Доливаю каждые 1000 км, при разгоне из выхлопа идет синий дым.';
 
   @override
-  String get case12Vehicle => '2011 Премиальный немецкий седан 2.1';
+  String get case12Vehicle => '2007 Volkswagen Passat 1.9 TDI';
 
   @override
   String get case12Complaint =>
-      'Масло смешалось с антифризом, в бачке эмульсия.';
+      'В холодные утра тяжело заводится, несколько минут идет белый дым и медленно уходит антифриз.';
 
   @override
-  String get case13Vehicle => '2003 Премиальный немецкий седан 1.8';
+  String get case13Vehicle => '2013 Renault Megane 1.5 dCi';
 
   @override
   String get case13Complaint =>
-      'Во время дождя в салон протекает вода через лобовое стекло и люк.';
+      'Со стороны двигателя слышен вой, утром под машиной увидел небольшую зеленоватую лужу.';
 
   @override
-  String get case14Vehicle => '2014 Премиальный шведский седан 2.0';
+  String get case14Vehicle => '2004 Fiat Doblo 1.9 JTD';
 
   @override
   String get case14Complaint =>
-      'Руль стал очень тяжелым, повернуть почти невозможно.';
+      'Двигатель сильно потерял мощность. Едва тянет в гору и иногда глохнет при нажатии на газ.';
 
   @override
-  String get case15Vehicle => '2016 Чешский седан 1.6';
+  String get case15Vehicle => '2010 Hyundai Accent Era 1.5 CRDi';
 
   @override
   String get case15Complaint =>
-      'Ошибки на панели: круиз-контроль и удержание в полосе отключены.';
+      'На бензине работает нормально, но на LPG дергается, троит и заметно теряет мощность.';
 
   @override
   String get analyzing => 'Анализ...';

@@ -31,21 +31,35 @@ class SettingsScreen extends ConsumerWidget {
                 Row(
                   children: [
                     Container(
-                      width: 42, height: 42,
+                      width: 42,
+                      height: 42,
                       decoration: BoxDecoration(
                         color: AppTheme.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.language, color: AppTheme.primary, size: 22),
+                      child: const Icon(
+                        Icons.language,
+                        color: AppTheme.primary,
+                        size: 22,
+                      ),
                     ),
                     const SizedBox(width: 14),
-                    Text(S.of(context)?.language ?? 'Dil / Language', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                    Text(
+                      S.of(context)?.language ?? 'Dil / Language',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 ...LocaleNotifier.supportedLocales.map((locale) {
-                  final name = LocaleNotifier.localeNames[locale.languageCode] ?? locale.languageCode;
-                  final isSelected = currentLocale.languageCode == locale.languageCode;
+                  final name =
+                      LocaleNotifier.localeNames[locale.languageCode] ??
+                      locale.languageCode;
+                  final isSelected =
+                      currentLocale.languageCode == locale.languageCode;
 
                   return Container(
                     margin: const EdgeInsets.only(bottom: 8),
@@ -60,17 +74,31 @@ class SettingsScreen extends ConsumerWidget {
                           ref.read(localeProvider.notifier).setLocale(locale);
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
                           child: Row(
                             children: [
-                              Text(name, style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                                color: isSelected ? AppTheme.primary : AppTheme.textPrimary,
-                              )),
+                              Text(
+                                name,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w400,
+                                  color: isSelected
+                                      ? AppTheme.primary
+                                      : AppTheme.textPrimary,
+                                ),
+                              ),
                               const Spacer(),
                               if (isSelected)
-                                const Icon(Icons.check_circle, color: AppTheme.primary, size: 22),
+                                const Icon(
+                                  Icons.check_circle,
+                                  color: AppTheme.primary,
+                                  size: 22,
+                                ),
                             ],
                           ),
                         ),
@@ -89,7 +117,10 @@ class SettingsScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
             icon: const Icon(Icons.delete_forever),
-            label: const Text('Hesabı Sil / Delete Account', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            label: const Text(
+              'Hesabı Sil / Delete Account',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             onPressed: () => _showDeleteConfirmation(context, ref),
           ),
           const SizedBox(height: 20),
@@ -103,7 +134,10 @@ class SettingsScreen extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bgCard,
-        title: const Text('⚠️ Hesabı Sil', style: TextStyle(color: AppTheme.danger)),
+        title: const Text(
+          '⚠️ Hesabı Sil',
+          style: TextStyle(color: AppTheme.danger),
+        ),
         content: const Text(
           'Bu işlem geri alınamaz!\n\n'
           'Tüm ilerlemen, satın alımların ve kişisel verilerin '
@@ -113,7 +147,10 @@ class SettingsScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(S.of(context)?.cancel ?? 'İptal', style: const TextStyle(color: AppTheme.textMuted)),
+            child: Text(
+              S.of(context)?.cancel ?? 'İptal',
+              style: const TextStyle(color: AppTheme.textMuted),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.danger),
@@ -138,30 +175,36 @@ class SettingsScreen extends ConsumerWidget {
     try {
       // 1. Delete from DynamoDB via API
       await ref.read(apiClientProvider).deleteAccount();
-      
+
       // 2. Delete from Firebase & Recreate Anonymous Session
       await AuthService.deleteAccount();
 
       if (context.mounted) {
         Navigator.pop(context); // close loader
         Navigator.pop(context); // close settings screen
-        
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Hesap başarıyla silindi ve sıfırlandı.'),
-          backgroundColor: AppTheme.success,
-        ));
-        
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Hesap başarıyla silindi ve sıfırlandı.'),
+            backgroundColor: AppTheme.success,
+          ),
+        );
+
         // Reload fresh data
         ref.read(userProfileProvider.notifier).load();
       }
     } catch (e) {
       if (context.mounted) {
         Navigator.pop(context); // close loader
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Silme işlemi başarısız oldu: $e\nLütfen tekrar giriş yapıp deneyin.'),
-          backgroundColor: AppTheme.danger,
-          duration: const Duration(seconds: 5),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Silme işlemi başarısız oldu: $e\nLütfen tekrar giriş yapıp deneyin.',
+            ),
+            backgroundColor: AppTheme.danger,
+            duration: const Duration(seconds: 5),
+          ),
+        );
       }
     }
   }

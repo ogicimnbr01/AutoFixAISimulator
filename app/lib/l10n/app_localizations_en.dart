@@ -483,42 +483,42 @@ class SEn extends S {
 
   @override
   String get case10Complaint =>
-      'RPM goes up when stepping on gas but car barely accelerates.';
+      'The check engine light came on. The car feels sluggish and uses more fuel than usual.';
 
   @override
-  String get case11Vehicle => '2005 Premium German Sedan 2.0';
+  String get case11Vehicle => '2003 BMW 320i E46';
 
   @override
   String get case11Complaint =>
-      'Check engine light is on and car won\'t go past 3000 RPM.';
+      'The engine is burning oil. I top it up every 1000 km and blue smoke comes from the exhaust under acceleration.';
 
   @override
-  String get case12Vehicle => '2011 Premium German Sedan 2.1';
+  String get case12Vehicle => '2007 Volkswagen Passat 1.9 TDI';
 
   @override
   String get case12Complaint =>
-      'Oil mixed with coolant, expansion tank looks like a milkshake.';
+      'Hard to start on cold mornings. It makes white smoke for a few minutes and slowly loses coolant.';
 
   @override
-  String get case13Vehicle => '2003 Premium German Sedan 1.8';
+  String get case13Vehicle => '2013 Renault Megane 1.5 dCi';
 
   @override
   String get case13Complaint =>
-      'Water leaking inside from the windshield and sunroof in the rain.';
+      'There is a whining noise from the engine area and I saw a small greenish puddle under the car this morning.';
 
   @override
-  String get case14Vehicle => '2014 Premium Swedish Sedan 2.0';
+  String get case14Vehicle => '2004 Fiat Doblo 1.9 JTD';
 
   @override
   String get case14Complaint =>
-      'Steering wheel got super heavy, almost impossible to turn.';
+      'The engine has lost a lot of power. It barely climbs hills and sometimes stalls when I press the gas.';
 
   @override
-  String get case15Vehicle => '2016 Czech Sedan 1.6';
+  String get case15Vehicle => '2010 Hyundai Accent Era 1.5 CRDi';
 
   @override
   String get case15Complaint =>
-      'Cruise control and lane assist disabled warnings on dash.';
+      'It runs fine on gasoline, but on LPG it hesitates, misfires, and has noticeably less power.';
 
   @override
   String get analyzing => 'Analyzing...';

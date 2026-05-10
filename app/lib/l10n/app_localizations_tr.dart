@@ -480,42 +480,42 @@ class STr extends S {
 
   @override
   String get case10Complaint =>
-      'Gaza basınca devir artıyor ama araç hızlanmıyor (bağırıyor ama gitmiyor).';
+      'Motor uyarı lambası yandı. Araç biraz hantal ve yakıtı fazla tüketiyor.';
 
   @override
-  String get case11Vehicle => '2005 Premium Alman Sedan 2.0';
+  String get case11Vehicle => '2003 BMW 320i E46';
 
   @override
   String get case11Complaint =>
-      'Motor uyarı lambası yanıyor ve araç 3000 deviri geçmiyor.';
+      'Motor yağ yakıyor. 1000 km\'de bir yağ ekliyorum ve hızlanırken egzozdan mavi duman çıkıyor.';
 
   @override
-  String get case12Vehicle => '2011 Premium Alman Sedan 2.1';
+  String get case12Vehicle => '2007 Volkswagen Passat 1.9 TDI';
 
   @override
   String get case12Complaint =>
-      'Motor suyuna yağ karışmış, antifriz kabı tahin gibi olmuş.';
+      'Soğuk sabahlarda zor çalışıyor, çalışınca birkaç dakika beyaz duman atıyor ve su eksiltiyor.';
 
   @override
-  String get case13Vehicle => '2003 Premium Alman Sedan 1.8';
+  String get case13Vehicle => '2013 Renault Megane 1.5 dCi';
 
   @override
   String get case13Complaint =>
-      'Ön camdan ve sunroof çevresinden yağmurlu havalarda su alıyor.';
+      'Motor tarafından uğultu geliyor ve sabah arabanın altında yeşilimsi sıvı birikintisi gördüm.';
 
   @override
-  String get case14Vehicle => '2014 Premium İsveç Sedan 2.0';
+  String get case14Vehicle => '2004 Fiat Doblo 1.9 JTD';
 
   @override
   String get case14Complaint =>
-      'Direksiyon çok ağırlaştı, döndürmek neredeyse imkansız.';
+      'Motor çok güç kaybetti. Yokuş çıkmakta zorlanıyor, bazen gaz verince stop ediyor.';
 
   @override
-  String get case15Vehicle => '2016 Çek Sedan 1.6';
+  String get case15Vehicle => '2010 Hyundai Accent Era 1.5 CRDi';
 
   @override
   String get case15Complaint =>
-      'Hız sabitleyici ve şerit takip asistanı devre dışı kaldı uyarısı.';
+      'Benzinde sorunsuz ama LPG\'de tekliyor, güçsüzleşiyor ve gaz yemiyor.';
 
   @override
   String get analyzing => 'İnceleniyor...';

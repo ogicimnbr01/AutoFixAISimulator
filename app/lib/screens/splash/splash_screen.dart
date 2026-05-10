@@ -10,7 +10,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeIn;
   late Animation<double> _scale;
@@ -18,12 +19,21 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
     _fadeIn = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0, 0.6, curve: Curves.easeOut)),
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0, 0.6, curve: Curves.easeOut),
+      ),
     );
     _scale = Tween<double>(begin: 0.8, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0, 0.6, curve: Curves.elasticOut)),
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0, 0.6, curve: Curves.elasticOut),
+      ),
     );
     _controller.forward();
 
@@ -44,10 +54,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           builder: (context, child) {
             return Opacity(
               opacity: _fadeIn.value,
-              child: Transform.scale(
-                scale: _scale.value,
-                child: child,
-              ),
+              child: Transform.scale(scale: _scale.value, child: child),
             );
           },
           child: Column(
@@ -55,30 +62,52 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             children: [
               // Logo
               Container(
-                width: 120, height: 120,
+                width: 120,
+                height: 120,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: AppTheme.primaryGradient,
                   boxShadow: [
-                    BoxShadow(color: AppTheme.primary.withValues(alpha: 0.4), blurRadius: 40, spreadRadius: 8),
+                    BoxShadow(
+                      color: AppTheme.primary.withValues(alpha: 0.4),
+                      blurRadius: 40,
+                      spreadRadius: 8,
+                    ),
                   ],
                 ),
-                child: const Icon(Icons.build_circle, size: 64, color: Colors.white),
+                child: const Icon(
+                  Icons.build_circle,
+                  size: 64,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(height: 32),
               Text(
                 S.of(context)?.splashTitle ?? 'SANAYİ USTASI',
-                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: AppTheme.textPrimary, letterSpacing: 4),
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.textPrimary,
+                  letterSpacing: 4,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 S.of(context)?.splashSubtitle ?? 'Garajın Seni Bekliyor',
-                style: const TextStyle(fontSize: 16, color: AppTheme.textSecondary, letterSpacing: 2),
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: AppTheme.textSecondary,
+                  letterSpacing: 2,
+                ),
               ),
               const SizedBox(height: 48),
               const SizedBox(
-                width: 32, height: 32,
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.primary),
+                width: 32,
+                height: 32,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppTheme.primary,
+                ),
               ),
             ],
           ),

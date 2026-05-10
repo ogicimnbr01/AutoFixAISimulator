@@ -461,37 +461,37 @@ class SZh extends S {
   String get case10Vehicle => '2007 日本掀背车 1.5';
 
   @override
-  String get case10Complaint => '踩油门时转速上升，但车几乎不加速。';
+  String get case10Complaint => '发动机故障灯亮起。车辆变得有点无力，油耗也比平时更高。';
 
   @override
-  String get case11Vehicle => '2005 高级德国轿车 2.0';
+  String get case11Vehicle => '2003 BMW 320i E46';
 
   @override
-  String get case11Complaint => '发动机故障灯亮起，转速无法超过 3000 转。';
+  String get case11Complaint => '发动机烧机油。每 1000 公里就要补机油，加速时排气管冒蓝烟。';
 
   @override
-  String get case12Vehicle => '2011 高级德国轿车 2.1';
+  String get case12Vehicle => '2007 Volkswagen Passat 1.9 TDI';
 
   @override
-  String get case12Complaint => '机油和防冻液混合，膨胀水箱里像奶昔一样。';
+  String get case12Complaint => '冷天早上很难启动，启动后几分钟冒白烟，冷却液也会慢慢减少。';
 
   @override
-  String get case13Vehicle => '2003 高级德国轿车 1.8';
+  String get case13Vehicle => '2013 Renault Megane 1.5 dCi';
 
   @override
-  String get case13Complaint => '下雨时挡风玻璃和天窗周围漏水。';
+  String get case13Complaint => '发动机区域有呜呜声，今天早上车底下有一小滩绿色液体。';
 
   @override
-  String get case14Vehicle => '2014 高级瑞典轿车 2.0';
+  String get case14Vehicle => '2004 Fiat Doblo 1.9 JTD';
 
   @override
-  String get case14Complaint => '方向盘变得非常沉重，几乎无法转动。';
+  String get case14Complaint => '发动机动力明显下降。上坡很吃力，有时一踩油门就熄火。';
 
   @override
-  String get case15Vehicle => '2016 捷克轿车 1.6';
+  String get case15Vehicle => '2010 Hyundai Accent Era 1.5 CRDi';
 
   @override
-  String get case15Complaint => '仪表盘显示定速巡航和车道保持辅助系统已禁用。';
+  String get case15Complaint => '用汽油时正常，但切到 LPG 后会犹豫、缺火，动力明显变差。';
 
   @override
   String get analyzing => '分析中...';

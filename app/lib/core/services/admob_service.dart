@@ -13,8 +13,8 @@ class AdMobService {
   bool _isAdLoaded = false;
 
   // Test Ad Unit ID for Rewarded Ads
-  final String _adUnitId = Platform.isAndroid 
-      ? 'ca-app-pub-3940256099942544/5224354917' 
+  final String _adUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/5224354917'
       : 'ca-app-pub-3940256099942544/1712485313';
 
   Future<void> initialize() async {
@@ -83,6 +83,6 @@ class AdMobService {
       },
     );
 
-    return completer.future; 
+    return completer.future;
   }
 }

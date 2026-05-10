@@ -5,7 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 enum AuthResult { success, cancelled, conflict, error }
 
 /// Authentication service for Google Sign-In and Apple Sign-In.
-/// Links credentials to existing anonymous Firebase accounts so 
+/// Links credentials to existing anonymous Firebase accounts so
 /// purchase history and game progress are preserved.
 class AuthService {
   static final _auth = FirebaseAuth.instance;
@@ -21,8 +21,9 @@ class AuthService {
   static bool get isLinked {
     final user = _auth.currentUser;
     if (user == null) return false;
-    return user.providerData.any((p) =>
-        p.providerId == 'google.com' || p.providerId == 'apple.com');
+    return user.providerData.any(
+      (p) => p.providerId == 'google.com' || p.providerId == 'apple.com',
+    );
   }
 
   /// Sign in with Google and link to existing anonymous account.
@@ -139,7 +140,7 @@ class AuthService {
         rethrow;
       }
     }
-    
+
     // Create new anonymous session after deletion
     await _googleSignIn.signOut();
     await _auth.signInAnonymously();

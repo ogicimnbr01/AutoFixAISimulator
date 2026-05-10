@@ -6,9 +6,10 @@ export 'purchases_provider.dart';
 final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
 
 /// User profile state
-final userProfileProvider = StateNotifierProvider<UserProfileNotifier, AsyncValue<UserProfile>>((ref) {
-  return UserProfileNotifier(ref.read(apiClientProvider));
-});
+final userProfileProvider =
+    StateNotifierProvider<UserProfileNotifier, AsyncValue<UserProfile>>((ref) {
+      return UserProfileNotifier(ref.read(apiClientProvider));
+    });
 
 class UserProfile {
   final String displayName;
@@ -120,7 +121,10 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
 
   Future<bool> claimAdReward(String type, {String? sessionId}) async {
     try {
-      await _api.claimAdReward(type, sessionId: sessionId);
+      final res = await _api.claimAdReward(type, sessionId: sessionId);
+      if (res['rewardGranted'] != true) {
+        return false;
+      }
       await load();
       return true;
     } catch (e) {
@@ -133,21 +137,23 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
       final res = await _api.updateProfile(newName);
       if (res['success'] == true) {
         state.whenData((profile) {
-          state = AsyncValue.data(UserProfile(
-            displayName: newName,
-            energy: profile.energy,
-            streakCount: profile.streakCount,
-            hintCredits: profile.hintCredits,
-            totalRepairs: profile.totalRepairs,
-            subscription: profile.subscription,
-            todayCasesPlayed: profile.todayCasesPlayed,
-            loginBonusClaimed: profile.loginBonusClaimed,
-            dailyHintClaimed: profile.dailyHintClaimed,
-            fomoPurchased: profile.fomoPurchased,
-            maxEnergy: profile.maxEnergy,
-            daysSinceInstall: profile.daysSinceInstall,
-            installDate: profile.installDate,
-          ));
+          state = AsyncValue.data(
+            UserProfile(
+              displayName: newName,
+              energy: profile.energy,
+              streakCount: profile.streakCount,
+              hintCredits: profile.hintCredits,
+              totalRepairs: profile.totalRepairs,
+              subscription: profile.subscription,
+              todayCasesPlayed: profile.todayCasesPlayed,
+              loginBonusClaimed: profile.loginBonusClaimed,
+              dailyHintClaimed: profile.dailyHintClaimed,
+              fomoPurchased: profile.fomoPurchased,
+              maxEnergy: profile.maxEnergy,
+              daysSinceInstall: profile.daysSinceInstall,
+              installDate: profile.installDate,
+            ),
+          );
         });
         return true;
       }
@@ -159,103 +165,113 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
 
   void updateEnergy(int newEnergy) {
     state.whenData((profile) {
-      state = AsyncValue.data(UserProfile(
-        displayName: profile.displayName,
-        energy: newEnergy,
-        streakCount: profile.streakCount,
-        hintCredits: profile.hintCredits,
-        totalRepairs: profile.totalRepairs,
-        subscription: profile.subscription,
-        todayCasesPlayed: profile.todayCasesPlayed,
-        loginBonusClaimed: profile.loginBonusClaimed,
-        dailyHintClaimed: profile.dailyHintClaimed,
-        fomoPurchased: profile.fomoPurchased,
-        maxEnergy: profile.maxEnergy,
-        daysSinceInstall: profile.daysSinceInstall,
-        installDate: profile.installDate,
-      ));
+      state = AsyncValue.data(
+        UserProfile(
+          displayName: profile.displayName,
+          energy: newEnergy,
+          streakCount: profile.streakCount,
+          hintCredits: profile.hintCredits,
+          totalRepairs: profile.totalRepairs,
+          subscription: profile.subscription,
+          todayCasesPlayed: profile.todayCasesPlayed,
+          loginBonusClaimed: profile.loginBonusClaimed,
+          dailyHintClaimed: profile.dailyHintClaimed,
+          fomoPurchased: profile.fomoPurchased,
+          maxEnergy: profile.maxEnergy,
+          daysSinceInstall: profile.daysSinceInstall,
+          installDate: profile.installDate,
+        ),
+      );
     });
   }
 
   /// Consume one hint credit locally after a successful hint API call
   void consumeHint() {
     state.whenData((profile) {
-      state = AsyncValue.data(UserProfile(
-        displayName: profile.displayName,
-        energy: profile.energy,
-        streakCount: profile.streakCount,
-        hintCredits: (profile.hintCredits - 1).clamp(0, 9999),
-        totalRepairs: profile.totalRepairs,
-        subscription: profile.subscription,
-        todayCasesPlayed: profile.todayCasesPlayed,
-        loginBonusClaimed: profile.loginBonusClaimed,
-        dailyHintClaimed: profile.dailyHintClaimed,
-        fomoPurchased: profile.fomoPurchased,
-        maxEnergy: profile.maxEnergy,
-        daysSinceInstall: profile.daysSinceInstall,
-        installDate: profile.installDate,
-      ));
+      state = AsyncValue.data(
+        UserProfile(
+          displayName: profile.displayName,
+          energy: profile.energy,
+          streakCount: profile.streakCount,
+          hintCredits: (profile.hintCredits - 1).clamp(0, 9999),
+          totalRepairs: profile.totalRepairs,
+          subscription: profile.subscription,
+          todayCasesPlayed: profile.todayCasesPlayed,
+          loginBonusClaimed: profile.loginBonusClaimed,
+          dailyHintClaimed: profile.dailyHintClaimed,
+          fomoPurchased: profile.fomoPurchased,
+          maxEnergy: profile.maxEnergy,
+          daysSinceInstall: profile.daysSinceInstall,
+          installDate: profile.installDate,
+        ),
+      );
     });
   }
 
   /// Add purchased hints to the local credit count
   void addHintCredits(int amount) {
     state.whenData((profile) {
-      state = AsyncValue.data(UserProfile(
-        displayName: profile.displayName,
-        energy: profile.energy,
-        streakCount: profile.streakCount,
-        hintCredits: profile.hintCredits + amount,
-        totalRepairs: profile.totalRepairs,
-        subscription: profile.subscription,
-        todayCasesPlayed: profile.todayCasesPlayed,
-        loginBonusClaimed: profile.loginBonusClaimed,
-        dailyHintClaimed: profile.dailyHintClaimed,
-        fomoPurchased: profile.fomoPurchased,
-        maxEnergy: profile.maxEnergy,
-        daysSinceInstall: profile.daysSinceInstall,
-        installDate: profile.installDate,
-      ));
+      state = AsyncValue.data(
+        UserProfile(
+          displayName: profile.displayName,
+          energy: profile.energy,
+          streakCount: profile.streakCount,
+          hintCredits: profile.hintCredits + amount,
+          totalRepairs: profile.totalRepairs,
+          subscription: profile.subscription,
+          todayCasesPlayed: profile.todayCasesPlayed,
+          loginBonusClaimed: profile.loginBonusClaimed,
+          dailyHintClaimed: profile.dailyHintClaimed,
+          fomoPurchased: profile.fomoPurchased,
+          maxEnergy: profile.maxEnergy,
+          daysSinceInstall: profile.daysSinceInstall,
+          installDate: profile.installDate,
+        ),
+      );
     });
   }
 
   void markFomoPurchased() {
     state.whenData((profile) {
-      state = AsyncValue.data(UserProfile(
-        displayName: profile.displayName,
-        energy: profile.energy,
-        streakCount: profile.streakCount,
-        hintCredits: profile.hintCredits,
-        totalRepairs: profile.totalRepairs,
-        subscription: 'pro', // Automatically make them PRO for the mock
-        todayCasesPlayed: profile.todayCasesPlayed,
-        loginBonusClaimed: profile.loginBonusClaimed,
-        dailyHintClaimed: profile.dailyHintClaimed,
-        fomoPurchased: true,
-        maxEnergy: profile.maxEnergy,
-        daysSinceInstall: profile.daysSinceInstall,
-        installDate: profile.installDate,
-      ));
+      state = AsyncValue.data(
+        UserProfile(
+          displayName: profile.displayName,
+          energy: profile.energy,
+          streakCount: profile.streakCount,
+          hintCredits: profile.hintCredits,
+          totalRepairs: profile.totalRepairs,
+          subscription: 'pro', // Automatically make them PRO for the mock
+          todayCasesPlayed: profile.todayCasesPlayed,
+          loginBonusClaimed: profile.loginBonusClaimed,
+          dailyHintClaimed: profile.dailyHintClaimed,
+          fomoPurchased: true,
+          maxEnergy: profile.maxEnergy,
+          daysSinceInstall: profile.daysSinceInstall,
+          installDate: profile.installDate,
+        ),
+      );
     });
   }
 
   void markProPurchased() {
     state.whenData((profile) {
-      state = AsyncValue.data(UserProfile(
-        displayName: profile.displayName,
-        energy: profile.energy,
-        streakCount: profile.streakCount,
-        hintCredits: profile.hintCredits,
-        totalRepairs: profile.totalRepairs,
-        subscription: 'pro',
-        todayCasesPlayed: profile.todayCasesPlayed,
-        loginBonusClaimed: profile.loginBonusClaimed,
-        dailyHintClaimed: profile.dailyHintClaimed,
-        fomoPurchased: profile.fomoPurchased,
-        maxEnergy: profile.maxEnergy,
-        daysSinceInstall: profile.daysSinceInstall,
-        installDate: profile.installDate,
-      ));
+      state = AsyncValue.data(
+        UserProfile(
+          displayName: profile.displayName,
+          energy: profile.energy,
+          streakCount: profile.streakCount,
+          hintCredits: profile.hintCredits,
+          totalRepairs: profile.totalRepairs,
+          subscription: 'pro',
+          todayCasesPlayed: profile.todayCasesPlayed,
+          loginBonusClaimed: profile.loginBonusClaimed,
+          dailyHintClaimed: profile.dailyHintClaimed,
+          fomoPurchased: profile.fomoPurchased,
+          maxEnergy: profile.maxEnergy,
+          daysSinceInstall: profile.daysSinceInstall,
+          installDate: profile.installDate,
+        ),
+      );
     });
   }
 }
@@ -302,25 +318,38 @@ class ChatMessage {
   final String content;
   final bool blocked;
 
-  ChatMessage({required this.role, required this.content, this.blocked = false});
+  ChatMessage({
+    required this.role,
+    required this.content,
+    this.blocked = false,
+  });
 }
 
 /// Leaderboard state
-final leaderboardProvider = FutureProvider.family<List<LeaderboardEntry>, String>((ref, period) async {
-  final api = ref.read(apiClientProvider);
-  final data = await api.getLeaderboard(period);
-  final rankings = data['rankings'] as List;
-  return rankings.map((r) => LeaderboardEntry(
-    rank: r['rank'],
-    displayName: r['displayName'],
-    repPoints: r['repPoints'],
-  )).toList();
-});
+final leaderboardProvider =
+    FutureProvider.family<List<LeaderboardEntry>, String>((ref, period) async {
+      final api = ref.read(apiClientProvider);
+      final data = await api.getLeaderboard(period);
+      final rankings = data['rankings'] as List;
+      return rankings
+          .map(
+            (r) => LeaderboardEntry(
+              rank: r['rank'],
+              displayName: r['displayName'],
+              repPoints: r['repPoints'],
+            ),
+          )
+          .toList();
+    });
 
 class LeaderboardEntry {
   final int rank;
   final String displayName;
   final int repPoints;
 
-  LeaderboardEntry({required this.rank, required this.displayName, required this.repPoints});
+  LeaderboardEntry({
+    required this.rank,
+    required this.displayName,
+    required this.repPoints,
+  });
 }

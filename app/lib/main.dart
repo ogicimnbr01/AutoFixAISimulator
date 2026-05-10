@@ -20,7 +20,7 @@ import 'core/services/revenuecat_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  
+
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -28,7 +28,7 @@ void main() async {
       systemNavigationBarColor: Colors.transparent,
     ),
   );
-  
+
   // Immersive Mode (Hide OS Navigation Bar)
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
@@ -84,14 +84,14 @@ class _AppEntryState extends ConsumerState<AppEntry> {
       if (FirebaseAuth.instance.currentUser == null) {
         await FirebaseAuth.instance.signInAnonymously();
       }
-      
+
       // 2. Load profile from backend
       if (mounted) {
         await ref.read(userProfileProvider.notifier).load();
-        
+
         // 3. Initialize Games Services (Play Games / Game Center)
         ref.read(achievementsServiceProvider).signIn();
-        
+
         // 4. Initialize AdMob
         ref.read(adMobServiceProvider).initialize();
 
@@ -103,14 +103,20 @@ class _AppEntryState extends ConsumerState<AppEntry> {
         }
       }
     } catch (e, stackTrace) {
-      AppLogger.e('Init Error during Authentication or Profile loading', e, stackTrace);
+      AppLogger.e(
+        'Init Error during Authentication or Profile loading',
+        e,
+        stackTrace,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (_showSplash) {
-      return SplashScreen(onComplete: () => setState(() => _showSplash = false));
+      return SplashScreen(
+        onComplete: () => setState(() => _showSplash = false),
+      );
     }
     return const MainShell();
   }
@@ -126,11 +132,7 @@ class MainShell extends ConsumerStatefulWidget {
 class _MainShellState extends ConsumerState<MainShell> {
   int _currentIndex = 0;
 
-  final _screens = const [
-    HomeScreen(),
-    LeaderboardScreen(),
-    ProfileScreen(),
-  ];
+  final _screens = const [HomeScreen(), LeaderboardScreen(), ProfileScreen()];
 
   @override
   Widget build(BuildContext context) {
@@ -139,19 +141,29 @@ class _MainShellState extends ConsumerState<MainShell> {
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AppTheme.bgElevated, width: 0.5)),
+          border: Border(
+            top: BorderSide(color: AppTheme.bgElevated, width: 0.5),
+          ),
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (i) => setState(() => _currentIndex = i),
           items: [
-            BottomNavigationBarItem(icon: const Icon(Icons.garage), label: loc?.tabGarage ?? 'Garaj'),
-            BottomNavigationBarItem(icon: const Icon(Icons.emoji_events), label: loc?.tabLeaderboard ?? 'Sıralama'),
-            BottomNavigationBarItem(icon: const Icon(Icons.person), label: loc?.tabProfile ?? 'Profil'),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.garage),
+              label: loc?.tabGarage ?? 'Garaj',
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.emoji_events),
+              label: loc?.tabLeaderboard ?? 'Sıralama',
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.person),
+              label: loc?.tabProfile ?? 'Profil',
+            ),
           ],
         ),
       ),
     );
   }
 }
-

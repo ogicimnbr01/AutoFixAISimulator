@@ -5,7 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 /// API Client for AutoFix AI Simulator backend
 class ApiClient {
-  static const _baseUrl = 'https://kw9p0x0sz4.execute-api.us-east-1.amazonaws.com';
+  static const _baseUrl =
+      'https://kw9p0x0sz4.execute-api.us-east-1.amazonaws.com';
 
   Future<Map<String, String>> get _headers async {
     final token = await FirebaseAuth.instance.currentUser?.getIdToken();
@@ -18,12 +19,18 @@ class ApiClient {
   // === User ===
 
   Future<Map<String, dynamic>> getProfile() async {
-    final res = await http.get(Uri.parse('$_baseUrl/user/profile'), headers: await _headers);
+    final res = await http.get(
+      Uri.parse('$_baseUrl/user/profile'),
+      headers: await _headers,
+    );
     return _parseResponse(res);
   }
 
   Future<Map<String, dynamic>> claimLoginBonus() async {
-    final res = await http.post(Uri.parse('$_baseUrl/user/login-bonus'), headers: await _headers);
+    final res = await http.post(
+      Uri.parse('$_baseUrl/user/login-bonus'),
+      headers: await _headers,
+    );
     return _parseResponse(res);
   }
 
@@ -38,18 +45,29 @@ class ApiClient {
     return _parseResponse(res);
   }
 
-  Future<Map<String, dynamic>> sendMessage(String sessionId, String message, {String lang = 'tr'}) async {
+  Future<Map<String, dynamic>> sendMessage(
+    String sessionId,
+    String message, {
+    String lang = 'tr',
+  }) async {
     final res = await http.post(
       Uri.parse('$_baseUrl/game/message'),
       headers: await _headers,
-      body: jsonEncode({'sessionId': sessionId, 'message': message, 'langCode': lang}),
+      body: jsonEncode({
+        'sessionId': sessionId,
+        'message': message,
+        'langCode': lang,
+      }),
     );
     return _parseResponse(res);
   }
 
   // === Hint ===
 
-  Future<Map<String, dynamic>> requestHint(String sessionId, {String lang = 'tr'}) async {
+  Future<Map<String, dynamic>> requestHint(
+    String sessionId, {
+    String lang = 'tr',
+  }) async {
     final res = await http.post(
       Uri.parse('$_baseUrl/hint'),
       headers: await _headers,
@@ -67,7 +85,10 @@ class ApiClient {
     return _parseResponse(res);
   }
 
-  Future<Map<String, dynamic>> mergeProfile(String oldAnonymousId, Map<String, dynamic> localData) async {
+  Future<Map<String, dynamic>> mergeProfile(
+    String oldAnonymousId,
+    Map<String, dynamic> localData,
+  ) async {
     final res = await http.post(
       Uri.parse('$_baseUrl/user/merge'),
       headers: await _headers,
@@ -89,14 +110,17 @@ class ApiClient {
 
   // === Report ===
 
-  Future<Map<String, dynamic>> reportMessage(String sessionId, String messageContent) async {
+  Future<Map<String, dynamic>> reportMessage(
+    String sessionId,
+    String messageContent,
+  ) async {
     final res = await http.post(
       Uri.parse('$_baseUrl/report'),
       headers: await _headers,
       body: jsonEncode({
         'sessionId': sessionId,
         'messageContent': messageContent,
-        'reason': 'Inappropriate AI behavior (Reported by User)'
+        'reason': 'Inappropriate AI behavior (Reported by User)',
       }),
     );
     return _parseResponse(res);
@@ -104,7 +128,10 @@ class ApiClient {
 
   // === Ad Reward ===
 
-  Future<Map<String, dynamic>> claimAdReward(String rewardType, {String? sessionId}) async {
+  Future<Map<String, dynamic>> claimAdReward(
+    String rewardType, {
+    String? sessionId,
+  }) async {
     final res = await http.post(
       Uri.parse('$_baseUrl/ad/reward'),
       headers: await _headers,
@@ -146,7 +173,11 @@ class ApiException implements Exception {
   final String error;
   final String message;
 
-  ApiException({required this.statusCode, required this.error, required this.message});
+  ApiException({
+    required this.statusCode,
+    required this.error,
+    required this.message,
+  });
 
   @override
   String toString() => 'ApiException($statusCode): $error — $message';

@@ -21,18 +21,18 @@ class AchievementsService {
   }
 
   /// Belirli bir başarımı açar.
-  Future<void> unlockAchievement({required String androidId, required String iosId}) async {
+  Future<void> unlockAchievement({
+    required String androidId,
+    required String iosId,
+  }) async {
     if (!_isSignIn) {
       await signIn();
     }
-    
+
     if (_isSignIn) {
       try {
         await GamesServices.unlock(
-          achievement: Achievement(
-            androidID: androidId,
-            iOSID: iosId,
-          ),
+          achievement: Achievement(androidID: androidId, iOSID: iosId),
         );
         AppLogger.i('Achievement unlocked: $androidId / $iosId');
       } catch (e) {
@@ -42,7 +42,7 @@ class AchievementsService {
   }
 
   // --- OYUN İÇİ BAŞARIMLAR ---
-  
+
   /// "Çırak": 5 Vaka Çöz
   Future<void> unlockCirak() => unlockAchievement(
     androidId: 'CgkI_PLACEHOLDER_1', // TODO: Play Console'dan alınacak
@@ -50,10 +50,8 @@ class AchievementsService {
   );
 
   /// "Usta": 50 Vaka Çöz
-  Future<void> unlockUsta() => unlockAchievement(
-    androidId: 'CgkI_PLACEHOLDER_2',
-    iosId: 'ach_usta',
-  );
+  Future<void> unlockUsta() =>
+      unlockAchievement(androidId: 'CgkI_PLACEHOLDER_2', iosId: 'ach_usta');
 
   /// "Şahin Gözlü": İpucu kullanmadan 3 vaka çöz
   Future<void> unlockSahinGozlu() => unlockAchievement(

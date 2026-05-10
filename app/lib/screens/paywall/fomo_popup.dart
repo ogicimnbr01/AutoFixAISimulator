@@ -21,10 +21,11 @@ class FOMOPopup extends StatefulWidget {
   State<FOMOPopup> createState() => _FOMOPopupState();
 }
 
-class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMixin {
+class _FOMOPopupState extends State<FOMOPopup>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animController;
   late Animation<double> _pulseAnimation;
-  
+
   int _spotsLeft = 3;
   int _visitors = 513;
   Timer? _countdownTimer;
@@ -32,20 +33,22 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    
+
     // Pulse animation for the urgent text
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
       CurvedAnimation(parent: _animController, curve: Curves.easeInOut),
     );
 
     // Fake Real-Time Logic (The Magic Trick)
     // Drops the available spots randomly every 2 to 4 seconds
-    _countdownTimer = Timer.periodic(const Duration(milliseconds: 3000), (timer) {
+    _countdownTimer = Timer.periodic(const Duration(milliseconds: 3000), (
+      timer,
+    ) {
       if (!mounted) return;
       final rand = Random();
       if (rand.nextBool() && _spotsLeft > 1) {
@@ -54,7 +57,7 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
           _visitors += rand.nextInt(5) + 2;
         });
       }
-      
+
       // Stop decreasing at 1 to maximize panic without closing the window
       if (_spotsLeft <= 1) {
         timer.cancel();
@@ -88,13 +91,16 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
         decoration: BoxDecoration(
           color: AppTheme.bgCard,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppTheme.danger.withValues(alpha: 0.5), width: 2),
+          border: Border.all(
+            color: AppTheme.danger.withValues(alpha: 0.5),
+            width: 2,
+          ),
           boxShadow: [
             BoxShadow(
               color: AppTheme.danger.withValues(alpha: 0.2),
               blurRadius: 30,
               spreadRadius: 5,
-            )
+            ),
           ],
         ),
         child: Column(
@@ -103,10 +109,14 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
             // Urgent Icon
             ScaleTransition(
               scale: _pulseAnimation,
-              child: const Icon(Icons.local_fire_department, color: AppTheme.danger, size: 64),
+              child: const Icon(
+                Icons.local_fire_department,
+                color: AppTheme.danger,
+                size: 64,
+              ),
             ),
             const SizedBox(height: 16),
-            
+
             // Headline
             Text(
               S.of(context)?.fomoPopupTitle ?? 'GİZLİ TEKLİF',
@@ -119,13 +129,16 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            
+
             // The Deal
             Stack(
               clipBehavior: Clip.none,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 20,
+                  ),
                   decoration: BoxDecoration(
                     color: AppTheme.danger.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -133,7 +146,8 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
                   child: Column(
                     children: [
                       Text(
-                        S.of(context)?.fomoOffer ?? '1 Haftalık Sınırsız Enerji\n🎁 +5 İpucu Hediye!',
+                        S.of(context)?.fomoOffer ??
+                            '1 Haftalık Sınırsız Enerji\n🎁 +5 İpucu Hediye!',
                         style: const TextStyle(
                           fontSize: 16,
                           color: AppTheme.danger,
@@ -178,17 +192,28 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
                   child: Transform.rotate(
                     angle: 0.15,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: AppTheme.success,
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
-                          BoxShadow(color: AppTheme.success.withValues(alpha: 0.4), blurRadius: 8, spreadRadius: 1)
+                          BoxShadow(
+                            color: AppTheme.success.withValues(alpha: 0.4),
+                            blurRadius: 8,
+                            spreadRadius: 1,
+                          ),
                         ],
                       ),
                       child: Text(
                         S.of(context)?.fomoDiscount ?? '%80 İNDİRİM!',
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ),
@@ -196,16 +221,24 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // Social Proof & Scarcity (Fake Counter)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.people_alt_outlined, color: AppTheme.textSecondary, size: 20),
+                const Icon(
+                  Icons.people_alt_outlined,
+                  color: AppTheme.textSecondary,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Text(
-                  S.of(context)?.fomoViewers(_visitors.toString()) ?? '$_visitors kişi teklifi inceliyor',
-                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+                  S.of(context)?.fomoViewers(_visitors.toString()) ??
+                      '$_visitors kişi teklifi inceliyor',
+                  style: const TextStyle(
+                    color: AppTheme.textSecondary,
+                    fontSize: 14,
+                  ),
                 ),
               ],
             ),
@@ -220,21 +253,29 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Kalan Paket: ', style: TextStyle(fontSize: 16, color: Colors.white70)),
+                  const Text(
+                    'Kalan Paket: ',
+                    style: TextStyle(fontSize: 16, color: Colors.white70),
+                  ),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
-                    transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
+                    transitionBuilder: (child, animation) =>
+                        ScaleTransition(scale: animation, child: child),
                     child: Text(
                       '$_spotsLeft',
                       key: ValueKey<int>(_spotsLeft),
-                      style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: AppTheme.warning),
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        color: AppTheme.warning,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 32),
-            
+
             // Call to Action
             SizedBox(
               width: double.infinity,
@@ -244,24 +285,33 @@ class _FOMOPopupState extends State<FOMOPopup> with SingleTickerProviderStateMix
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.danger,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   elevation: 8,
                   shadowColor: AppTheme.danger.withValues(alpha: 0.5),
                 ),
                 child: Text(
                   S.of(context)?.fomoBuy ?? 'TÜKENMEDEN AL',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, letterSpacing: 1),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Dismiss
             TextButton(
               onPressed: () => Navigator.pop(context, true),
               child: Text(
                 S.of(context)?.fomoSkip ?? 'Fırsatı Kaçır ve Normal Devam Et',
-                style: const TextStyle(color: AppTheme.textMuted, decoration: TextDecoration.underline),
+                style: const TextStyle(
+                  color: AppTheme.textMuted,
+                  decoration: TextDecoration.underline,
+                ),
               ),
             ),
           ],
