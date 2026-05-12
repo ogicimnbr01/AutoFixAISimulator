@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/providers.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import '../../core/services/revenuecat_service.dart';
 
 // Instead of hardcoding everything, we use RevenueCat packages.
 // We map RevenueCat package identifiers to these UI properties.
@@ -259,7 +261,7 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
                 }
 
                 final btnText = selectedPkg != null
-                    ? 'Satın Al — ${selectedPkg.storeProduct.localizedPriceString}'
+                    ? 'Satın Al — ${selectedPkg.storeProduct.priceString}'
                     : 'Paket Bekleniyor...';
 
                 return Container(
@@ -280,7 +282,7 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
                   child: ElevatedButton(
                     onPressed: selectedPkg == null
                         ? null
-                        : () => _onPurchase(selectedPkg),
+                        : () => _onPurchase(selectedPkg!),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.warning,
                       foregroundColor: Colors.black,
@@ -406,7 +408,7 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
 
                 // Price
                 Text(
-                  pkg.storeProduct.localizedPriceString,
+                  pkg.storeProduct.priceString,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,

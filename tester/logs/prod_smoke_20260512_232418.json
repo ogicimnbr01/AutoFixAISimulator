@@ -1,0 +1,79 @@
+{
+  "startedAt": "2026-05-12T23:24:07",
+  "baseUrl": "https://kw9p0x0sz4.execute-api.us-east-1.amazonaws.com",
+  "lang": "tr",
+  "scenarioIds": [
+    1
+  ],
+  "cases": [
+    {
+      "scenarioId": 1,
+      "name": "S01 - Dead battery",
+      "goal": "Akü ölçümü kabul edilmeli ve akü değişince vaka çözülmeli.",
+      "steps": [
+        {
+          "index": 1,
+          "message": "aküyü ölç",
+          "status": 200,
+          "body": {
+            "response": "Multimeter akü terminallerine bağlandığında 9,2V ölçüyor. Normal 12,6V'nin altında.",
+            "messageCount": 1,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 2,
+          "message": "aküye saf su ve asit takviyesi yapıp başka akü ile şarj edelim",
+          "status": 200,
+          "body": {
+            "response": "Akü terminallerine saf su ve asit takviyesi yapıldı, başka bir akü ile şarj edildi. Ancak yine de akü düşük voltaj gösteriyor.",
+            "messageCount": 2,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 3,
+          "message": "aküyü değiştir",
+          "status": 200,
+          "body": {
+            "response": "Yeni bir akü ile değiştirildi. Şimdi araba sorunsuz başlıyor.",
+            "messageCount": 3,
+            "messageLimit": 18,
+            "solved": true,
+            "streakCount": 1,
+            "bonusEnergy": false,
+            "masteryFeedback": "Asit/saf su ve şarj fikri mantıklı bir denemeydi ama ölçüm değişmedi. Yeni akü ile değiştirdikten sonra sorun çözüldü. Güzel teşhis, usta gibi toparladın."
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        }
+      ],
+      "ok": true,
+      "start": {
+        "status": 200,
+        "body": {
+          "sessionId": "a3d7ad9a-13da-4677-a2e0-c90ddb1cffd4",
+          "scenario": {
+            "id": 1,
+            "vehicle": "2002 Japon Sedan 1.6, Benzin, Manuel",
+            "complaint": "The car won't start at all. When I turn the key, nothing happens — no sound, no lights, nothing.",
+            "difficulty": "Easy"
+          },
+          "energy": 4,
+          "isPro": false
+        }
+      }
+    }
+  ],
+  "finishedAt": "2026-05-12T23:24:18",
+  "ok": true
+}

@@ -1,0 +1,133 @@
+{
+  "startedAt": "2026-05-12T22:37:31",
+  "baseUrl": "https://kw9p0x0sz4.execute-api.us-east-1.amazonaws.com",
+  "lang": "tr",
+  "scenarioIds": [
+    2,
+    3
+  ],
+  "cases": [
+    {
+      "scenarioId": 2,
+      "name": "S02 - Starter motor",
+      "goal": "Marş motoru komutları kabul edilmeli ve tamir/değişim çözmeli.",
+      "steps": [
+        {
+          "index": 1,
+          "message": "marş motorunu kontrol et",
+          "status": 200,
+          "body": {
+            "response": "Marş motorunu kontrol ediyorsun. Gözlem sonuçları: Gözlem / Sonuç: After giving the starter motor a couple of firm taps with a wrench, the engine starts on the next attempt.",
+            "messageCount": 1,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 2,
+          "message": "marş motorunu değiştir",
+          "status": 200,
+          "body": {
+            "response": "Marş motorunu değiştiriyorsun. Araba artık sorunsuz çalışıyor.",
+            "messageCount": 2,
+            "messageLimit": 18,
+            "solved": true,
+            "streakCount": 1,
+            "bonusEnergy": false,
+            "masteryFeedback": "Hızlı ve etkili sorun teşhisi için teşekkürler! Marş motorunu değiştirme hamleniz doğruydu. Gelecekte benzer durumlarda bu kadar çabuk ve doğru bir teşhis koymaya devam et!"
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        }
+      ],
+      "ok": true,
+      "start": {
+        "status": 200,
+        "body": {
+          "sessionId": "79e63ed0-90da-4261-ab17-06570475e2fb",
+          "scenario": {
+            "id": 2,
+            "vehicle": "2006 Amerikan Hatchback 1.6, Dizel, Manuel",
+            "complaint": "When I turn the key, I hear a clicking sound but the engine doesn't turn over.",
+            "difficulty": "Easy"
+          },
+          "energy": 4,
+          "isPro": false
+        }
+      }
+    },
+    {
+      "scenarioId": 3,
+      "name": "S03 - Left headlight fuse",
+      "goal": "Sağlam parça halüsinasyonu yapmadan sigorta çözümüne gitmeli.",
+      "steps": [
+        {
+          "index": 1,
+          "message": "sağ farı test edelim",
+          "status": 200,
+          "body": {
+            "response": "Sağ far her iki modda da çalışıyor.",
+            "messageCount": 1,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 2,
+          "message": "sol far ampulünü kontrol edelim",
+          "status": 200,
+          "body": {
+            "response": "Sol far lambası tamamen yanmamış durumda, filament sağlam, lamba sağlıklı görünüyor.",
+            "messageCount": 2,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 3,
+          "message": "sol far sigortasını değiştir",
+          "status": 200,
+          "body": {
+            "response": "Sol far sigortasının değiştirilmesiyle sol far tekrar çalışmaya başladı ve normal şekilde yanıyor.",
+            "messageCount": 3,
+            "messageLimit": 18,
+            "solved": true,
+            "streakCount": 2,
+            "bonusEnergy": false,
+            "masteryFeedback": "Sol far sigortasının değiştirilmesi için doğru karar aldın, bu işlemi başarıyla gerçekleştirdin. Bu testlerle nasıl mantıklı bir şekilde problemin çözüldüğünü gösterdin. İyi çalışma!"
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        }
+      ],
+      "ok": true,
+      "start": {
+        "status": 200,
+        "body": {
+          "sessionId": "b2b96f9d-0249-4545-9b89-a41f860f6efb",
+          "scenario": {
+            "id": 3,
+            "vehicle": "2008 Alman Hatchback 1.4, Benzin, Otomatik",
+            "complaint": "My left headlight isn't working. The right one is fine.",
+            "difficulty": "Easy"
+          },
+          "energy": 3,
+          "isPro": false
+        }
+      }
+    }
+  ],
+  "finishedAt": "2026-05-12T22:37:45",
+  "ok": true
+}

@@ -1,0 +1,79 @@
+{
+  "startedAt": "2026-05-12T22:37:11",
+  "baseUrl": "https://kw9p0x0sz4.execute-api.us-east-1.amazonaws.com",
+  "lang": "tr",
+  "scenarioIds": [
+    1
+  ],
+  "cases": [
+    {
+      "scenarioId": 1,
+      "name": "S01 - Dead battery",
+      "goal": "Akü ölçümü kabul edilmeli ve akü değişince vaka çözülmeli.",
+      "steps": [
+        {
+          "index": 1,
+          "message": "aküyü ölç",
+          "status": 200,
+          "body": {
+            "response": "Multimetre ile akü terminallerinde ölçüm yapıldı. 9,2 volt ölçüldü. Normal 12,6 voltun altında.",
+            "messageCount": 1,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 2,
+          "message": "aküye saf su ve asit takviyesi yapıp başka akü ile şarj edelim",
+          "status": 200,
+          "body": {
+            "response": "Bu araçta bu bileşene ait bir test bulunamıyor.",
+            "messageCount": 2,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 3,
+          "message": "aküyü değiştir",
+          "status": 200,
+          "body": {
+            "response": "Akü değiştirildi. Araç şimdi sorunsuz çalışıyor.",
+            "messageCount": 3,
+            "messageLimit": 18,
+            "solved": true,
+            "streakCount": 1,
+            "bonusEnergy": false,
+            "masteryFeedback": "Harika teşhis hamlesi, doğru arızayı tespit ettin. Akü değişimiyle sorunu başarıyla çözdün. Başka araçlarda da bu tür teşhisleri hızlı bir şekilde yapabilmek için pratik yap."
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        }
+      ],
+      "ok": true,
+      "start": {
+        "status": 200,
+        "body": {
+          "sessionId": "32b4b213-2663-48d1-ae63-2e8f925ad66f",
+          "scenario": {
+            "id": 1,
+            "vehicle": "2002 Japon Sedan 1.6, Benzin, Manuel",
+            "complaint": "The car won't start at all. When I turn the key, nothing happens — no sound, no lights, nothing.",
+            "difficulty": "Easy"
+          },
+          "energy": 4,
+          "isPro": false
+        }
+      }
+    }
+  ],
+  "finishedAt": "2026-05-12T22:37:19",
+  "ok": true
+}

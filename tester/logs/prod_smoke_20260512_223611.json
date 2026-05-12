@@ -1,0 +1,134 @@
+{
+  "startedAt": "2026-05-12T22:35:57",
+  "baseUrl": "https://kw9p0x0sz4.execute-api.us-east-1.amazonaws.com",
+  "lang": "tr",
+  "scenarioIds": [
+    1,
+    2,
+    3
+  ],
+  "cases": [
+    {
+      "scenarioId": 1,
+      "name": "S01 - Dead battery",
+      "goal": "Akü ölçümü kabul edilmeli ve akü değişince vaka çözülmeli.",
+      "steps": [
+        {
+          "index": 1,
+          "message": "aküyü ölç",
+          "status": 200,
+          "body": {
+            "response": "Multimetre akü terminallerinde 9,2 volt gösteriyor. Normal 12,6 voltun çok altında.",
+            "messageCount": 1,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 2,
+          "message": "aküye saf su ve asit takviyesi yapıp başka akü ile şarj edelim",
+          "status": 200,
+          "body": {
+            "response": "Bu araçta bu bileşene ait bir saf su ve asit takviye ve şarj sistemi bulunmuyor.",
+            "messageCount": 2,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [
+            "contains blocked text: bulunmuyor"
+          ],
+          "warnings": [],
+          "ok": false
+        }
+      ],
+      "ok": false,
+      "start": {
+        "status": 200,
+        "body": {
+          "sessionId": "5ccc8b29-3f89-4475-9829-96d33b073890",
+          "scenario": {
+            "id": 1,
+            "vehicle": "2002 Japon Sedan 1.6, Benzin, Manuel",
+            "complaint": "The car won't start at all. When I turn the key, nothing happens — no sound, no lights, nothing.",
+            "difficulty": "Easy"
+          },
+          "energy": 1,
+          "isPro": false
+        }
+      }
+    },
+    {
+      "scenarioId": 2,
+      "name": "S02 - Starter motor",
+      "goal": "Marş motoru komutları kabul edilmeli ve tamir/değişim çözmeli.",
+      "steps": [
+        {
+          "index": 1,
+          "message": "marş motorunu kontrol et",
+          "status": 200,
+          "body": {
+            "response": "TEST ANAHTARI: tap_starter_motor | Gözlem / Sonuç: After giving the starter motor a couple of firm taps with a wrench, the engine starts on the next attempt.",
+            "messageCount": 1,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 2,
+          "message": "marş motorunu değiştir",
+          "status": 200,
+          "body": {
+            "response": "Parçanın değiştirildiğini ve arabanın artık sorunsuz çalıştığını söyle.",
+            "messageCount": 2,
+            "messageLimit": 18,
+            "solved": true,
+            "streakCount": 5,
+            "bonusEnergy": false,
+            "masteryFeedback": "Mükemmel iş çıkardın. Marş motorunu kontrol etme ve değiştirme hamlelerini doğru şekilde yaptın. Tekrar tekrar denemeyi bırakma, bu küçük testler çok yararlı olabilir."
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        }
+      ],
+      "ok": true,
+      "start": {
+        "status": 200,
+        "body": {
+          "sessionId": "e0ddab33-7cfe-4cda-b6e2-be6b58509eb9",
+          "scenario": {
+            "id": 2,
+            "vehicle": "2006 Amerikan Hatchback 1.6, Dizel, Manuel",
+            "complaint": "When I turn the key, I hear a clicking sound but the engine doesn't turn over.",
+            "difficulty": "Easy"
+          },
+          "energy": 0,
+          "isPro": false
+        }
+      }
+    },
+    {
+      "scenarioId": 3,
+      "name": "S03 - Left headlight fuse",
+      "goal": "Sağlam parça halüsinasyonu yapmadan sigorta çözümüne gitmeli.",
+      "steps": [],
+      "ok": false,
+      "start": {
+        "status": 403,
+        "body": {
+          "error": "no_energy",
+          "message": "Watch an ad or wait for daily reset."
+        }
+      },
+      "error": "start failed with HTTP 403"
+    }
+  ],
+  "finishedAt": "2026-05-12T22:36:11",
+  "ok": false
+}

@@ -992,7 +992,7 @@ abstract class S {
   /// No description provided for @case11Complaint.
   ///
   /// In tr, this message translates to:
-  /// **'Motor yağ yakıyor. 1000 km'de bir yağ ekliyorum ve hızlanırken egzozdan mavi duman çıkıyor.'**
+  /// **'Motor yağ yakıyor. 1000 km\'de bir yağ ekliyorum ve hızlanırken egzozdan mavi duman çıkıyor.'**
   String get case11Complaint;
 
   /// No description provided for @case12Vehicle.
@@ -1040,7 +1040,7 @@ abstract class S {
   /// No description provided for @case15Complaint.
   ///
   /// In tr, this message translates to:
-  /// **'Benzinde sorunsuz ama LPG'de tekliyor, güçsüzleşiyor ve gaz yemiyor.'**
+  /// **'Benzinde sorunsuz ama LPG\'de tekliyor, güçsüzleşiyor ve gaz yemiyor.'**
   String get case15Complaint;
 
   /// No description provided for @analyzing.

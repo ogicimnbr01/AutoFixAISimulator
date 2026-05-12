@@ -1,0 +1,79 @@
+{
+  "startedAt": "2026-05-12T22:44:51",
+  "baseUrl": "https://kw9p0x0sz4.execute-api.us-east-1.amazonaws.com",
+  "lang": "tr",
+  "scenarioIds": [
+    1
+  ],
+  "cases": [
+    {
+      "scenarioId": 1,
+      "name": "S01 - Dead battery",
+      "goal": "Akü ölçümü kabul edilmeli ve akü değişince vaka çözülmeli.",
+      "steps": [
+        {
+          "index": 1,
+          "message": "aküyü ölç",
+          "status": 200,
+          "body": {
+            "response": "Multimeter ile aküyü ölçtün. Gösterge 9,2V okuyor. Normal 12,6V'nin çok altında.",
+            "messageCount": 1,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 2,
+          "message": "aküye saf su ve asit takviyesi yapıp başka akü ile şarj edelim",
+          "status": 200,
+          "body": {
+            "response": "Akü terminallerine saf su ve asit takviyesi yapıp başka bir akü ile şarj etmeye çalıştınız. Ancak bu işlem sonucunda akü terminallerindeki korozyon birikimi ve düşük voltaj sorunu çözülmedi.",
+            "messageCount": 2,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 3,
+          "message": "aküyü değiştir",
+          "status": 200,
+          "body": {
+            "response": "Aküyü yeni bir tane ile değiştirdiniz. Artık akü terminallerinde korozyon yok. Multimeter ile ölçüm yaptığınızda 12,6V okuyor. Araba artık sorunsuz bir şekilde çalışıyor.",
+            "messageCount": 3,
+            "messageLimit": 18,
+            "solved": true,
+            "streakCount": 1,
+            "bonusEnergy": false,
+            "masteryFeedback": "Harika çalışma! Aküyü değiştirme hamleni doğru ve hızlı bir şekilde yaptın. Test sonuçlarını iyi analiz ettin ve ardından doğru tanı koydun. Devam et!"
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        }
+      ],
+      "ok": true,
+      "start": {
+        "status": 200,
+        "body": {
+          "sessionId": "812ad27d-72fc-48e5-a935-39ac5ea9856a",
+          "scenario": {
+            "id": 1,
+            "vehicle": "2002 Japon Sedan 1.6, Benzin, Manuel",
+            "complaint": "The car won't start at all. When I turn the key, nothing happens — no sound, no lights, nothing.",
+            "difficulty": "Easy"
+          },
+          "energy": 4,
+          "isPro": false
+        }
+      }
+    }
+  ],
+  "finishedAt": "2026-05-12T22:45:02",
+  "ok": true
+}

@@ -1,0 +1,133 @@
+{
+  "startedAt": "2026-05-12T23:24:45",
+  "baseUrl": "https://kw9p0x0sz4.execute-api.us-east-1.amazonaws.com",
+  "lang": "tr",
+  "scenarioIds": [
+    2,
+    3
+  ],
+  "cases": [
+    {
+      "scenarioId": 2,
+      "name": "S02 - Starter motor",
+      "goal": "Marş motoru komutları kabul edilmeli ve tamir/değişim çözmeli.",
+      "steps": [
+        {
+          "index": 1,
+          "message": "marş motorunu kontrol et",
+          "status": 200,
+          "body": {
+            "response": "Dinleme / Sonuç: Göğsün altından çabuk bir tıklama sesi duyuyorsun.",
+            "messageCount": 1,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 2,
+          "message": "marş motorunu değiştir",
+          "status": 200,
+          "body": {
+            "response": "Marş motoru değiştirildi. Artık sorunsuz çalışıyorsun.",
+            "messageCount": 2,
+            "messageLimit": 18,
+            "solved": true,
+            "streakCount": 2,
+            "bonusEnergy": false,
+            "masteryFeedback": "Tıklama sesiyle marş motorunu değiştirme hamleniz mantıklıydı, sadece önce tıklama sebebini doğrulamak için marş motorunu hafifçe dövmeyi denemek yararlı olabilirdi. Net teşhis, iyi son hamle."
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        }
+      ],
+      "ok": true,
+      "start": {
+        "status": 200,
+        "body": {
+          "sessionId": "c12c7078-08ce-4754-a7ab-e4d120d6a97e",
+          "scenario": {
+            "id": 2,
+            "vehicle": "2006 Amerikan Hatchback 1.6, Dizel, Manuel",
+            "complaint": "When I turn the key, I hear a clicking sound but the engine doesn't turn over.",
+            "difficulty": "Easy"
+          },
+          "energy": 3,
+          "isPro": false
+        }
+      }
+    },
+    {
+      "scenarioId": 3,
+      "name": "S03 - Left headlight fuse",
+      "goal": "Sağlam parça halüsinasyonu yapmadan sigorta çözümüne gitmeli.",
+      "steps": [
+        {
+          "index": 1,
+          "message": "sağ farı test edelim",
+          "status": 200,
+          "body": {
+            "response": "Sağ far her iki modda da çalışıyor.",
+            "messageCount": 1,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 2,
+          "message": "sol far ampulünü kontrol edelim",
+          "status": 200,
+          "body": {
+            "response": "Sol far lambası sağlam görünüyor, ancak çalışmıyor.",
+            "messageCount": 2,
+            "messageLimit": 18,
+            "solved": false
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        },
+        {
+          "index": 3,
+          "message": "sol far sigortasını değiştir",
+          "status": 200,
+          "body": {
+            "response": "Sol far sigortasının değiştirilmesiyle sol far çalışmaya başladı.",
+            "messageCount": 3,
+            "messageLimit": 18,
+            "solved": true,
+            "streakCount": 3,
+            "bonusEnergy": true,
+            "masteryFeedback": "Sol far çalışmıyordu ama ampul sağlamdı, bu yüzden sigorta kontrolü yapmak mantıklı bir adımdı. Sigortanın bozulduğunu görmek ve doğru şekilde değiştirmek için kullanılan adımlar doğruydu. Güzel teşhis, usta gibi toparladın."
+          },
+          "failures": [],
+          "warnings": [],
+          "ok": true
+        }
+      ],
+      "ok": true,
+      "start": {
+        "status": 200,
+        "body": {
+          "sessionId": "e5af4371-8541-4ad2-8bc4-ece67099e914",
+          "scenario": {
+            "id": 3,
+            "vehicle": "2008 Alman Hatchback 1.4, Benzin, Otomatik",
+            "complaint": "My left headlight isn't working. The right one is fine.",
+            "difficulty": "Easy"
+          },
+          "energy": 2,
+          "isPro": false
+        }
+      }
+    }
+  ],
+  "finishedAt": "2026-05-12T23:25:10",
+  "ok": true
+}

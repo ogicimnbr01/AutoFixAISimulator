@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/providers.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import '../../core/services/revenuecat_service.dart';
 import 'package:lottie/lottie.dart';
 import '../../l10n/app_localizations.dart';
 
@@ -224,7 +226,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                                 title:
                                     S.of(context)?.weeklyPlan ??
                                     'Haftalık Plan',
-                                price: weekly.storeProduct.localizedPriceString,
+                                price: weekly.storeProduct.priceString,
                                 subtitle:
                                     S.of(context)?.weeklyPlanSub ??
                                     'Kısa süreli ustalık',
@@ -239,7 +241,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                                 title:
                                     S.of(context)?.monthlyPlan ?? 'Aylık Plan',
                                 price:
-                                    monthly.storeProduct.localizedPriceString,
+                                    monthly.storeProduct.priceString,
                                 subtitle:
                                     S.of(context)?.monthlyPlanSub ??
                                     'Sadece birkaç kahve parası',
@@ -257,7 +259,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                                 id: 'yearly',
                                 title:
                                     S.of(context)?.yearlyPlan ?? 'Yıllık Plan',
-                                price: yearly.storeProduct.localizedPriceString,
+                                price: yearly.storeProduct.priceString,
                                 subtitle:
                                     S.of(context)?.yearlyPlanSub ??
                                     'Uzun vadeli yatırım',
