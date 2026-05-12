@@ -54,7 +54,7 @@ def build_game_system_prompt(scenario: dict, lang_code: str = "tr") -> str:
 2. **Rolün:** Sadece eylemin fiziksel sonucunu anlat. Akıl verme, arızanın nedenini asla AÇIKLAMA.
 3. **KOMUTLARI YORUMLAMA:** Oyuncu "motora bakalım", "aküyü inceleyelim", "farı kontrol et" diyorsa, BU BİR KOMUTTUR (tavsiye istemiyordur). Hemen o parçayı kontrol edip durumunu bildir.
 4. **Kısa Yanıtlar:** En fazla 1-3 cümle kullan. Yanıtının sonuna ASLA soru cümlesi ekleme (Örn: "Başka ne istersin?", "Şimdi ne yapalım?" DEME, sadece durumu bildirip sus.)
-5. **Gerçekçilik:** Sadece aşağıdaki "Teşhis İpuçları" bölümündeki arızaları raporla. Araba bunun dışında %100 SAĞLAMDIR. Hayali arıza UYDURMA. Oyuncunun komutunu en yakın test anahtarıyla eşleştir ve SADECE o testin sonucunu anlat. Eşleşen test yoksa, 'Bu araçta bu bileşen/test bulunmuyor' de.
+5. **Gerçekçilik:** Sadece aşağıdaki "Teşhis İpuçları" bölümündeki arızaları raporla. Araba bunun dışında %100 SAĞLAMDIR. Hayali arıza UYDURMA. Oyuncunun komutunu en yakın test anahtarıyla eşleştir ve SADECE o testin sonucunu anlat. Eşleşen test yoksa veya oyuncu yanlış/etkisiz bir işlem yaparsa, "yok/bulunmuyor/gerekli ekipman yok" gibi oyun dışı cümleler kurma. İşlemin denendiğini, ama belirti veya ölçümün değişmediğini kısa ve doğal biçimde söyle. Oyuncuya doğru cevabı açıklama.
 6. **GÜVENLİK KRİTİK:** Arızanın sebebini ASLA oyuncuya doğrudan söyleme. Oyuncu "sorun ne" diye sorarsa, "Test yapıp bulman gerekiyor." de.
 7. **TAMİR VE DEĞİŞİM EYLEMLERİ:**
    Oyuncu kendi kararıyla bir parçayı tamir etmek veya değiştirmek istediğinde (Örn: "aküyü değiştir", "su pompası tak"):
@@ -146,8 +146,11 @@ MASTERY_FEEDBACK_PROMPTS = {
 
 KURALLAR:
 - Oyuncunun sohbet geçmişindeki gerçek hamlelerine göre konuş.
-- İyi eleme/test hamlelerini özellikle takdir et.
-- Yanlış veya dolambaçlı hamle varsa kırmadan açıkla.
+- Rutin ve zorunlu ilk testleri boşuna övme; "aküyü ölçmek", "farı kontrol etmek" gibi temel kontroller tek başına alkışlanacak başarı değildir.
+- Oyuncu yanlış ama mantıklı bir deneme yaptıysa bunu özellikle ele al: "asit/saf su ve şarj fikri mantıklı bir denemeydi ama ölçüm değişmedi" gibi.
+- Yanlış veya dolambaçlı hamle varsa önce onu kırmadan değerlendir, sonra doğru sonuca nasıl dönüldüğünü açıkla.
+- "Mükemmel", "harika", "çok zekice" gibi büyük övgüleri sadece gerçekten sıra dışı eleme veya akıl yürütme varsa kullan.
+- Son cümlede kısa ama sıcak bir başarı hissi ver: "Güzel teşhis, usta gibi toparladın.", "İyi okudun, temiz karar.", "Net teşhis, iyi son hamle." gibi. Bu kapanış somut yorumdan sonra gelsin.
 - Doğru cevabı ve kanıtı artık açıklayabilirsin çünkü vaka çözüldü.
 - En fazla 3 kısa cümle yaz.
 - Abartılı övgü, liste, markdown, emoji ve başlık kullanma.
@@ -157,8 +160,11 @@ KURALLAR:
 
 RULES:
 - Refer only to the player's actual moves from the chat history.
-- Praise good elimination/testing moves.
-- If there was a wrong or indirect move, explain it gently.
+- Do not overpraise routine required checks; actions like measuring the battery or checking a light are basic steps, not exceptional mastery by themselves.
+- If the player made a wrong but plausible attempt, address it directly, e.g. "the acid/water and recharge idea was a reasonable try, but the reading did not change."
+- If there was a wrong or indirect move, discuss it gently first, then explain how the player returned to the correct conclusion.
+- Use strong praise like "excellent" or "very clever" only for genuinely exceptional elimination or reasoning.
+- End with a short but warm grounded reward line like "Good diagnosis, you recovered like a pro.", "Nice read, clean call.", or "Solid diagnosis, good final move." after the specific coaching.
 - You may explain the correct answer and evidence because the case is solved.
 - Write at most 3 short sentences.
 - No exaggerated praise, lists, markdown, emoji, or heading.
@@ -195,6 +201,12 @@ def build_mastery_feedback_prompt(scenario: dict, lang_code: str = "tr") -> str:
     clues_text = _format_clues(scenario["key_clues"])
 
     return f"""{coach_block}
+
+UNIVERSAL FEEDBACK PRIORITY RULES:
+- The best feedback is not generic praise; it must react to the player's actual path.
+- If the player made a wrong but reasonable attempt before the final repair, mention that attempt first.
+- Do not praise routine required checks unless the player's sequence or comparison made them meaningful.
+- Avoid empty compliments. Be specific, fair, and slightly coach-like.
 
 VAKA BİLGİSİ:
 - Araç / Vehicle: {scenario['vehicle']}
@@ -337,25 +349,25 @@ VALIDATION_MESSAGES = {
     "tr": {
         "generic_normal": "Bu konuda anormal bir şey fark etmiyorsun. Farklı bir yaklaşım dene.",
         "direct_test_key": "Test sonucunu doğrudan aktaramam. Aracı kendin test et.",
-        "invalid_test": "Belirttiğin test sonucu geçersiz veya bu araçta bu bileşen/test bulunmuyor.",
+        "invalid_test": "Bu işlemden sonra belirti değişmiyor. Eldeki bulgular hâlâ aynı noktayı işaret ediyor.",
         "protected_normal": "{part} kontrol ediliyor. Her şey normal görünüyor ve düzgün çalışıyor.",
     },
     "en": {
         "generic_normal": "You do not notice anything abnormal there. Try a different approach.",
         "direct_test_key": "I cannot report the internal test key. Test the vehicle yourself.",
-        "invalid_test": "That test result is invalid or this vehicle does not have that component/test.",
+        "invalid_test": "After that action, the symptom does not change. The clues still point in the same direction.",
         "protected_normal": "You check the {part}. Everything looks normal and works properly.",
     },
     "ru": {
         "generic_normal": "Здесь ничего необычного не заметно. Попробуй другой подход.",
         "direct_test_key": "Я не могу сообщить внутренний ключ теста. Проверь автомобиль сам.",
-        "invalid_test": "Этот результат теста недействителен или у этого автомобиля нет такого компонента/теста.",
+        "invalid_test": "После этого действия симптом не меняется. Имеющиеся признаки всё ещё указывают в том же направлении.",
         "protected_normal": "Проверяешь {part}. Все выглядит нормально и работает исправно.",
     },
     "zh": {
         "generic_normal": "这里没有发现异常。换个检查方向。",
         "direct_test_key": "不能直接报告内部测试键。请自己检查车辆。",
-        "invalid_test": "该测试结果无效，或这辆车没有这个部件/测试。",
+        "invalid_test": "做完这个操作后，故障现象没有变化。现有线索仍然指向同一个方向。",
         "protected_normal": "你检查了{part}。一切看起来正常，工作正常。",
     },
 }

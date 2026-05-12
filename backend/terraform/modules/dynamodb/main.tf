@@ -133,6 +133,25 @@ resource "aws_dynamodb_table" "transactions" {
   tags = { Name = "${local.prefix}_Transactions" }
 }
 
+# --- Device Economy State Table ---
+resource "aws_dynamodb_table" "device_states" {
+  name         = "${local.prefix}_DeviceStates"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "deviceHash"
+
+  attribute {
+    name = "deviceHash"
+    type = "S"
+  }
+
+  ttl {
+    attribute_name = "expiresAt"
+    enabled        = true
+  }
+
+  tags = { Name = "${local.prefix}_DeviceStates" }
+}
+
 # --- Outputs ---
 output "users_table_name" { value = aws_dynamodb_table.users.name }
 output "users_table_arn" { value = aws_dynamodb_table.users.arn }
@@ -151,3 +170,6 @@ output "reports_table_arn" { value = aws_dynamodb_table.reports.arn }
 
 output "transactions_table_name" { value = aws_dynamodb_table.transactions.name }
 output "transactions_table_arn" { value = aws_dynamodb_table.transactions.arn }
+
+output "device_states_table_name" { value = aws_dynamodb_table.device_states.name }
+output "device_states_table_arn" { value = aws_dynamodb_table.device_states.arn }

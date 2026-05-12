@@ -19,6 +19,8 @@ class UserProfile {
   final int totalRepairs;
   final String subscription;
   final int todayCasesPlayed;
+  final int archiveViewsToday;
+  final int archiveViewLimit;
   final bool loginBonusClaimed;
   final bool dailyHintClaimed;
   final bool fomoPurchased;
@@ -34,6 +36,8 @@ class UserProfile {
     required this.totalRepairs,
     required this.subscription,
     required this.todayCasesPlayed,
+    required this.archiveViewsToday,
+    required this.archiveViewLimit,
     required this.loginBonusClaimed,
     required this.dailyHintClaimed,
     required this.fomoPurchased,
@@ -50,6 +54,8 @@ class UserProfile {
     totalRepairs: json['totalRepairs'] ?? 0,
     subscription: json['subscription'] ?? 'free',
     todayCasesPlayed: json['todayCasesPlayed'] ?? 0,
+    archiveViewsToday: json['archiveViewsToday'] ?? 0,
+    archiveViewLimit: json['archiveViewLimit'] ?? 2,
     loginBonusClaimed: json['loginBonusClaimed'] ?? false,
     dailyHintClaimed: json['dailyHintClaimed'] ?? false,
     fomoPurchased: json['fomoPurchased'] ?? false,
@@ -66,6 +72,8 @@ class UserProfile {
     'totalRepairs': totalRepairs,
     'subscription': subscription,
     'todayCasesPlayed': todayCasesPlayed,
+    'archiveViewsToday': archiveViewsToday,
+    'archiveViewLimit': archiveViewLimit,
     'loginBonusClaimed': loginBonusClaimed,
     'dailyHintClaimed': dailyHintClaimed,
     'fomoPurchased': fomoPurchased,
@@ -146,6 +154,8 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
               totalRepairs: profile.totalRepairs,
               subscription: profile.subscription,
               todayCasesPlayed: profile.todayCasesPlayed,
+              archiveViewsToday: profile.archiveViewsToday,
+              archiveViewLimit: profile.archiveViewLimit,
               loginBonusClaimed: profile.loginBonusClaimed,
               dailyHintClaimed: profile.dailyHintClaimed,
               fomoPurchased: profile.fomoPurchased,
@@ -174,6 +184,8 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
           totalRepairs: profile.totalRepairs,
           subscription: profile.subscription,
           todayCasesPlayed: profile.todayCasesPlayed,
+          archiveViewsToday: profile.archiveViewsToday,
+          archiveViewLimit: profile.archiveViewLimit,
           loginBonusClaimed: profile.loginBonusClaimed,
           dailyHintClaimed: profile.dailyHintClaimed,
           fomoPurchased: profile.fomoPurchased,
@@ -197,6 +209,8 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
           totalRepairs: profile.totalRepairs,
           subscription: profile.subscription,
           todayCasesPlayed: profile.todayCasesPlayed,
+          archiveViewsToday: profile.archiveViewsToday,
+          archiveViewLimit: profile.archiveViewLimit,
           loginBonusClaimed: profile.loginBonusClaimed,
           dailyHintClaimed: profile.dailyHintClaimed,
           fomoPurchased: profile.fomoPurchased,
@@ -220,6 +234,8 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
           totalRepairs: profile.totalRepairs,
           subscription: profile.subscription,
           todayCasesPlayed: profile.todayCasesPlayed,
+          archiveViewsToday: profile.archiveViewsToday,
+          archiveViewLimit: profile.archiveViewLimit,
           loginBonusClaimed: profile.loginBonusClaimed,
           dailyHintClaimed: profile.dailyHintClaimed,
           fomoPurchased: profile.fomoPurchased,
@@ -242,6 +258,8 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
           totalRepairs: profile.totalRepairs,
           subscription: 'pro', // Automatically make them PRO for the mock
           todayCasesPlayed: profile.todayCasesPlayed,
+          archiveViewsToday: profile.archiveViewsToday,
+          archiveViewLimit: profile.archiveViewLimit,
           loginBonusClaimed: profile.loginBonusClaimed,
           dailyHintClaimed: profile.dailyHintClaimed,
           fomoPurchased: true,
@@ -264,6 +282,8 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
           totalRepairs: profile.totalRepairs,
           subscription: 'pro',
           todayCasesPlayed: profile.todayCasesPlayed,
+          archiveViewsToday: profile.archiveViewsToday,
+          archiveViewLimit: profile.archiveViewLimit,
           loginBonusClaimed: profile.loginBonusClaimed,
           dailyHintClaimed: profile.dailyHintClaimed,
           fomoPurchased: profile.fomoPurchased,

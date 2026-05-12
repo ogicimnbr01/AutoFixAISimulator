@@ -32,6 +32,8 @@ BAD_FALLBACKS = [
     "bulunmuyor",
     "bilesen/test bulunmuyor",
     "bileşen/test bulunmuyor",
+    "gerekli ekipman",
+    "bilgi bulunmuyor",
     "test yapip bulman gerekiyor",
     "test yapıp bulman gerekiyor",
 ]
@@ -45,6 +47,11 @@ SMOKE_CASES: dict[int, dict[str, Any]] = {
             {
                 "message": "aküyü ölç",
                 "must_contain_any": ["9.2", "9,2", "volt", "akü", "aku"],
+                "must_not_contain_any": BAD_FALLBACKS,
+            },
+            {
+                "message": "aküye saf su ve asit takviyesi yapıp başka akü ile şarj edelim",
+                "expect_solved": False,
                 "must_not_contain_any": BAD_FALLBACKS,
             },
             {

@@ -4,7 +4,9 @@ Profile management and daily login bonus.
 """
 import sys
 sys.path.insert(0, "/opt")
-from db import get_or_create_user, update_user, get_daily_reset, update_daily_reset, calculate_max_energy, delete_user_data
+from db import (get_or_create_user, update_user, get_daily_reset,
+                update_daily_reset, calculate_max_energy, delete_user_data,
+                apply_device_state_to_new_user, save_device_state_from_user)
 import json
 from response import api_response
 
@@ -18,11 +20,11 @@ def lambda_handler(event, context):
         return api_response(401, {"error": "unauthorized"})
 
     if path == "/user/profile" and method == "GET":
-        return handle_profile(user_id)
+        return handle_profile(user_id, event)
     elif path == "/user/profile" and method == "PUT":
         return handle_update_profile(user_id, event)
     elif path == "/user/profile" and method == "DELETE":
-        return handle_delete_profile(user_id)
+        return handle_delete_profile(user_id, event)
     elif path == "/user/merge" and method == "POST":
         return handle_merge_profile(user_id, event)
     elif path == "/user/login-bonus" and method == "POST":
@@ -31,8 +33,9 @@ def lambda_handler(event, context):
         return api_response(404, {"error": "not_found"})
 
 
-def handle_profile(user_id):
+def handle_profile(user_id, event):
     user = get_or_create_user(user_id)
+    user = apply_device_state_to_new_user(_install_id(event), user)
     daily = get_daily_reset(user_id)
     energy_info = calculate_max_energy(user.get("createdAt", ""))
     return api_response(200, {
@@ -43,6 +46,8 @@ def handle_profile(user_id):
         "totalRepairs": user["totalRepairs"],
         "subscription": user["subscription"],
         "todayCasesPlayed": daily["casesPlayed"],
+        "archiveViewsToday": daily.get("archiveViews", 0),
+        "archiveViewLimit": 9999 if user.get("subscription") == "pro" else 2,
         "loginBonusClaimed": daily["loginBonusClaimed"],
         "maxEnergy": energy_info["maxEnergy"],
         "daysSinceInstall": energy_info["daysSinceInstall"],
@@ -120,11 +125,18 @@ def handle_merge_profile(user_id, event):
     return api_response(200, {"success": True, "merged": merged_updates})
 
 
-def handle_delete_profile(user_id):
+def handle_delete_profile(user_id, event):
     try:
+        user = get_or_create_user(user_id)
+        daily = get_daily_reset(user_id)
+        save_device_state_from_user(_install_id(event), user, daily)
         delete_user_data(user_id)
         return api_response(200, {"success": True, "message": "User data deleted successfully."})
     except Exception as e:
         print(f"Error deleting user {user_id}: {e}")
         return api_response(500, {"error": "delete_failed"})
 
+
+def _install_id(event):
+    headers = event.get("headers") or {}
+    return headers.get("x-install-id") or headers.get("X-Install-Id")

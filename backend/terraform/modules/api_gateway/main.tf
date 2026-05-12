@@ -40,6 +40,8 @@ locals {
   routes = {
     "POST /game/start"          = "game_handler"
     "POST /game/message"        = "game_handler"
+    "GET /game/completed"       = "game_handler"
+    "GET /game/archive/{id}"    = "game_handler"
     "POST /hint"                = "hint_handler"
     "GET /user/profile"         = "user_handler"
     "PUT /user/profile"         = "user_handler"

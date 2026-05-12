@@ -6,9 +6,10 @@ output "api_gateway_url" {
 output "dynamodb_tables" {
   description = "DynamoDB table names"
   value = {
-    users        = module.dynamodb.users_table_name
-    sessions     = module.dynamodb.sessions_table_name
-    daily_resets = module.dynamodb.daily_resets_table_name
-    leaderboard  = module.dynamodb.leaderboard_table_name
+    users         = module.dynamodb.users_table_name
+    sessions      = module.dynamodb.sessions_table_name
+    daily_resets  = module.dynamodb.daily_resets_table_name
+    leaderboard   = module.dynamodb.leaderboard_table_name
+    device_states = module.dynamodb.device_states_table_name
   }
 }

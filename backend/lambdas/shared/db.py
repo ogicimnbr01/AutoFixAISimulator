@@ -6,6 +6,8 @@ import os
 import boto3
 from datetime import datetime, timezone, timedelta
 import uuid
+import hashlib
+from boto3.dynamodb.conditions import Key, Attr
 
 dynamodb = boto3.resource("dynamodb")
 
@@ -15,6 +17,7 @@ TABLE_DAILY_RESETS = os.environ.get("TABLE_DAILY_RESETS", "MechanicMaster_DailyR
 TABLE_LEADERBOARD = os.environ.get("TABLE_LEADERBOARD", "MechanicMaster_Leaderboard")
 TABLE_REPORTS = os.environ.get("TABLE_REPORTS", "MechanicMaster_Reports")
 TABLE_TRANSACTIONS = os.environ.get("TABLE_TRANSACTIONS", "MechanicMaster_Transactions")
+TABLE_DEVICE_STATES = os.environ.get("TABLE_DEVICE_STATES", "MechanicMaster_DeviceStates")
 
 
 def _now_iso():
@@ -23,6 +26,15 @@ def _now_iso():
 
 def _today_str():
     return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+
+def hash_install_id(install_id: str | None) -> str | None:
+    if not install_id:
+        return None
+    normalized = install_id.strip()
+    if len(normalized) < 12:
+        return None
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
 
 # ============== USERS ==============
@@ -124,6 +136,26 @@ def delete_user_data(user_id: str):
             Key={"period": item["period"], "score_userId": item["score_userId"]}
         )
 
+    # 4. Delete game sessions and archived chats.
+    sessions_table = dynamodb.Table(TABLE_SESSIONS)
+    session_result = sessions_table.query(
+        IndexName="userId-index",
+        KeyConditionExpression=Key("userId").eq(user_id),
+        ProjectionExpression="sessionId",
+    )
+    for item in session_result.get("Items", []):
+        sessions_table.delete_item(Key={"sessionId": item["sessionId"]})
+
+    # 5. Delete user reports.
+    reports_table = dynamodb.Table(TABLE_REPORTS)
+    report_result = reports_table.query(
+        IndexName="userId-index",
+        KeyConditionExpression=Key("userId").eq(user_id),
+        ProjectionExpression="reportId",
+    )
+    for item in report_result.get("Items", []):
+        reports_table.delete_item(Key={"reportId": item["reportId"]})
+
 
 # ============== SESSIONS ==============
 
@@ -176,6 +208,72 @@ def update_session(session_id: str, updates: dict):
     )
 
 
+def archive_session(session_id: str, updates: dict):
+    """Mark a solved session as archived and remove short-lived TTL."""
+    table = dynamodb.Table(TABLE_SESSIONS)
+    expr_parts = []
+    expr_values = {}
+    expr_names = {"#ttl": "expiresAt"}
+    for i, (key, val) in enumerate(updates.items()):
+        alias = f"#k{i}"
+        placeholder = f":v{i}"
+        expr_parts.append(f"{alias} = {placeholder}")
+        expr_values[placeholder] = val
+        expr_names[alias] = key
+
+    table.update_item(
+        Key={"sessionId": session_id},
+        UpdateExpression="SET " + ", ".join(expr_parts) + " REMOVE #ttl",
+        ExpressionAttributeValues=expr_values,
+        ExpressionAttributeNames=expr_names,
+    )
+
+
+def get_completed_scenarios(user_id: str) -> list[dict]:
+    """Return latest solved session per scenario for a user."""
+    table = dynamodb.Table(TABLE_SESSIONS)
+    resp = table.query(
+        IndexName="userId-index",
+        KeyConditionExpression=Key("userId").eq(user_id),
+        FilterExpression=Attr("status").eq("solved"),
+    )
+    latest_by_scenario = {}
+    for item in resp.get("Items", []):
+        scenario_id = int(item.get("scenarioId", 0))
+        if not scenario_id:
+            continue
+        existing = latest_by_scenario.get(scenario_id)
+        if not existing or str(item.get("solvedAt", "")) > str(existing.get("solvedAt", "")):
+            latest_by_scenario[scenario_id] = item
+
+    return sorted(
+        [
+            {
+                "scenarioId": scenario_id,
+                "sessionId": item["sessionId"],
+                "solvedAt": item.get("solvedAt"),
+                "messageCount": item.get("messageCount", 0),
+            }
+            for scenario_id, item in latest_by_scenario.items()
+        ],
+        key=lambda x: x["scenarioId"],
+    )
+
+
+def get_solved_session_for_scenario(user_id: str, scenario_id: int) -> dict | None:
+    """Return the archived solved session for a scenario, if any."""
+    table = dynamodb.Table(TABLE_SESSIONS)
+    resp = table.query(
+        IndexName="userId-index",
+        KeyConditionExpression=Key("userId").eq(user_id),
+        FilterExpression=Attr("status").eq("solved") & Attr("scenarioId").eq(scenario_id),
+    )
+    items = resp.get("Items", [])
+    if not items:
+        return None
+    return max(items, key=lambda item: str(item.get("solvedAt", "")))
+
+
 # ============== DAILY RESETS ==============
 
 def get_daily_reset(user_id: str) -> dict:
@@ -191,6 +289,8 @@ def get_daily_reset(user_id: str) -> dict:
         "userId_date": key,
         "energyUsed": 0,
         "casesPlayed": 0,
+        "archiveViews": 0,
+        "archiveViewedScenarioIds": [],
         "loginBonusClaimed": False,
         "hintBonusClaimed": False,
         "expiresAt": expires,
@@ -219,6 +319,59 @@ def update_daily_reset(user_id: str, updates: dict):
         ExpressionAttributeValues=expr_values,
         ExpressionAttributeNames=expr_names,
     )
+
+
+# ============== DEVICE ECONOMY STATE ==============
+
+def get_device_state(install_id: str | None) -> dict | None:
+    device_hash = hash_install_id(install_id)
+    if not device_hash:
+        return None
+    resp = dynamodb.Table(TABLE_DEVICE_STATES).get_item(Key={"deviceHash": device_hash})
+    return resp.get("Item")
+
+
+def save_device_state_from_user(install_id: str | None, user: dict, daily: dict):
+    device_hash = hash_install_id(install_id)
+    if not device_hash:
+        return
+
+    expires = int((datetime.now(timezone.utc) + timedelta(days=7)).timestamp())
+    dynamodb.Table(TABLE_DEVICE_STATES).put_item(Item={
+        "deviceHash": device_hash,
+        "energy": int(user.get("energy", 0)),
+        "casesPlayed": int(daily.get("casesPlayed", 0)),
+        "energyUsed": int(daily.get("energyUsed", 0)),
+        "archiveViews": int(daily.get("archiveViews", 0)),
+        "archiveViewedScenarioIds": daily.get("archiveViewedScenarioIds", []),
+        "createdAt": user.get("createdAt"),
+        "deletedAt": _now_iso(),
+        "expiresAt": expires,
+    })
+
+
+def apply_device_state_to_new_user(install_id: str | None, user: dict):
+    state = get_device_state(install_id)
+    if not state or user.get("deviceStateApplied"):
+        return user
+
+    updates = {
+        "energy": min(int(user.get("energy", 0)), int(state.get("energy", 0))),
+        "deviceStateApplied": True,
+    }
+    if state.get("createdAt"):
+        updates["createdAt"] = state["createdAt"]
+    update_user(user["userId"], updates)
+
+    daily_updates = {
+        "casesPlayed": int(state.get("casesPlayed", 0)),
+        "energyUsed": int(state.get("energyUsed", 0)),
+        "archiveViews": int(state.get("archiveViews", 0)),
+        "archiveViewedScenarioIds": state.get("archiveViewedScenarioIds", []),
+    }
+    update_daily_reset(user["userId"], daily_updates)
+    user.update(updates)
+    return user
 
 
 # ============== LEADERBOARD ==============

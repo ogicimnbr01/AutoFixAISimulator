@@ -6,12 +6,14 @@ import json
 import os
 import boto3
 import sys
+import re
 
 # Add shared layer to path
 sys.path.insert(0, "/opt")
 from db import (get_or_create_user, update_user, create_session,
-                get_session, update_session, get_daily_reset,
-                update_daily_reset, add_leaderboard_point)
+                get_session, update_session, archive_session, get_daily_reset,
+                update_daily_reset, add_leaderboard_point,
+                get_completed_scenarios, get_solved_session_for_scenario)
 from prompts import (build_game_system_prompt, build_hint_system_prompt,
                      build_mastery_feedback_prompt, sanitize_input,
                      validate_output, validate_language)
@@ -34,6 +36,11 @@ def lambda_handler(event, context):
         return handle_start(event, user_id)
     elif path == "/game/message" and method == "POST":
         return handle_message(event, user_id)
+    elif path == "/game/completed" and method == "GET":
+        return handle_completed(user_id)
+    elif path.startswith("/game/archive/") and method == "GET":
+        scenario_id = path.rsplit("/", 1)[-1]
+        return handle_archive(user_id, scenario_id)
     else:
         return api_response(404, {"error": "not_found"})
 
@@ -46,16 +53,26 @@ def handle_start(event, user_id):
     if not scenario_id:
         return api_response(400, {"error": "scenarioId required"})
 
-    # Get user and check energy
+    # Get user and scenario
     user = get_or_create_user(user_id)
     is_pro = user.get("subscription") == "pro"
-    if not is_pro and user["energy"] <= 0:
-        return api_response(403, {"error": "no_energy", "message": "Watch an ad or wait for daily reset."})
 
-    # Get scenario
     scenario = get_scenario_by_id(scenario_id)
     if not scenario:
         return api_response(404, {"error": "scenario_not_found"})
+
+    solved_session = get_solved_session_for_scenario(user_id, int(scenario_id))
+    if solved_session:
+        return api_response(409, {
+            "error": "already_solved",
+            "message": "Bu vaka zaten çözüldü. Arşivden sohbeti inceleyebilirsin.",
+            "scenarioId": int(scenario_id),
+            "sessionId": solved_session["sessionId"],
+            "solvedAt": solved_session.get("solvedAt"),
+        })
+
+    if not is_pro and user["energy"] <= 0:
+        return api_response(403, {"error": "no_energy", "message": "Watch an ad or wait for daily reset."})
 
     # Create session
     session = create_session(user_id, scenario_id)
@@ -185,6 +202,7 @@ def handle_message(event, user_id):
         ai_text = lang_msg
     else:
         ai_text = validate_output(ai_text, scenario, lang_code=lang_code)
+    ai_text = _soften_unhelpful_invalid_response(ai_text, lang_code)
 
     # Check [CASE_SOLVED]. The model can describe the correct repair but forget
     # the marker, so keep a deterministic repair-command guard as backup.
@@ -242,9 +260,75 @@ def handle_message(event, user_id):
         )
         if mastery_feedback:
             response_data["masteryFeedback"] = mastery_feedback
+            session_updates["masteryFeedback"] = mastery_feedback
 
-    update_session(session_id, session_updates)
+    if case_solved:
+        archive_session(session_id, session_updates)
+    else:
+        update_session(session_id, session_updates)
     return api_response(200, response_data)
+
+
+def handle_completed(user_id):
+    user = get_or_create_user(user_id)
+    daily = get_daily_reset(user_id)
+    return api_response(200, {
+        "completedScenarios": get_completed_scenarios(user_id),
+        "archiveViewsToday": int(daily.get("archiveViews", 0)),
+        "archiveViewLimit": 9999 if user.get("subscription") == "pro" else 2,
+        "isPro": user.get("subscription") == "pro",
+    })
+
+
+def handle_archive(user_id, scenario_id_value):
+    try:
+        scenario_id = int(scenario_id_value)
+    except Exception:
+        return api_response(400, {"error": "invalid_scenario_id"})
+
+    session = get_solved_session_for_scenario(user_id, scenario_id)
+    if not session:
+        return api_response(404, {"error": "archive_not_found"})
+
+    scenario = get_scenario_by_id(scenario_id)
+    user = get_or_create_user(user_id)
+    is_pro = user.get("subscription") == "pro"
+    daily = get_daily_reset(user_id)
+    viewed_ids = [int(x) for x in daily.get("archiveViewedScenarioIds", [])]
+    archive_views = int(daily.get("archiveViews", 0))
+
+    if not is_pro and scenario_id not in viewed_ids:
+        if archive_views >= 2:
+            return api_response(403, {
+                "error": "archive_limit",
+                "message": "Bugün 2 geçmiş vaka inceleme hakkını kullandın. Pro Usta sınırsız arşiv açar.",
+                "archiveViewsToday": archive_views,
+                "archiveViewLimit": 2,
+            })
+        viewed_ids.append(scenario_id)
+        archive_views += 1
+        update_daily_reset(user_id, {
+            "archiveViews": archive_views,
+            "archiveViewedScenarioIds": viewed_ids,
+        })
+
+    return api_response(200, {
+        "sessionId": session["sessionId"],
+        "scenario": {
+            "id": scenario["id"],
+            "vehicle": scenario["vehicle"],
+            "complaint": scenario["complaint"],
+            "difficulty": scenario["difficulty"],
+        } if scenario else {"id": scenario_id},
+        "messages": session.get("messages", []),
+        "messageCount": session.get("messageCount", 0),
+        "solved": True,
+        "solvedAt": session.get("solvedAt"),
+        "masteryFeedback": session.get("masteryFeedback"),
+        "archiveViewsToday": archive_views,
+        "archiveViewLimit": 9999 if is_pro else 2,
+        "isPro": is_pro,
+    })
 
 
 def _parse_body(event):
@@ -291,6 +375,7 @@ def _build_mastery_feedback(scenario, messages, lang_code="tr"):
         feedback = _clean_mastery_feedback(feedback)
         if not feedback:
             return None
+        feedback = _improve_mastery_feedback(feedback, messages, lang_code)
 
         is_lang_valid, _ = validate_language(feedback, lang_code)
         if not is_lang_valid:
@@ -313,6 +398,31 @@ def _format_feedback_messages(messages):
     )
 
 
+UNHELPFUL_INVALID_RESPONSE_TERMS = [
+    "bulunmuyor", "gerekli ekipman", "bilgi bulunmuyor", "bileşen/test",
+    "does not have that component", "invalid test", "no such component",
+    "нет такого компонента", "недействителен", "没有这个部件", "无效",
+]
+
+
+SOFT_INVALID_RESPONSES = {
+    "tr": "Bu işlemden sonra belirti değişmiyor. Eldeki bulgular hâlâ aynı noktayı işaret ediyor.",
+    "en": "After that action, the symptom does not change. The clues still point in the same direction.",
+    "ru": "После этого действия симптом не меняется. Имеющиеся признаки всё ещё указывают в том же направлении.",
+    "zh": "做完这个操作后，故障现象没有变化。现有线索仍然指向同一个方向。",
+}
+
+
+def _soften_unhelpful_invalid_response(ai_text, lang_code):
+    normalized = _normalize_repair_text(ai_text)
+    terms = [_normalize_repair_text(term) for term in UNHELPFUL_INVALID_RESPONSE_TERMS]
+    if not any(term in normalized for term in terms):
+        return ai_text
+
+    lang = "zh" if str(lang_code).startswith("zh") else lang_code
+    return SOFT_INVALID_RESPONSES.get(lang, SOFT_INVALID_RESPONSES["tr"])
+
+
 def _clean_mastery_feedback(feedback):
     forbidden_prefixes = ("```", "#", "-", "*", "Ustalık Değerlendirmesi:", "Mastery Review:")
     for prefix in forbidden_prefixes:
@@ -322,6 +432,118 @@ def _clean_mastery_feedback(feedback):
     if len(feedback) > 700:
         feedback = feedback[:700].rsplit(" ", 1)[0].strip()
     return feedback
+
+
+FAILED_ATTEMPT_MARKERS = [
+    "cozulmedi", "degismiyor", "degismedi", "hala", "still", "does not change",
+    "did not change", "not fixed", "not solve", "не меняется", "не измен", "没有变化",
+]
+
+BATTERY_RECOVERY_ATTEMPT_MARKERS = [
+    "asit", "acid", "saf su", "water", "sarj", "sarz", "charge", "recharge",
+    "takviye", "заряд", "кислот", "долей",
+]
+
+BATTERY_RECOVERY_FEEDBACK = {
+    "tr": "Saf su, asit ve şarj denemesi mantıklı bir kurtarma hamlesiydi, ama voltaj değişmeyince doğru karar aküyü değiştirmekti.",
+    "en": "The water, acid, and recharge attempt was a reasonable recovery idea, but once the voltage did not change, replacing the battery was the right call.",
+    "ru": "Попытка с водой, кислотой и зарядкой была понятной идеей восстановления, но раз напряжение не изменилось, правильным решением стала замена аккумулятора.",
+    "zh": "加水、补酸和充电是一个可以理解的抢救思路，但电压没有变化时，更换电瓶才是正确决定。",
+}
+
+
+def _improve_mastery_feedback(feedback, messages, lang_code):
+    feedback = _rebalance_empty_mastery_praise(feedback, lang_code)
+    if not _has_failed_battery_recovery_attempt(messages):
+        return feedback
+
+    normalized_feedback = _normalize_repair_text(feedback)
+    mentions_attempt = any(
+        _normalize_repair_text(marker) in normalized_feedback
+        for marker in BATTERY_RECOVERY_ATTEMPT_MARKERS
+    )
+    if mentions_attempt:
+        return feedback
+
+    lang = "zh" if str(lang_code).startswith("zh") else lang_code
+    return BATTERY_RECOVERY_FEEDBACK.get(lang, BATTERY_RECOVERY_FEEDBACK["tr"])
+
+
+EMPTY_MASTERY_PRAISE_TERMS = [
+    "mukemmel", "harika", "super", "bravo",
+    "excellent", "great job", "perfect", "very clever",
+    "отлично", "превосходно", "идеально",
+    "太棒", "完美", "很聪明",
+]
+
+MASTERY_PRAISE_CLOSERS = {
+    "tr": "Güzel teşhis, usta gibi toparladın.",
+    "en": "Good diagnosis, you recovered like a pro.",
+    "ru": "Хорошая диагностика, ты собрал всё как мастер.",
+    "zh": "判断不错，收尾很有师傅范儿。",
+}
+
+
+def _rebalance_empty_mastery_praise(feedback, lang_code):
+    sentences = [part.strip() for part in re.split(r"(?<=[.!?。])\s+", feedback) if part.strip()]
+    if len(sentences) <= 1:
+        return feedback
+
+    kept = []
+    replaced_empty_praise = False
+    for sentence in sentences:
+        normalized = _normalize_repair_text(sentence)
+        has_empty_praise = any(
+            _normalize_repair_text(term) in normalized
+            for term in EMPTY_MASTERY_PRAISE_TERMS
+        )
+        has_specific_content = any(
+            term in normalized
+            for term in [
+                "asit", "saf su", "sarj", "aku", "akuyu", "sigorta", "mars",
+                "battery", "fuse", "starter", "charge", "acid", "voltage",
+                "аккумулятор", "предохранитель", "стартер", "电瓶", "保险丝",
+            ]
+        )
+        if has_empty_praise and not has_specific_content:
+            replaced_empty_praise = True
+            continue
+        kept.append(sentence)
+
+    if not kept:
+        return feedback
+    if replaced_empty_praise:
+        lang = "zh" if str(lang_code).startswith("zh") else lang_code
+        closer = MASTERY_PRAISE_CLOSERS.get(lang, MASTERY_PRAISE_CLOSERS["tr"])
+        if not kept[-1].endswith(closer):
+            kept.append(closer)
+    return " ".join(kept)
+
+
+def _has_failed_battery_recovery_attempt(messages):
+    last_user = ""
+    for message in messages:
+        role = message.get("role")
+        content = message.get("content", "")
+        if role == "user":
+            last_user = content
+            continue
+        if role != "assistant" or not last_user:
+            continue
+
+        normalized_user = _normalize_repair_text(last_user)
+        normalized_reply = _normalize_repair_text(content)
+        attempted_recovery = any(
+            _normalize_repair_text(marker) in normalized_user
+            for marker in BATTERY_RECOVERY_ATTEMPT_MARKERS
+        )
+        failed_attempt = any(
+            _normalize_repair_text(marker) in normalized_reply
+            for marker in FAILED_ATTEMPT_MARKERS
+        )
+        if attempted_recovery and failed_attempt:
+            return True
+    return False
 
 
 REPAIR_VERBS = [
@@ -350,6 +572,66 @@ CORRECT_REPAIR_ALIASES = {
     14: ["timing belt", "triger", "zamanlama", "sente", "ремень грм", "грм", "正时皮带", "正时"],
     15: ["lpg ecu", "lpg harita", "lpg kalibr", "gaz ayar", "газов", "lpg", "燃气", "液化气"],
 }
+DEFAULT_REPAIR_VERBS_STRICT = [
+    "replace", "change", "swap", "renew", "fix", "repair", "install",
+    "degistir", "degis", "yenile", "tamir", "onar", "tak",
+    "замени", "заменить", "поменяй", "поменять", "почини", "починить",
+    "установи", "установить", "отремонтируй", "отремонтировать",
+    "更换", "换", "修理", "维修", "安装",
+]
+
+REPLACEMENT_VERBS_STRICT = [
+    "replace", "change", "swap", "renew",
+    "degistir", "degis", "yenile",
+    "замени", "заменить", "поменяй", "поменять",
+    "更换", "换",
+]
+
+CORRECT_REPAIR_RULES_STRICT = {
+    1: {
+        "targets": ["battery", "aku", "akuyu", "akumulator", "аккумулятор", "电瓶", "蓄电池"],
+        "verbs": REPLACEMENT_VERBS_STRICT,
+        "blocked": [
+            "charge", "recharge", "jump", "boost", "water", "acid",
+            "sarj", "sarz", "takviye", "doldur", "asit", "заряд", "кислот", "долей",
+        ],
+    },
+    2: {
+        "targets": ["starter", "starter motor", "mars motor", "стартер", "起动机"],
+        "verbs": DEFAULT_REPAIR_VERBS_STRICT,
+    },
+    3: {
+        "targets": ["fuse", "sigorta", "#14", "15a", "15 a", "предохранитель", "保险丝"],
+        "verbs": REPLACEMENT_VERBS_STRICT,
+    },
+    4: {"targets": ["wiper motor", "silecek motor"], "verbs": DEFAULT_REPAIR_VERBS_STRICT},
+    5: {
+        "targets": ["ac line", "refrigerant", "klima hatt", "klima gaz", "kacak"],
+        "verbs": DEFAULT_REPAIR_VERBS_STRICT,
+    },
+    6: {"targets": ["thermostat", "termostat"], "verbs": DEFAULT_REPAIR_VERBS_STRICT},
+    7: {
+        "targets": ["spark plug", "buji", "cylinder 3", "silindir 3", "3. silindir"],
+        "verbs": DEFAULT_REPAIR_VERBS_STRICT,
+    },
+    8: {
+        "targets": ["atf", "transmission fluid", "sanziman yagi", "sanziman sivisi"],
+        "verbs": DEFAULT_REPAIR_VERBS_STRICT,
+    },
+    9: {"targets": ["brake pad", "balata", "fren balata"], "verbs": DEFAULT_REPAIR_VERBS_STRICT},
+    10: {
+        "targets": ["o2 sensor", "oxygen sensor", "lambda", "oksijen sensor"],
+        "verbs": DEFAULT_REPAIR_VERBS_STRICT,
+    },
+    11: {
+        "targets": ["piston ring", "segman", "cylinder 2", "cylinder 3", "silindir 2", "silindir 3"],
+        "verbs": DEFAULT_REPAIR_VERBS_STRICT,
+    },
+    12: {"targets": ["head gasket", "conta", "silindir kapak"], "verbs": DEFAULT_REPAIR_VERBS_STRICT},
+    13: {"targets": ["water pump", "su pompa", "devirdaim"], "verbs": DEFAULT_REPAIR_VERBS_STRICT},
+    14: {"targets": ["timing belt", "triger", "zamanlama", "sente"], "verbs": DEFAULT_REPAIR_VERBS_STRICT},
+    15: {"targets": ["lpg ecu", "lpg harita", "lpg kalibr", "gaz ayar", "lpg"], "verbs": DEFAULT_REPAIR_VERBS_STRICT},
+}
 
 
 def _is_correct_repair_command(scenario, user_message):
@@ -359,22 +641,28 @@ def _is_correct_repair_command(scenario, user_message):
     if not normalized:
         return False
 
-    has_repair_intent = any(
-        _normalize_repair_text(verb) in normalized
-        for verb in REPAIR_VERBS
-    )
-    if not has_repair_intent:
+    rule = CORRECT_REPAIR_RULES_STRICT.get(scenario_id)
+    if not rule:
         return False
 
-    aliases = CORRECT_REPAIR_ALIASES.get(scenario_id, [])
-    return any(_normalize_repair_text(alias) in normalized for alias in aliases)
+    if _contains_any_repair_term(normalized, rule.get("blocked", [])):
+        return False
+
+    return (
+        _contains_any_repair_term(normalized, rule["targets"])
+        and _contains_any_repair_term(normalized, rule["verbs"])
+    )
+
+
+def _contains_any_repair_term(text, values):
+    return any(_normalize_repair_text(value) in text for value in values)
 
 
 def _normalize_repair_text(text):
     text = (text or "").lower()
     replacements = {
-        "ı": "i", "İ": "i", "ğ": "g", "ü": "u", "ş": "s", "ö": "o", "ç": "c",
-        "Ğ": "g", "Ü": "u", "Ş": "s", "Ö": "o", "Ç": "c",
+        "ı": "i", "İ": "i", "ğ": "g", "Ğ": "g", "ü": "u", "Ü": "u",
+        "ş": "s", "Ş": "s", "ö": "o", "Ö": "o", "ç": "c", "Ç": "c",
     }
     for old, new in replacements.items():
         text = text.replace(old, new)

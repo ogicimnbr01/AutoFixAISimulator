@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -10,10 +12,21 @@ class ApiClient {
 
   Future<Map<String, String>> get _headers async {
     final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+    final installId = await _installId;
     return {
       'Content-Type': 'application/json',
+      'X-Install-Id': installId,
       if (token != null) 'Authorization': 'Bearer $token',
     };
+  }
+
+  Future<String> get _installId async {
+    final prefs = await SharedPreferences.getInstance();
+    final existing = prefs.getString('autofix_install_id');
+    if (existing != null && existing.length >= 12) return existing;
+    final created = const Uuid().v4();
+    await prefs.setString('autofix_install_id', created);
+    return created;
   }
 
   // === User ===
@@ -41,6 +54,22 @@ class ApiClient {
       Uri.parse('$_baseUrl/game/start'),
       headers: await _headers,
       body: jsonEncode({'scenarioId': scenarioId}),
+    );
+    return _parseResponse(res);
+  }
+
+  Future<Map<String, dynamic>> getCompletedScenarios() async {
+    final res = await http.get(
+      Uri.parse('$_baseUrl/game/completed'),
+      headers: await _headers,
+    );
+    return _parseResponse(res);
+  }
+
+  Future<Map<String, dynamic>> getArchivedScenario(int scenarioId) async {
+    final res = await http.get(
+      Uri.parse('$_baseUrl/game/archive/$scenarioId'),
+      headers: await _headers,
     );
     return _parseResponse(res);
   }

@@ -42,6 +42,7 @@ locals {
     TABLE_LEADERBOARD          = var.dynamodb_table_names["leaderboard"]
     TABLE_REPORTS              = var.dynamodb_table_names["reports"]
     TABLE_TRANSACTIONS         = var.dynamodb_table_names["transactions"]
+    TABLE_DEVICE_STATES        = var.dynamodb_table_names["device_states"]
     BEDROCK_MODEL_ID           = "us.amazon.nova-lite-v1:0"
     BEDROCK_REGION             = "us-east-1"
     ALLOW_CLIENT_AD_REWARD     = var.environment == "prod" ? "false" : "true"

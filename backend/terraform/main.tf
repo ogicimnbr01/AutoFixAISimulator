@@ -46,6 +46,7 @@ module "iam" {
     module.dynamodb.leaderboard_table_arn,
     module.dynamodb.reports_table_arn,
     module.dynamodb.transactions_table_arn,
+    module.dynamodb.device_states_table_arn,
   ]
 }
 
@@ -56,12 +57,13 @@ module "lambda" {
   lambdas_dir               = "${path.root}/../lambdas"
   revenuecat_webhook_secret = var.revenuecat_webhook_secret
   dynamodb_table_names = {
-    users        = module.dynamodb.users_table_name
-    sessions     = module.dynamodb.sessions_table_name
-    daily_resets = module.dynamodb.daily_resets_table_name
-    leaderboard  = module.dynamodb.leaderboard_table_name
-    reports      = module.dynamodb.reports_table_name
-    transactions = module.dynamodb.transactions_table_name
+    users         = module.dynamodb.users_table_name
+    sessions      = module.dynamodb.sessions_table_name
+    daily_resets  = module.dynamodb.daily_resets_table_name
+    leaderboard   = module.dynamodb.leaderboard_table_name
+    reports       = module.dynamodb.reports_table_name
+    transactions  = module.dynamodb.transactions_table_name
+    device_states = module.dynamodb.device_states_table_name
   }
 }
 

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/api/api_client.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
+import '../../providers/providers.dart';
 import '../game/game_screen.dart';
 
 /// Scenarios data — matches backend scenarios.py
@@ -107,23 +110,60 @@ const _scenarios = [
   },
 ];
 
-class ScenarioSelectScreen extends StatelessWidget {
+class ScenarioSelectScreen extends ConsumerStatefulWidget {
   final String difficulty;
   const ScenarioSelectScreen({super.key, required this.difficulty});
 
   @override
+  ConsumerState<ScenarioSelectScreen> createState() =>
+      _ScenarioSelectScreenState();
+}
+
+class _ScenarioSelectScreenState extends ConsumerState<ScenarioSelectScreen> {
+  final Map<int, Map<String, dynamic>> _completed = {};
+  bool _isLoadingCompleted = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCompleted();
+  }
+
+  Future<void> _loadCompleted() async {
+    try {
+      final res = await ref.read(apiClientProvider).getCompletedScenarios();
+      final items = res['completedScenarios'] as List? ?? const [];
+      if (!mounted) return;
+      setState(() {
+        _completed
+          ..clear()
+          ..addEntries(
+            items.map((item) {
+              final entry = item as Map<String, dynamic>;
+              return MapEntry(entry['scenarioId'] as int, entry);
+            }),
+          );
+        _isLoadingCompleted = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isLoadingCompleted = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final scenarios = _scenarios
-        .where((s) => s['difficulty'] == difficulty)
+        .where((s) => s['difficulty'] == widget.difficulty)
         .toList();
-    final diffColor = difficulty == 'Easy'
+    final diffColor = widget.difficulty == 'Easy'
         ? AppTheme.success
-        : difficulty == 'Medium'
+        : widget.difficulty == 'Medium'
         ? AppTheme.warning
         : AppTheme.danger;
-    final diffLabel = difficulty == 'Easy'
+    final diffLabel = widget.difficulty == 'Easy'
         ? (S.of(context)?.difficultyEasy ?? 'Kolay')
-        : difficulty == 'Medium'
+        : widget.difficulty == 'Medium'
         ? (S.of(context)?.difficultyMedium ?? 'Orta')
         : (S.of(context)?.difficultyHard ?? 'Zor');
 
@@ -164,6 +204,9 @@ class ScenarioSelectScreen extends StatelessWidget {
         itemCount: scenarios.length,
         itemBuilder: (context, index) {
           final s = scenarios[index];
+          final scenarioId = s['id'] as int;
+          final completed = _completed[scenarioId];
+          final isSolved = completed != null;
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
             child: Material(
@@ -171,13 +214,18 @@ class ScenarioSelectScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  if (isSolved) {
+                    await _openArchive(scenarioId);
+                    return;
+                  }
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => GameScreen(scenarioId: s['id'] as int),
+                      builder: (_) => GameScreen(scenarioId: scenarioId),
                     ),
                   );
+                  _loadCompleted();
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -245,13 +293,59 @@ class ScenarioSelectScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const Icon(
-                            Icons.play_circle_fill,
-                            color: AppTheme.primary,
-                            size: 36,
-                          ),
+                          if (_isLoadingCompleted)
+                            const SizedBox(
+                              width: 28,
+                              height: 28,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          else
+                            Icon(
+                              isSolved
+                                  ? Icons.check_circle
+                                  : Icons.play_circle_fill,
+                              color: isSolved
+                                  ? AppTheme.success
+                                  : AppTheme.primary,
+                              size: 36,
+                            ),
                         ],
                       ),
+                      if (isSolved) ...[
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppTheme.success.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: AppTheme.success.withValues(alpha: 0.25),
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.fact_check_outlined,
+                                color: AppTheme.success,
+                                size: 16,
+                              ),
+                              SizedBox(width: 6),
+                              Text(
+                                'Çözüldü · Sohbeti Gör',
+                                style: TextStyle(
+                                  color: AppTheme.success,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 12),
                       Container(
                         padding: const EdgeInsets.all(12),
@@ -289,6 +383,37 @@ class ScenarioSelectScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _openArchive(int scenarioId) async {
+    try {
+      final archive = await ref
+          .read(apiClientProvider)
+          .getArchivedScenario(scenarioId);
+      if (!mounted) return;
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => GameScreen(
+            scenarioId: scenarioId,
+            archiveData: archive,
+            readOnlyArchive: true,
+          ),
+        ),
+      );
+      ref.read(userProfileProvider.notifier).load();
+      _loadCompleted();
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          backgroundColor: e.error == 'archive_limit'
+              ? AppTheme.warning
+              : AppTheme.danger,
+        ),
+      );
+    }
   }
 
   String? _getLocalizedVehicle(BuildContext context, int id) {

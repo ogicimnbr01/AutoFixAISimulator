@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
+import 'dart:math' as math;
 import '../../core/theme/app_theme.dart';
 import '../../core/api/api_client.dart';
 import '../../providers/providers.dart';
@@ -10,7 +11,15 @@ import 'hint_store_sheet.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
   final int scenarioId;
-  const GameScreen({super.key, required this.scenarioId});
+  final Map<String, dynamic>? archiveData;
+  final bool readOnlyArchive;
+
+  const GameScreen({
+    super.key,
+    required this.scenarioId,
+    this.archiveData,
+    this.readOnlyArchive = false,
+  });
 
   @override
   ConsumerState<GameScreen> createState() => _GameScreenState();
@@ -38,10 +47,52 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void initState() {
     super.initState();
-    _startGame();
+    if (widget.readOnlyArchive && widget.archiveData != null) {
+      _loadArchive(widget.archiveData!);
+    } else {
+      _startGame();
+    }
   }
 
   ApiClient get _api => ref.read(apiClientProvider);
+
+  void _loadArchive(Map<String, dynamic> archive) {
+    final scenario = archive['scenario'] as Map<String, dynamic>?;
+    final rawMessages = archive['messages'] as List? ?? const [];
+    final complaint =
+        _getLocalizedComplaint(context, widget.scenarioId) ??
+        scenario?['complaint'] ??
+        '';
+
+    setState(() {
+      _sessionId = archive['sessionId'] as String?;
+      _scenario = scenario;
+      _solved = true;
+      _messageCount = archive['messageCount'] ?? rawMessages.length;
+      if (archive['masteryFeedback'] is String &&
+          (archive['masteryFeedback'] as String).trim().isNotEmpty) {
+        _masteryFeedback = (archive['masteryFeedback'] as String).trim();
+      }
+      _messages
+        ..clear()
+        ..add({
+          'role': 'system',
+          'content':
+              S.of(context)?.customerComplaint(complaint) ??
+              'Müşteri: "$complaint"',
+        })
+        ..addAll(
+          rawMessages.map((message) {
+            final item = message as Map;
+            return {
+              'role': '${item['role'] ?? 'assistant'}',
+              'content': '${item['content'] ?? ''}',
+            };
+          }),
+        );
+      _isLoading = false;
+    });
+  }
 
   Future<void> _startGame() async {
     setState(() => _isLoading = true);
@@ -723,82 +774,96 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   colors: [Color(0xFF1B5E20), Color(0xFF2E7D32)],
                 ),
               ),
-              child: Column(
+              child: Stack(
+                alignment: Alignment.topCenter,
                 children: [
-                  Text(
-                    S.of(context)?.repairSuccess ?? '🏆 Tamir Başarılı!',
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                  if (!widget.readOnlyArchive)
+                    const Positioned.fill(
+                      child: IgnorePointer(child: _SolvedConfettiBurst()),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    '${S.of(context)?.seriesInfo(_streakCount) ?? 'Seri: $_streakCount | +1 Ün Puanı'}${_bonusEnergy ? (S.of(context)?.bonusEnergyTag ?? ' | 🎁 +1 Bonus Enerji!') : ''}',
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
-                  ),
-                  if (masteryNote != null) ...[
-                    const SizedBox(height: 12),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.20),
+                  Column(
+                    children: [
+                      Text(
+                        S.of(context)?.repairSuccess ?? '🏆 Tamir Başarılı!',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
                         ),
                       ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(
-                            Icons.school_outlined,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  masteryTitle,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  masteryNote,
-                                  style: const TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 13,
-                                    height: 1.35,
-                                  ),
-                                ),
-                              ],
+                      const SizedBox(height: 6),
+                      Text(
+                        '${S.of(context)?.seriesInfo(_streakCount) ?? 'Seri: $_streakCount | +1 Ün Puanı'}${_bonusEnergy ? (S.of(context)?.bonusEnergyTag ?? ' | 🎁 +1 Bonus Enerji!') : ''}',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
+                      if (masteryNote != null) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.20),
                             ),
                           ),
-                        ],
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(
+                                Icons.school_outlined,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      masteryTitle,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      masteryNote,
+                                      style: const TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 13,
+                                        height: 1.35,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 14),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.garage),
+                          label: Text(
+                            S.of(context)?.backToGarage ?? 'Garaja Dön',
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppTheme.success,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                  const SizedBox(height: 14),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.garage),
-                      label: Text(S.of(context)?.backToGarage ?? 'Garaja Dön'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: AppTheme.success,
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
@@ -1225,6 +1290,184 @@ String? _getMasteryNote(BuildContext context, int id) {
   };
 
   return notes[lang]?[id] ?? notes['en']?[id];
+}
+
+class _SolvedConfettiBurst extends StatefulWidget {
+  const _SolvedConfettiBurst();
+
+  @override
+  State<_SolvedConfettiBurst> createState() => _SolvedConfettiBurstState();
+}
+
+class _SolvedConfettiBurstState extends State<_SolvedConfettiBurst>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 950),
+    )..forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final progress = Curves.easeOutCubic.transform(_controller.value);
+        return CustomPaint(
+          painter: _SolvedConfettiPainter(progress),
+          size: Size.infinite,
+        );
+      },
+    );
+  }
+}
+
+class _ConfettiPiece {
+  const _ConfettiPiece({
+    required this.dx,
+    required this.dy,
+    required this.size,
+    required this.rotation,
+    required this.color,
+  });
+
+  final double dx;
+  final double dy;
+  final double size;
+  final double rotation;
+  final Color color;
+}
+
+class _SolvedConfettiPainter extends CustomPainter {
+  _SolvedConfettiPainter(this.progress);
+
+  final double progress;
+
+  static const _pieces = [
+    _ConfettiPiece(
+      dx: -0.42,
+      dy: 46,
+      size: 8,
+      rotation: 0.2,
+      color: Color(0xFFFFD54F),
+    ),
+    _ConfettiPiece(
+      dx: -0.30,
+      dy: 60,
+      size: 6,
+      rotation: 1.1,
+      color: Color(0xFFFF7043),
+    ),
+    _ConfettiPiece(
+      dx: -0.18,
+      dy: 42,
+      size: 7,
+      rotation: 2.0,
+      color: Color(0xFF4DD0E1),
+    ),
+    _ConfettiPiece(
+      dx: -0.08,
+      dy: 68,
+      size: 5,
+      rotation: 0.8,
+      color: Color(0xFF81C784),
+    ),
+    _ConfettiPiece(
+      dx: 0.06,
+      dy: 54,
+      size: 7,
+      rotation: 1.7,
+      color: Color(0xFFFFF176),
+    ),
+    _ConfettiPiece(
+      dx: 0.16,
+      dy: 40,
+      size: 5,
+      rotation: 2.5,
+      color: Color(0xFF64B5F6),
+    ),
+    _ConfettiPiece(
+      dx: 0.28,
+      dy: 62,
+      size: 8,
+      rotation: 0.6,
+      color: Color(0xFFFF8A65),
+    ),
+    _ConfettiPiece(
+      dx: 0.40,
+      dy: 48,
+      size: 6,
+      rotation: 1.4,
+      color: Color(0xFFA5D6A7),
+    ),
+    _ConfettiPiece(
+      dx: -0.34,
+      dy: 30,
+      size: 5,
+      rotation: 2.7,
+      color: Color(0xFFE1BEE7),
+    ),
+    _ConfettiPiece(
+      dx: 0.34,
+      dy: 34,
+      size: 5,
+      rotation: 0.3,
+      color: Color(0xFFB2EBF2),
+    ),
+  ];
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.isEmpty || progress <= 0) return;
+
+    final origin = Offset(size.width / 2, 12);
+    final fadeStart = 0.58;
+    final opacity = progress < fadeStart
+        ? 1.0
+        : (1 - ((progress - fadeStart) / (1 - fadeStart))).clamp(0.0, 1.0);
+
+    for (final piece in _pieces) {
+      final paint = Paint()
+        ..color = piece.color.withValues(alpha: opacity * 0.95);
+      final drift = Offset(
+        piece.dx * size.width * progress,
+        piece.dy * progress + 36 * progress * progress,
+      );
+      final center = origin + drift;
+
+      canvas.save();
+      canvas.translate(center.dx, center.dy);
+      canvas.rotate(piece.rotation + progress * math.pi * 2.2);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(
+            center: Offset.zero,
+            width: piece.size,
+            height: piece.size * 0.58,
+          ),
+          const Radius.circular(1.5),
+        ),
+        paint,
+      );
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _SolvedConfettiPainter oldDelegate) {
+    return oldDelegate.progress != progress;
+  }
 }
 
 String? _getLocalizedVehicle(BuildContext context, int id) {
