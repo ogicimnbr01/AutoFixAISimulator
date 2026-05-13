@@ -179,8 +179,9 @@ class _ScenarioSelectScreenState extends ConsumerState<ScenarioSelectScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: diffColor.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8),
+                color: AppTheme.bgSurface,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: diffColor.withValues(alpha: 0.35)),
               ),
               child: Text(
                 diffLabel,
@@ -211,12 +212,23 @@ class _ScenarioSelectScreenState extends ConsumerState<ScenarioSelectScreen> {
             margin: const EdgeInsets.only(bottom: 12),
             child: Material(
               color: AppTheme.bgCard,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(6),
               child: InkWell(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(6),
                 onTap: () async {
                   if (isSolved) {
                     await _openArchive(scenarioId);
+                    return;
+                  }
+                  final profile = ref.read(userProfileProvider).valueOrNull;
+                  if (profile == null) {
+                    ref.read(userProfileProvider.notifier).load();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(S.of(context)!.profileLoadingRetry),
+                        backgroundColor: AppTheme.warning,
+                      ),
+                    );
                     return;
                   }
                   await Navigator.push(
@@ -234,23 +246,54 @@ class _ScenarioSelectScreenState extends ConsumerState<ScenarioSelectScreen> {
                     children: [
                       // Car Image
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          'assets/images/cars/scenario_${s['id']}.jpg',
-                          width: double.infinity,
-                          height: 140,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                                width: double.infinity,
-                                height: 140,
-                                color: diffColor.withValues(alpha: 0.1),
-                                child: Icon(
-                                  Icons.directions_car,
-                                  size: 64,
-                                  color: diffColor.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(6),
+                        child: Stack(
+                          children: [
+                            Image.asset(
+                              'assets/images/cars/scenario_${s['id']}.jpg',
+                              width: double.infinity,
+                              height: 140,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                    width: double.infinity,
+                                    height: 140,
+                                    color: diffColor.withValues(alpha: 0.1),
+                                    child: Icon(
+                                      Icons.directions_car,
+                                      size: 64,
+                                      color: diffColor.withValues(alpha: 0.5),
+                                    ),
+                                  ),
+                            ),
+                            Positioned.fill(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.black.withValues(alpha: 0.0),
+                                      Colors.black.withValues(alpha: 0.32),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
                                 ),
                               ),
+                            ),
+                            Positioned(
+                              left: 10,
+                              bottom: 10,
+                              child: _StatusChip(
+                                icon: isSolved
+                                    ? Icons.check_circle_outline
+                                    : Icons.assignment_outlined,
+                                label: isSolved
+                                    ? S.of(context)!.solved
+                                    : S.of(context)!.serviceIntake,
+                                color: isSolved ? AppTheme.success : diffColor,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -261,7 +304,10 @@ class _ScenarioSelectScreenState extends ConsumerState<ScenarioSelectScreen> {
                             height: 40,
                             decoration: BoxDecoration(
                               color: diffColor.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: diffColor.withValues(alpha: 0.30),
+                              ),
                             ),
                             child: Center(
                               child: Text(
@@ -320,23 +366,23 @@ class _ScenarioSelectScreenState extends ConsumerState<ScenarioSelectScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: AppTheme.success.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(6),
                             border: Border.all(
                               color: AppTheme.success.withValues(alpha: 0.25),
                             ),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.fact_check_outlined,
                                 color: AppTheme.success,
                                 size: 16,
                               ),
-                              SizedBox(width: 6),
+                              const SizedBox(width: 6),
                               Text(
-                                'Çözüldü · Sohbeti Gör',
-                                style: TextStyle(
+                                S.of(context)!.solvedViewChat,
+                                style: const TextStyle(
                                   color: AppTheme.success,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w800,
@@ -351,15 +397,18 @@ class _ScenarioSelectScreenState extends ConsumerState<ScenarioSelectScreen> {
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: AppTheme.bgSurface,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: AppTheme.bgElevated),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              '🧑‍🔧 ',
-                              style: TextStyle(fontSize: 16),
+                            const Icon(
+                              Icons.notes_outlined,
+                              color: AppTheme.textMuted,
+                              size: 18,
                             ),
+                            const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 '"${_getLocalizedComplaint(context, s['id'] as int) ?? s['complaint']}"',
@@ -490,5 +539,44 @@ class _ScenarioSelectScreenState extends ConsumerState<ScenarioSelectScreen> {
       default:
         return null;
     }
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  const _StatusChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppTheme.bgDark.withValues(alpha: 0.78),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.45)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 15),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

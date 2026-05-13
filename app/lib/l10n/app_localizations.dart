@@ -119,6 +119,12 @@ abstract class S {
   /// **'Sıralama'**
   String get tabLeaderboard;
 
+  /// No description provided for @tabStore.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mağaza'**
+  String get tabStore;
+
   /// No description provided for @tabProfile.
   ///
   /// In tr, this message translates to:
@@ -1097,6 +1103,18 @@ abstract class S {
   /// **'Reklam yüklenemedi veya yarıda kesildi.'**
   String get adLoadFail;
 
+  /// No description provided for @rewardVerifyingTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ödül doğrulanıyor'**
+  String get rewardVerifyingTitle;
+
+  /// No description provided for @rewardVerifyingBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Reklam ödülünü güvenli şekilde işliyoruz. Birkaç saniye sürebilir.'**
+  String get rewardVerifyingBody;
+
   /// No description provided for @hintError.
   ///
   /// In tr, this message translates to:
@@ -1205,11 +1223,101 @@ abstract class S {
   /// **'Başarıyla güncellendi!'**
   String get saveSuccess;
 
+  /// No description provided for @mergeProfileSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'✅ Mevcut cihaz verisiyle birleştirildi!'**
+  String get mergeProfileSuccess;
+
   /// No description provided for @save.
   ///
   /// In tr, this message translates to:
   /// **'Kaydet'**
   String get save;
+
+  /// No description provided for @guestDeleteDisabledInfo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Anonim hesaplar uygulama içinden silinemez. Verilerini silmek için önce profilden Google veya Apple hesabı bağla; sonra hesap silme seçeneği açılır.'**
+  String get guestDeleteDisabledInfo;
+
+  /// No description provided for @guestDeleteDisabledSnack.
+  ///
+  /// In tr, this message translates to:
+  /// **'Anonim hesap silinemez. Önce Google veya Apple hesabı bağla.'**
+  String get guestDeleteDisabledSnack;
+
+  /// No description provided for @profileLoadingRetry.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profil yükleniyor. Enerji bilgisi gelince tekrar dene.'**
+  String get profileLoadingRetry;
+
+  /// No description provided for @storeTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mağaza'**
+  String get storeTitle;
+
+  /// No description provided for @storeSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Enerji ve ipucu paketleri'**
+  String get storeSubtitle;
+
+  /// No description provided for @energyPacks.
+  ///
+  /// In tr, this message translates to:
+  /// **'Enerji Paketleri'**
+  String get energyPacks;
+
+  /// No description provided for @hintPacks.
+  ///
+  /// In tr, this message translates to:
+  /// **'İpucu Paketleri'**
+  String get hintPacks;
+
+  /// No description provided for @noEnergyPacks.
+  ///
+  /// In tr, this message translates to:
+  /// **'Enerji paketleri henüz RevenueCat\'te görünmüyor.'**
+  String get noEnergyPacks;
+
+  /// No description provided for @noHintPacks.
+  ///
+  /// In tr, this message translates to:
+  /// **'İpucu paketleri henüz RevenueCat\'te görünmüyor.'**
+  String get noHintPacks;
+
+  /// No description provided for @purchaseSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'Satın alma başarılı.'**
+  String get purchaseSuccess;
+
+  /// No description provided for @purchaseFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Satın alma iptal edildi veya başarısız oldu.'**
+  String get purchaseFailed;
+
+  /// No description provided for @serviceIntake.
+  ///
+  /// In tr, this message translates to:
+  /// **'Servis Kabul'**
+  String get serviceIntake;
+
+  /// No description provided for @solved.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çözüldü'**
+  String get solved;
+
+  /// No description provided for @solvedViewChat.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çözüldü · Sohbeti Gör'**
+  String get solvedViewChat;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

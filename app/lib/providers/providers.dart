@@ -129,15 +129,50 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
 
   Future<bool> claimAdReward(String type, {String? sessionId}) async {
     try {
+      final previousEnergy = state.valueOrNull?.energy;
       final res = await _api.claimAdReward(type, sessionId: sessionId);
-      if (res['rewardGranted'] != true) {
-        return false;
+      if (res['rewardGranted'] == true) {
+        await load();
+        return true;
       }
-      await load();
-      return true;
+      if (res['pendingVerification'] == true) {
+        if (type == 'energy') {
+          return _waitForVerifiedEnergy(previousEnergy);
+        }
+        if (type == 'cooldown') {
+          await Future.delayed(const Duration(seconds: 3));
+          await load();
+          return true;
+        }
+      }
+      return false;
     } catch (e) {
       return false;
     }
+  }
+
+  Future<bool> _waitForVerifiedEnergy(int? previousEnergy) async {
+    const delays = [
+      Duration.zero,
+      Duration(milliseconds: 450),
+      Duration(milliseconds: 700),
+      Duration(milliseconds: 900),
+      Duration(milliseconds: 1200),
+      Duration(milliseconds: 1600),
+      Duration(milliseconds: 2200),
+    ];
+    for (final delay in delays) {
+      if (delay > Duration.zero) {
+        await Future.delayed(delay);
+      }
+      final data = await _api.getProfile();
+      final profile = UserProfile.fromJson(data);
+      state = AsyncValue.data(profile);
+      if (previousEnergy == null || profile.energy > previousEnergy) {
+        return true;
+      }
+    }
+    return false;
   }
 
   Future<bool> updateDisplayName(String newName) async {
@@ -194,6 +229,12 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile>> {
           installDate: profile.installDate,
         ),
       );
+    });
+  }
+
+  void addEnergyCredits(int amount) {
+    state.whenData((profile) {
+      updateEnergy(profile.energy + amount);
     });
   }
 
@@ -346,8 +387,14 @@ class ChatMessage {
 }
 
 /// Leaderboard state
+const bool _showcaseLeaderboard = bool.fromEnvironment('SHOWCASE_LEADERBOARD');
+
 final leaderboardProvider =
     FutureProvider.family<List<LeaderboardEntry>, String>((ref, period) async {
+      if (_showcaseLeaderboard) {
+        return _showcaseLeaderboardEntries(period);
+      }
+
       final api = ref.read(apiClientProvider);
       final data = await api.getLeaderboard(period);
       final rankings = data['rankings'] as List;
@@ -361,6 +408,36 @@ final leaderboardProvider =
           )
           .toList();
     });
+
+List<LeaderboardEntry> _showcaseLeaderboardEntries(String period) {
+  final multiplier = switch (period) {
+    'yearly' => 3,
+    'monthly' => 2,
+    _ => 1,
+  };
+  const names = [
+    'Alex Torque',
+    'Maya Garage',
+    'Kenji Fix',
+    'Lena Auto',
+    'Ivan Motors',
+    'Chen Works',
+    'Ozan Usta',
+    'Nora Service',
+    'Max Volt',
+    'Eli Parts',
+  ];
+  const weeklyPoints = [18, 16, 14, 12, 10, 9, 8, 7, 6, 5];
+
+  return [
+    for (var i = 0; i < names.length; i++)
+      LeaderboardEntry(
+        rank: i + 1,
+        displayName: names[i],
+        repPoints: weeklyPoints[i] * multiplier,
+      ),
+  ];
+}
 
 class LeaderboardEntry {
   final int rank;

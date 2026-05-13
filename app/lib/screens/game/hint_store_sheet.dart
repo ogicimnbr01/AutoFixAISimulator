@@ -23,14 +23,35 @@ class HintStoreItem {
 
 const _hintMetadata = {
   'hints_3': HintStoreItem(emoji: '🧰', amount: 3, unitPriceSuffix: '/adet'),
+  'hint_pack_3': HintStoreItem(
+    emoji: '🧰',
+    amount: 3,
+    unitPriceSuffix: '/adet',
+  ),
   'hints_10': HintStoreItem(emoji: '🔧', amount: 10, unitPriceSuffix: '/adet'),
+  'hint_pack_10': HintStoreItem(
+    emoji: '🔧',
+    amount: 10,
+    unitPriceSuffix: '/adet',
+  ),
   'hints_25': HintStoreItem(
     emoji: '⭐',
     amount: 25,
     unitPriceSuffix: '/adet',
     isTarget: true,
   ),
+  'hint_pack_25': HintStoreItem(
+    emoji: '⭐',
+    amount: 25,
+    unitPriceSuffix: '/adet',
+    isTarget: true,
+  ),
   'hints_50': HintStoreItem(emoji: '🔥', amount: 50, unitPriceSuffix: '/adet'),
+  'hint_pack_50': HintStoreItem(
+    emoji: '🔥',
+    amount: 50,
+    unitPriceSuffix: '/adet',
+  ),
 };
 
 /// Show the hint store as a bottom sheet
@@ -58,7 +79,7 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
   @override
   void initState() {
     super.initState();
-    _selectedPackageId = 'hint_25'; // Default to the target package
+    _selectedPackageId = 'hints_25'; // Default to the target package
     _glowController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
@@ -87,7 +108,9 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
     if (success) {
       // Refresh profile to pull the new hint credits from the backend
       // (Assuming a webhook adds the hints to DynamoDB, or we do it optimistically)
-      final meta = _hintMetadata[package.identifier];
+      final meta =
+          _hintMetadata[package.identifier] ??
+          _hintMetadata[package.storeProduct.identifier];
       if (meta != null) {
         ref.read(userProfileProvider.notifier).addHintCredits(meta.amount);
       } else {
@@ -231,7 +254,9 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
 
                     return Column(
                       children: offering.availablePackages.map((pkg) {
-                        final isSelected = _selectedPackageId == pkg.identifier;
+                        final isSelected =
+                            _selectedPackageId == pkg.identifier ||
+                            _selectedPackageId == pkg.storeProduct.identifier;
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 10),
                           child: _buildPackageCard(pkg, isSelected),
@@ -255,7 +280,9 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
                 Package? selectedPkg;
                 if (pkgs != null && pkgs.isNotEmpty) {
                   selectedPkg = pkgs.firstWhere(
-                    (p) => p.identifier == _selectedPackageId,
+                    (p) =>
+                        p.identifier == _selectedPackageId ||
+                        p.storeProduct.identifier == _selectedPackageId,
                     orElse: () => pkgs.first,
                   );
                 }
@@ -326,7 +353,8 @@ class _HintStoreSheetState extends ConsumerState<_HintStoreSheet>
     // Default metadata if ID doesn't match our predefined list
     final meta =
         _hintMetadata[pkg.identifier] ??
-        HintStoreItem(emoji: '📦', amount: 1, unitPriceSuffix: '');
+        _hintMetadata[pkg.storeProduct.identifier] ??
+        const HintStoreItem(emoji: '📦', amount: 1, unitPriceSuffix: '');
     final name = pkg.storeProduct.title
         .replaceAll(RegExp(r'\(.*\)'), '')
         .trim(); // Remove "(App Name)"

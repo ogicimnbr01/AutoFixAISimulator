@@ -18,6 +18,9 @@ class SEn extends S {
   String get tabLeaderboard => 'Leaderboard';
 
   @override
+  String get tabStore => 'Store';
+
+  @override
   String get tabProfile => 'Profile';
 
   @override
@@ -548,6 +551,13 @@ class SEn extends S {
   String get adLoadFail => 'Ad failed to load or was interrupted.';
 
   @override
+  String get rewardVerifyingTitle => 'Verifying reward';
+
+  @override
+  String get rewardVerifyingBody =>
+      'We are safely processing your ad reward. This can take a few seconds.';
+
+  @override
   String get hintError => 'Hint error';
 
   @override
@@ -607,5 +617,53 @@ class SEn extends S {
   String get saveSuccess => 'Successfully updated!';
 
   @override
+  String get mergeProfileSuccess => '✅ Device progress merged!';
+
+  @override
   String get save => 'Save';
+
+  @override
+  String get guestDeleteDisabledInfo =>
+      'Anonymous accounts cannot be deleted inside the app. To delete your data, first link a Google or Apple account from Profile; then the account deletion option will appear.';
+
+  @override
+  String get guestDeleteDisabledSnack =>
+      'Anonymous accounts cannot be deleted. Link a Google or Apple account first.';
+
+  @override
+  String get profileLoadingRetry =>
+      'Profile is loading. Try again when energy info is ready.';
+
+  @override
+  String get storeTitle => 'Store';
+
+  @override
+  String get storeSubtitle => 'Energy and hint packs';
+
+  @override
+  String get energyPacks => 'Energy Packs';
+
+  @override
+  String get hintPacks => 'Hint Packs';
+
+  @override
+  String get noEnergyPacks => 'Energy packs are not visible in RevenueCat yet.';
+
+  @override
+  String get noHintPacks => 'Hint packs are not visible in RevenueCat yet.';
+
+  @override
+  String get purchaseSuccess => 'Purchase successful.';
+
+  @override
+  String get purchaseFailed => 'Purchase was cancelled or failed.';
+
+  @override
+  String get serviceIntake => 'Service Intake';
+
+  @override
+  String get solved => 'Solved';
+
+  @override
+  String get solvedViewChat => 'Solved · View Chat';
 }

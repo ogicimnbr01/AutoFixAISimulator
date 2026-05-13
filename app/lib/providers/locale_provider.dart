@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Manages the app's locale (language) state with persistence.
 class LocaleNotifier extends StateNotifier<Locale> {
-  LocaleNotifier() : super(const Locale('tr')) {
+  LocaleNotifier() : super(_deviceLocaleOrEnglish()) {
     _loadSavedLocale();
   }
 
@@ -24,10 +24,20 @@ class LocaleNotifier extends StateNotifier<Locale> {
     'zh': '🇨🇳 中文',
   };
 
+  static Locale _deviceLocaleOrEnglish() {
+    final deviceCode =
+        WidgetsBinding.instance.platformDispatcher.locale.languageCode;
+    final isSupported = supportedLocales.any(
+      (locale) => locale.languageCode == deviceCode,
+    );
+    return Locale(isSupported ? deviceCode : 'en');
+  }
+
   Future<void> _loadSavedLocale() async {
     final prefs = await SharedPreferences.getInstance();
     final code = prefs.getString(_key);
-    if (code != null) {
+    if (code != null &&
+        supportedLocales.any((locale) => locale.languageCode == code)) {
       state = Locale(code);
     }
   }

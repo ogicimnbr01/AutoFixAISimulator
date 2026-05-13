@@ -127,6 +127,14 @@ def handle_merge_profile(user_id, event):
 
 def handle_delete_profile(user_id, event):
     try:
+        auth_context = event.get("requestContext", {}).get("authorizer", {}).get("lambda", {})
+        is_anonymous = auth_context.get("isAnonymous")
+        if is_anonymous is True or is_anonymous == "true" or auth_context.get("signInProvider") == "anonymous":
+            return api_response(403, {
+                "error": "anonymous_delete_disabled",
+                "message": "Anonymous guest accounts cannot be deleted in-app. Link a Google or Apple account first.",
+            })
+
         user = get_or_create_user(user_id)
         daily = get_daily_reset(user_id)
         save_device_state_from_user(_install_id(event), user, daily)

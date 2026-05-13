@@ -26,6 +26,9 @@ class AuthService {
     );
   }
 
+  /// Whether the current session is an anonymous guest account.
+  static bool get isAnonymous => _auth.currentUser?.isAnonymous ?? true;
+
   /// Sign in with Google and link to existing anonymous account.
   /// Returns AuthResult to indicate conflict or success.
   static Future<AuthResult> signInWithGoogle() async {
@@ -128,6 +131,14 @@ class AuthService {
   static Future<void> deleteAccount() async {
     final firebaseUser = _auth.currentUser;
     if (firebaseUser == null) return;
+
+    if (firebaseUser.isAnonymous) {
+      throw FirebaseAuthException(
+        code: 'anonymous-delete-disabled',
+        message:
+            'Anonim hesaplar uygulama icinden silinemez. Once Google veya Apple ile baglan.',
+      );
+    }
 
     try {
       await firebaseUser.delete();

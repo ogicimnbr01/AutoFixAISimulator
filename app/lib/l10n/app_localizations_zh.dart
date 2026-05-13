@@ -18,6 +18,9 @@ class SZh extends S {
   String get tabLeaderboard => '排行榜';
 
   @override
+  String get tabStore => '商店';
+
+  @override
   String get tabProfile => '个人资料';
 
   @override
@@ -521,6 +524,12 @@ class SZh extends S {
   String get adLoadFail => '广告加载失败或被中断。';
 
   @override
+  String get rewardVerifyingTitle => '正在验证奖励';
+
+  @override
+  String get rewardVerifyingBody => '正在安全处理你的广告奖励，可能需要几秒钟。';
+
+  @override
   String get hintError => '提示错误';
 
   @override
@@ -579,5 +588,51 @@ class SZh extends S {
   String get saveSuccess => '更新成功！';
 
   @override
+  String get mergeProfileSuccess => '✅ 设备进度已合并！';
+
+  @override
   String get save => '保存';
+
+  @override
+  String get guestDeleteDisabledInfo =>
+      '匿名账号不能在应用内删除。如需删除数据，请先在个人资料中绑定 Google 或 Apple 账号；随后会显示账号删除选项。';
+
+  @override
+  String get guestDeleteDisabledSnack => '匿名账号不能删除。请先绑定 Google 或 Apple 账号。';
+
+  @override
+  String get profileLoadingRetry => '个人资料正在加载。能量信息准备好后请重试。';
+
+  @override
+  String get storeTitle => '商店';
+
+  @override
+  String get storeSubtitle => '能量和提示礼包';
+
+  @override
+  String get energyPacks => '能量礼包';
+
+  @override
+  String get hintPacks => '提示礼包';
+
+  @override
+  String get noEnergyPacks => 'RevenueCat 中暂时看不到能量礼包。';
+
+  @override
+  String get noHintPacks => 'RevenueCat 中暂时看不到提示礼包。';
+
+  @override
+  String get purchaseSuccess => '购买成功。';
+
+  @override
+  String get purchaseFailed => '购买已取消或失败。';
+
+  @override
+  String get serviceIntake => '服务接待';
+
+  @override
+  String get solved => '已解决';
+
+  @override
+  String get solvedViewChat => '已解决 · 查看聊天';
 }

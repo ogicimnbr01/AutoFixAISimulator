@@ -23,11 +23,16 @@ def lambda_handler(event, context):
         request = requests.Request()
         claims = id_token.verify_firebase_token(token, request, audience=PROJECT_ID)
 
+        firebase_claims = claims.get("firebase", {}) or {}
+        sign_in_provider = firebase_claims.get("sign_in_provider", "")
+
         print(f"Authorized user: {claims['sub']}")
         return {
             "isAuthorized": True,
             "context": {
                 "userId": claims["sub"],  # Firebase UID
+                "signInProvider": sign_in_provider,
+                "isAnonymous": sign_in_provider == "anonymous",
             }
         }
     except Exception as e:
@@ -41,4 +46,3 @@ def _extract_token(event):
     if auth.startswith("Bearer "):
         return auth[7:]
     return None
-

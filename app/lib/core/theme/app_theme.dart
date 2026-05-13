@@ -3,40 +3,41 @@ import 'package:google_fonts/google_fonts.dart';
 
 /// AutoFix AI Simulator — Dark Garage Theme
 class AppTheme {
-  // === Brand Colors ===
-  static const primary = Color(0xFFFF6B35); // Orange wrench
-  static const primaryDark = Color(0xFFE55A2B);
-  static const accent = Color(0xFF00E5FF); // Cyan diagnostic
-  static const success = Color(0xFF4CAF50);
-  static const warning = Color(0xFFFFB300);
-  static const danger = Color(0xFFEF5350);
+  // === Automotive Brand-Inspired Colors ===
+  static const primary = Color(0xFFEB0A1E); // Toyota red
+  static const primaryDark = Color(0xFF8F0813);
+  static const accent = Color(0xFF1C396D); // Ford blue
+  static const success = Color(0xFF2F7D32);
+  static const warning = Color(0xFFD7A640);
+  static const danger = Color(0xFFE32119); // Ferrari red
 
   // === Background ===
-  static const bgDark = Color(0xFF0D1117);
-  static const bgCard = Color(0xFF161B22);
-  static const bgSurface = Color(0xFF21262D);
-  static const bgElevated = Color(0xFF30363D);
+  static const bgDark = Color(0xFF0B0B0C);
+  static const bgCard = Color(0xFF141516);
+  static const bgSurface = Color(0xFF1C1E20);
+  static const bgElevated = Color(0xFF303236);
+  static const steel = Color(0xFF58595B);
 
   // === Text ===
-  static const textPrimary = Color(0xFFF0F6FC);
-  static const textSecondary = Color(0xFF8B949E);
-  static const textMuted = Color(0xFF484F58);
+  static const textPrimary = Color(0xFFF4F1EA);
+  static const textSecondary = Color(0xFFB8B5AE);
+  static const textMuted = Color(0xFF777A7D);
 
   // === Gradients ===
   static const primaryGradient = LinearGradient(
-    colors: [Color(0xFFFF6B35), Color(0xFFFF8F65)],
+    colors: [Color(0xFFEB0A1E), Color(0xFF8F0813)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const accentGradient = LinearGradient(
-    colors: [Color(0xFF00E5FF), Color(0xFF00B8D4)],
+    colors: [Color(0xFF1C396D), Color(0xFF10213F)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const darkGradient = LinearGradient(
-    colors: [Color(0xFF0D1117), Color(0xFF161B22)],
+    colors: [Color(0xFF0B0B0C), Color(0xFF141516)],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
@@ -53,7 +54,7 @@ class AppTheme {
         surface: bgCard,
         error: danger,
       ),
-      textTheme: GoogleFonts.interTextTheme(
+      textTheme: GoogleFonts.barlowTextTheme(
         const TextTheme(
           displayLarge: TextStyle(
             fontSize: 32,
@@ -99,20 +100,19 @@ class AppTheme {
         backgroundColor: bgDark,
         elevation: 0,
         centerTitle: true,
+        foregroundColor: textPrimary,
       ),
       cardTheme: CardThemeData(
         color: bgCard,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
@@ -120,11 +120,11 @@ class AppTheme {
         filled: true,
         fillColor: bgSurface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(6),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(6),
           borderSide: const BorderSide(color: primary, width: 2),
         ),
         hintStyle: const TextStyle(color: textMuted),

@@ -12,6 +12,7 @@ import 'screens/splash/splash_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/leaderboard/leaderboard_screen.dart';
 import 'screens/profile/profile_screen.dart';
+import 'screens/store/store_screen.dart';
 import 'core/utils/logger.dart';
 import 'core/services/achievements_service.dart';
 import 'core/services/admob_service.dart';
@@ -132,7 +133,12 @@ class MainShell extends ConsumerStatefulWidget {
 class _MainShellState extends ConsumerState<MainShell> {
   int _currentIndex = 0;
 
-  final _screens = const [HomeScreen(), LeaderboardScreen(), ProfileScreen()];
+  final _screens = const [
+    HomeScreen(),
+    LeaderboardScreen(),
+    StoreScreen(),
+    ProfileScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -156,6 +162,10 @@ class _MainShellState extends ConsumerState<MainShell> {
             BottomNavigationBarItem(
               icon: const Icon(Icons.emoji_events),
               label: loc?.tabLeaderboard ?? 'Sıralama',
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.storefront),
+              label: loc?.tabStore ?? 'Mağaza',
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.person),

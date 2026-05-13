@@ -39,8 +39,8 @@ def lambda_handler(event, context):
         user = get_or_create_user(user_id)
         updates = {}
         
-        # Consumable Hint Packages
-        if event_type == "NON_RENEWING_PURCHASE":
+        # Consumable Hint / Energy Packages
+        if event_type in ["NON_RENEWING_PURCHASE", "INITIAL_PURCHASE"]:
             hints_to_add = 0
             if "hint_pack_3" in product_id:
                 hints_to_add = 3
@@ -55,9 +55,27 @@ def lambda_handler(event, context):
                 current_hints = user.get("hintCredits", 0)
                 updates["hintCredits"] = current_hints + hints_to_add
                 print(f"[REVENUECAT] Added {hints_to_add} hints. New total: {updates['hintCredits']}")
-                
+
+            energy_to_add = 0
+            if "energy_pack_3" in product_id:
+                energy_to_add = 3
+            elif "energy_pack_10" in product_id:
+                energy_to_add = 10
+            elif "energy_pack_25" in product_id:
+                energy_to_add = 25
+            elif "energy_pack_50" in product_id:
+                energy_to_add = 50
+
+            if energy_to_add > 0:
+                current_energy = user.get("energy", 0)
+                updates["energy"] = current_energy + energy_to_add
+                print(f"[REVENUECAT] Added {energy_to_add} energy. New total: {updates['energy']}")
+
+            if hints_to_add > 0 or energy_to_add > 0:
+                pass
+
         # Subscriptions
-        elif event_type in ["INITIAL_PURCHASE", "RENEWAL"]:
+        if event_type in ["INITIAL_PURCHASE", "RENEWAL"]:
             if "pro" in product_id:
                 updates["subscription"] = "pro"
                 print("[REVENUECAT] User upgraded to PRO subscription")

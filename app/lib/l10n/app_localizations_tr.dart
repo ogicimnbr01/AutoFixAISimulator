@@ -18,6 +18,9 @@ class STr extends S {
   String get tabLeaderboard => 'Sıralama';
 
   @override
+  String get tabStore => 'Mağaza';
+
+  @override
   String get tabProfile => 'Profil';
 
   @override
@@ -545,6 +548,13 @@ class STr extends S {
   String get adLoadFail => 'Reklam yüklenemedi veya yarıda kesildi.';
 
   @override
+  String get rewardVerifyingTitle => 'Ödül doğrulanıyor';
+
+  @override
+  String get rewardVerifyingBody =>
+      'Reklam ödülünü güvenli şekilde işliyoruz. Birkaç saniye sürebilir.';
+
+  @override
   String get hintError => 'İpucu hatası';
 
   @override
@@ -604,5 +614,54 @@ class STr extends S {
   String get saveSuccess => 'Başarıyla güncellendi!';
 
   @override
+  String get mergeProfileSuccess => '✅ Mevcut cihaz verisiyle birleştirildi!';
+
+  @override
   String get save => 'Kaydet';
+
+  @override
+  String get guestDeleteDisabledInfo =>
+      'Anonim hesaplar uygulama içinden silinemez. Verilerini silmek için önce profilden Google veya Apple hesabı bağla; sonra hesap silme seçeneği açılır.';
+
+  @override
+  String get guestDeleteDisabledSnack =>
+      'Anonim hesap silinemez. Önce Google veya Apple hesabı bağla.';
+
+  @override
+  String get profileLoadingRetry =>
+      'Profil yükleniyor. Enerji bilgisi gelince tekrar dene.';
+
+  @override
+  String get storeTitle => 'Mağaza';
+
+  @override
+  String get storeSubtitle => 'Enerji ve ipucu paketleri';
+
+  @override
+  String get energyPacks => 'Enerji Paketleri';
+
+  @override
+  String get hintPacks => 'İpucu Paketleri';
+
+  @override
+  String get noEnergyPacks =>
+      'Enerji paketleri henüz RevenueCat\'te görünmüyor.';
+
+  @override
+  String get noHintPacks => 'İpucu paketleri henüz RevenueCat\'te görünmüyor.';
+
+  @override
+  String get purchaseSuccess => 'Satın alma başarılı.';
+
+  @override
+  String get purchaseFailed => 'Satın alma iptal edildi veya başarısız oldu.';
+
+  @override
+  String get serviceIntake => 'Servis Kabul';
+
+  @override
+  String get solved => 'Çözüldü';
+
+  @override
+  String get solvedViewChat => 'Çözüldü · Sohbeti Gör';
 }

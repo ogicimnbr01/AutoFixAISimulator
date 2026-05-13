@@ -12,6 +12,7 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLocale = ref.watch(localeProvider);
+    final canDeleteAccount = AuthService.isLinked;
 
     return Scaffold(
       appBar: AppBar(title: Text(S.of(context)?.settings ?? 'Ayarlar')),
@@ -111,18 +112,51 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 32),
           // --- Account Deletion Section ---
-          TextButton.icon(
-            style: TextButton.styleFrom(
-              foregroundColor: AppTheme.danger,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+          if (canDeleteAccount)
+            TextButton.icon(
+              style: TextButton.styleFrom(
+                foregroundColor: AppTheme.danger,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              icon: const Icon(Icons.delete_forever),
+              label: const Text(
+                'Hesabı Sil / Delete Account',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              onPressed: () => _showDeleteConfirmation(context, ref),
+            )
+          else
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppTheme.bgCard,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppTheme.warning.withValues(alpha: 0.25),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.lock_outline,
+                    color: AppTheme.warning,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      S.of(context)!.guestDeleteDisabledInfo,
+                      style: const TextStyle(
+                        color: AppTheme.textSecondary,
+                        fontSize: 13,
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            icon: const Icon(Icons.delete_forever),
-            label: const Text(
-              'Hesabı Sil / Delete Account',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            onPressed: () => _showDeleteConfirmation(context, ref),
-          ),
           const SizedBox(height: 20),
         ],
       ),
@@ -130,6 +164,16 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showDeleteConfirmation(BuildContext context, WidgetRef ref) {
+    if (!AuthService.isLinked) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(S.of(context)!.guestDeleteDisabledSnack),
+          backgroundColor: AppTheme.warning,
+        ),
+      );
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -166,6 +210,16 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _performDeletion(BuildContext context, WidgetRef ref) async {
+    if (!AuthService.isLinked) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(S.of(context)!.guestDeleteDisabledSnack),
+          backgroundColor: AppTheme.warning,
+        ),
+      );
+      return;
+    }
+
     showDialog(
       context: context,
       barrierDismissible: false,

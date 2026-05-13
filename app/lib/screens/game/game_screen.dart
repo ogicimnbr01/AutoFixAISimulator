@@ -4,9 +4,11 @@ import 'dart:async';
 import 'dart:math' as math;
 import '../../core/theme/app_theme.dart';
 import '../../core/api/api_client.dart';
+import '../../core/services/admob_service.dart';
 import '../../providers/providers.dart';
 import '../../core/services/achievements_service.dart';
 import '../../l10n/app_localizations.dart';
+import '../../widgets/reward_verification_dialog.dart';
 import 'hint_store_sheet.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
@@ -113,7 +115,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           'role': 'system',
           'content':
               S.of(context)?.customerComplaint(complaint) ??
-              '🧑‍🔧 Müşteri: "$complaint"',
+              'Müşteri: "$complaint"',
         });
         _isLoading = false;
       });
@@ -124,7 +126,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         if (e.error == 'no_energy') {
           errorMsg =
               S.of(context)?.noEnergy ??
-              '⚡ Enerji bitti! Reklam izle veya bekle.';
+              'Enerji bitti. Reklam izle veya bekle.';
         }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(errorMsg), backgroundColor: AppTheme.danger),
@@ -213,7 +215,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             'role': 'assistant',
             'content':
                 S.of(context)?.fallbackError ??
-                '⚡ Garajın şartelleri attı. Tekrar dene.',
+                'Garajın şartelleri attı. Tekrar dene.',
           });
           _isLoading = false;
         });
@@ -225,7 +227,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           'role': 'assistant',
           'content':
               S.of(context)?.fallbackError ??
-              '⚡ Garajın şartelleri attı. Tekrar dene.',
+              'Garajın şartelleri attı. Tekrar dene.',
         });
         _isLoading = false;
       });
@@ -563,10 +565,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             ),
             Text(
               _solved
-                  ? (S.of(context)?.caseSolved ?? '✅ Vaka Çözüldü!')
+                  ? (S.of(context)?.caseSolved ?? 'Vaka Çözüldü')
                   : _isCooldown
                   ? (S.of(context)?.cooldownLabel(_cooldownRemaining) ??
-                        '⏰ Cooldown: $_cooldownRemaining')
+                        'Cooldown: $_cooldownRemaining')
                   : (S
                             .of(context)
                             ?.messageCount(_messageCount, _messageLimit) ??
@@ -613,7 +615,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             height: 3,
             child: LinearProgressIndicator(
               value: _messageCount / _messageLimit,
-              backgroundColor: AppTheme.bgSurface,
+              backgroundColor: AppTheme.bgElevated,
               valueColor: AlwaysStoppedAnimation(
                 _messageCount > _messageLimit - 4
                     ? AppTheme.danger
@@ -651,14 +653,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.warning.withValues(alpha: 0.15),
-                    AppTheme.bgCard,
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+                color: AppTheme.bgCard,
                 border: const Border(
                   top: BorderSide(color: AppTheme.bgElevated),
                 ),
@@ -688,11 +683,33 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         child: ElevatedButton.icon(
                           onPressed: () async {
                             final messenger = ScaffoldMessenger.of(context);
-                            final success = await ref
-                                .read(userProfileProvider.notifier)
-                                .claimAdReward(
-                                  'cooldown',
+                            final adWatched = await ref
+                                .read(adMobServiceProvider)
+                                .showRewardedAd(
+                                  rewardType: 'cooldown',
                                   sessionId: _sessionId,
+                                );
+                            if (!adWatched) {
+                              messenger.showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    S.of(context)?.adLoadFail ??
+                                        'Reklam yüklenemedi veya yarıda kesildi.',
+                                  ),
+                                  backgroundColor: AppTheme.danger,
+                                ),
+                              );
+                              return;
+                            }
+                            final success =
+                                await showRewardVerificationDialog<bool>(
+                                  context: context,
+                                  task: () => ref
+                                      .read(userProfileProvider.notifier)
+                                      .claimAdReward(
+                                        'cooldown',
+                                        sessionId: _sessionId,
+                                      ),
                                 );
                             if (success && mounted) {
                               // We just assume 1 hour reduction for simplicity, real app would get response data.
@@ -712,7 +729,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                                     SnackBar(
                                       content: Text(
                                         S.of(context)?.cooldownCleared ??
-                                            '🎬 Cooldown sıfırlandı! Devam et.',
+                                            'Cooldown sıfırlandı. Devam et.',
                                       ),
                                       backgroundColor: AppTheme.success,
                                     ),
@@ -769,9 +786,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF1B5E20), Color(0xFF2E7D32)],
+              decoration: BoxDecoration(
+                color: AppTheme.bgCard,
+                border: Border(
+                  top: BorderSide(
+                    color: AppTheme.success.withValues(alpha: 0.45),
+                  ),
                 ),
               ),
               child: Stack(
@@ -783,19 +803,41 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                     ),
                   Column(
                     children: [
-                      Text(
-                        S.of(context)?.repairSuccess ?? '🏆 Tamir Başarılı!',
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 34,
+                            height: 34,
+                            decoration: BoxDecoration(
+                              color: AppTheme.success.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: AppTheme.success.withValues(alpha: 0.35),
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.check_circle_outline,
+                              color: AppTheme.success,
+                              size: 22,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            S.of(context)?.repairSuccess ?? 'Tamir Başarılı',
+                            style: const TextStyle(
+                              fontSize: 21,
+                              fontWeight: FontWeight.w900,
+                              color: AppTheme.textPrimary,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        '${S.of(context)?.seriesInfo(_streakCount) ?? 'Seri: $_streakCount | +1 Ün Puanı'}${_bonusEnergy ? (S.of(context)?.bonusEnergyTag ?? ' | 🎁 +1 Bonus Enerji!') : ''}',
+                        '${S.of(context)?.seriesInfo(_streakCount) ?? 'Seri: $_streakCount | +1 Ün Puanı'}${_bonusEnergy ? (S.of(context)?.bonusEnergyTag ?? ' | +1 Bonus Enerji') : ''}',
                         style: const TextStyle(
-                          color: Colors.white70,
+                          color: AppTheme.textSecondary,
                           fontSize: 14,
                         ),
                       ),
@@ -805,10 +847,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.12),
+                            color: AppTheme.success.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.20),
+                              color: AppTheme.success.withValues(alpha: 0.24),
                             ),
                           ),
                           child: Row(
@@ -816,7 +858,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                             children: [
                               const Icon(
                                 Icons.school_outlined,
-                                color: Colors.white,
+                                color: AppTheme.success,
                                 size: 20,
                               ),
                               const SizedBox(width: 10),
@@ -827,7 +869,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                                     Text(
                                       masteryTitle,
                                       style: const TextStyle(
-                                        color: Colors.white,
+                                        color: AppTheme.textPrimary,
                                         fontSize: 13,
                                         fontWeight: FontWeight.w800,
                                       ),
@@ -836,7 +878,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                                     Text(
                                       masteryNote,
                                       style: const TextStyle(
-                                        color: Colors.white70,
+                                        color: AppTheme.textSecondary,
                                         fontSize: 13,
                                         height: 1.35,
                                       ),
@@ -858,8 +900,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                             S.of(context)?.backToGarage ?? 'Garaja Dön',
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: AppTheme.success,
+                            backgroundColor: AppTheme.success,
+                            foregroundColor: Colors.white,
                           ),
                         ),
                       ),
@@ -962,17 +1004,17 @@ class _MessageBubble extends StatelessWidget {
     Color bgColor;
     Color textColor;
     if (isUser) {
-      bgColor = AppTheme.primary.withValues(alpha: 0.15);
-      textColor = AppTheme.primary;
+      bgColor = const Color(0xFF341217);
+      textColor = AppTheme.textPrimary;
     } else if (isSystem) {
-      bgColor = AppTheme.warning.withValues(alpha: 0.1);
+      bgColor = AppTheme.bgCard;
       textColor = AppTheme.textPrimary;
     } else if (isHint) {
-      bgColor = AppTheme.accent.withValues(alpha: 0.12);
-      textColor = AppTheme.accent;
+      bgColor = const Color(0xFF13213B);
+      textColor = AppTheme.textPrimary;
     } else {
       // AI / Master message
-      bgColor = AppTheme.bgSurface.withValues(alpha: 0.6);
+      bgColor = AppTheme.bgSurface;
       textColor = AppTheme.textPrimary;
     }
 
@@ -980,28 +1022,32 @@ class _MessageBubble extends StatelessWidget {
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 6),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.78,
         ),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(20),
-            topRight: const Radius.circular(20),
+            topLeft: const Radius.circular(8),
+            topRight: const Radius.circular(8),
             bottomLeft: isUser
-                ? const Radius.circular(20)
-                : const Radius.circular(6),
+                ? const Radius.circular(8)
+                : const Radius.circular(2),
             bottomRight: isUser
-                ? const Radius.circular(6)
-                : const Radius.circular(20),
+                ? const Radius.circular(2)
+                : const Radius.circular(8),
           ),
-          border: isSystem
-              ? Border.all(
-                  color: AppTheme.warning.withValues(alpha: 0.3),
-                  width: 1,
-                )
-              : null,
+          border: Border.all(
+            color: isSystem
+                ? AppTheme.warning.withValues(alpha: 0.30)
+                : isUser
+                ? AppTheme.primary.withValues(alpha: 0.34)
+                : isHint
+                ? AppTheme.accent.withValues(alpha: 0.36)
+                : AppTheme.bgElevated,
+            width: 1,
+          ),
         ),
         child: Text(
           message['content']!,
@@ -1030,7 +1076,8 @@ class _TypingIndicator extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: AppTheme.bgSurface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppTheme.bgElevated),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -1091,12 +1138,12 @@ class _AnimatedHintButtonState extends State<_AnimatedHintButton>
     )..repeat(reverse: true);
 
     _glowAnimation = Tween<double>(
-      begin: 0.3,
-      end: 0.7,
+      begin: 0.08,
+      end: 0.18,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: 1.06,
+      end: 1.02,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
@@ -1122,28 +1169,30 @@ class _AnimatedHintButtonState extends State<_AnimatedHintButton>
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               decoration: BoxDecoration(
                 gradient: hasCredits
-                    ? const LinearGradient(
-                        colors: [Color(0xFFFFF176), Color(0xFFFFD54F)],
+                    ? LinearGradient(
+                        colors: [
+                          AppTheme.warning.withValues(alpha: 0.95),
+                          AppTheme.warning.withValues(alpha: 0.72),
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       )
                     : null,
                 color: hasCredits ? null : AppTheme.bgSurface,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(8),
                 boxShadow: hasCredits
                     ? [
                         BoxShadow(
                           color: AppTheme.warning.withValues(
                             alpha: _glowAnimation.value,
                           ),
-                          blurRadius: 12,
-                          spreadRadius: 1,
+                          blurRadius: 8,
                         ),
                       ]
                     : null,
                 border: hasCredits
                     ? Border.all(
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: AppTheme.warning.withValues(alpha: 0.35),
                         width: 1,
                       )
                     : Border.all(color: AppTheme.bgElevated),

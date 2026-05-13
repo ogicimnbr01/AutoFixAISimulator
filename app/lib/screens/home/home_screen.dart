@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/providers.dart';
 import '../../l10n/app_localizations.dart';
-import '../leaderboard/leaderboard_screen.dart';
 import '../paywall/paywall_screen.dart';
 import '../paywall/fomo_popup.dart';
 import '../scenario/scenario_select_screen.dart';
 import '../../core/services/admob_service.dart';
+import '../../widgets/reward_verification_dialog.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -143,7 +143,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 // Header
                 Row(
                   children: [
-                    const Text('🔧', style: TextStyle(fontSize: 32)),
+                    Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: AppTheme.primary,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Icon(
+                        Icons.car_repair,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -280,10 +292,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppTheme.accent.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(16),
+                    color: AppTheme.bgCard,
+                    borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color: AppTheme.accent.withValues(alpha: 0.2),
+                      color: AppTheme.accent.withValues(alpha: 0.38),
                     ),
                   ),
                   child: Row(
@@ -334,20 +346,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   void _handleGameStart(String difficulty) async {
     final profile = ref.read(userProfileProvider).valueOrNull;
-    if (profile != null && !profile.isPro && profile.energy <= 0) {
+    if (profile == null) {
+      ref.read(userProfileProvider.notifier).load();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(S.of(context)!.profileLoadingRetry),
+          backgroundColor: AppTheme.warning,
+        ),
+      );
+      return;
+    }
+
+    if (!profile.isPro && profile.energy <= 0) {
       final isOfferActive =
           _fomoOfferEndTime != null &&
           DateTime.now().isBefore(_fomoOfferEndTime!);
-
-      // No FOMO popup during honeymoon — just a friendly message
-      if (profile.isHoneymoon) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Enerjin bitti! Yarın yeni enerjin hazır olacak. 🔧'),
-            backgroundColor: AppTheme.warning,
-          ),
-        );
-      } else if (!profile.fomoPurchased && !isOfferActive) {
+      if (!profile.fomoPurchased && !isOfferActive) {
         final dismissed = await FOMOPopup.show(context);
         if (dismissed == true) {
           setState(() {
@@ -390,19 +404,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: AppTheme.primaryGradient,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primary.withValues(alpha: 0.25),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        color: AppTheme.bgCard,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: AppTheme.bgElevated),
       ),
       child: Row(
         children: [
-          const Icon(Icons.bolt, color: Colors.white, size: 40),
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppTheme.primary.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Icon(Icons.bolt, color: AppTheme.primary, size: 26),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -413,12 +429,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                    color: AppTheme.textPrimary,
                   ),
                 ),
                 Text(
                   energySubtitle,
-                  style: const TextStyle(fontSize: 14, color: Colors.white70),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppTheme.textSecondary,
+                  ),
                 ),
               ],
             ),
@@ -432,22 +451,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(10),
+                  color: AppTheme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppTheme.primary.withValues(alpha: 0.25),
+                  ),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.play_circle_outline,
-                      color: Colors.white,
+                      color: AppTheme.primary,
                       size: 18,
                     ),
                     SizedBox(width: 4),
                     Text(
                       '+1',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppTheme.primary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -466,7 +488,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       height: 90,
       decoration: BoxDecoration(
         color: AppTheme.bgCard,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: const Center(
         child: CircularProgressIndicator(
@@ -483,7 +505,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppTheme.danger.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AppTheme.danger.withValues(alpha: 0.3)),
       ),
       child: Row(
@@ -516,7 +538,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.bgCard,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AppTheme.bgElevated),
       ),
       child: Row(
@@ -557,7 +579,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              S.of(context)?.bonusEnergyShort ?? '🎁 +1 Enerji',
+              S.of(context)?.bonusEnergyShort ?? '+1 Enerji',
               style: const TextStyle(
                 color: AppTheme.primary,
                 fontWeight: FontWeight.w600,
@@ -575,7 +597,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       height: 70,
       decoration: BoxDecoration(
         color: AppTheme.bgCard,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(6),
       ),
     );
   }
@@ -589,15 +611,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppTheme.warning.withValues(alpha: 0.12),
-            AppTheme.warning.withValues(alpha: 0.04),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(14),
+        color: AppTheme.bgCard,
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(color: AppTheme.warning.withValues(alpha: 0.3)),
       ),
       child: Column(
@@ -633,10 +648,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-                ),
-                borderRadius: BorderRadius.circular(10),
+                color: AppTheme.warning,
+                borderRadius: BorderRadius.circular(6),
               ),
               child: const Text(
                 'Pro\'ya geçersen sınırsız kalır ✨',
@@ -762,13 +775,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
               // 1. Show AdMob Ad
               final adMobService = ref.read(adMobServiceProvider);
-              final adWatched = await adMobService.showRewardedAd();
+              final adWatched = await adMobService.showRewardedAd(
+                rewardType: 'energy',
+              );
 
               if (adWatched) {
                 // 2. Grant Reward
-                final success = await ref
-                    .read(userProfileProvider.notifier)
-                    .claimAdReward('energy');
+                final success = await showRewardVerificationDialog<bool>(
+                  context: context,
+                  task: () => ref
+                      .read(userProfileProvider.notifier)
+                      .claimAdReward('energy'),
+                );
                 messenger.showSnackBar(
                   SnackBar(
                     content: Text(
@@ -858,10 +876,10 @@ class _DifficultyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppTheme.bgCard,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(6),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(6),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
@@ -870,8 +888,9 @@ class _DifficultyCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppTheme.bgSurface,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: color.withValues(alpha: 0.35)),
                 ),
                 child: Icon(icon, color: color, size: 24),
               ),
@@ -884,8 +903,8 @@ class _DifficultyCard extends StatelessWidget {
                       title,
                       style: TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: color,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.textPrimary,
                       ),
                     ),
                     Text(
@@ -905,7 +924,8 @@ class _DifficultyCard extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: AppTheme.bgSurface,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: AppTheme.bgElevated),
                 ),
                 child: Text(
                   scenarios,
@@ -948,12 +968,12 @@ class _AnimatedProButtonState extends State<_AnimatedProButton>
 
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: 1.08,
+      end: 1.03,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _glowAnimation = Tween<double>(
-      begin: 0.4,
-      end: 0.8,
+      begin: 0.12,
+      end: 0.22,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
@@ -978,24 +998,19 @@ class _AnimatedProButtonState extends State<_AnimatedProButton>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
+                color: AppTheme.warning.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(
-                      0xFFFFD700,
-                    ).withValues(alpha: _glowAnimation.value),
-                    blurRadius: 15,
-                    spreadRadius: 2,
+                    color: AppTheme.warning.withValues(
+                      alpha: _glowAnimation.value,
+                    ),
+                    blurRadius: 8,
                   ),
                 ],
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  width: 1.5,
+                  color: AppTheme.warning.withValues(alpha: 0.35),
+                  width: 1,
                 ),
               ),
               child: const Row(
@@ -1003,14 +1018,14 @@ class _AnimatedProButtonState extends State<_AnimatedProButton>
                 children: [
                   Icon(
                     Icons.workspace_premium,
-                    color: Colors.black87,
+                    color: AppTheme.warning,
                     size: 20,
                   ),
                   SizedBox(width: 4),
                   Text(
                     'PRO',
                     style: TextStyle(
-                      color: Colors.black87,
+                      color: AppTheme.warning,
                       fontWeight: FontWeight.w900,
                       fontSize: 16,
                       letterSpacing: 1.2,

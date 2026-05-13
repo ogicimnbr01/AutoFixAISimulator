@@ -18,6 +18,9 @@ class SRu extends S {
   String get tabLeaderboard => 'Рейтинг';
 
   @override
+  String get tabStore => 'Магазин';
+
+  @override
   String get tabProfile => 'Профиль';
 
   @override
@@ -547,6 +550,13 @@ class SRu extends S {
   String get adLoadFail => 'Реклама не загрузилась или была прервана.';
 
   @override
+  String get rewardVerifyingTitle => 'Проверяем награду';
+
+  @override
+  String get rewardVerifyingBody =>
+      'Мы безопасно обрабатываем награду за рекламу. Это может занять несколько секунд.';
+
+  @override
   String get hintError => 'Ошибка подсказки';
 
   @override
@@ -607,5 +617,53 @@ class SRu extends S {
   String get saveSuccess => 'Успешно обновлено!';
 
   @override
+  String get mergeProfileSuccess => '✅ Прогресс с устройства объединён!';
+
+  @override
   String get save => 'Сохранить';
+
+  @override
+  String get guestDeleteDisabledInfo =>
+      'Анонимные аккаунты нельзя удалить внутри приложения. Чтобы удалить данные, сначала привяжите аккаунт Google или Apple в профиле; после этого появится опция удаления аккаунта.';
+
+  @override
+  String get guestDeleteDisabledSnack =>
+      'Анонимный аккаунт нельзя удалить. Сначала привяжите аккаунт Google или Apple.';
+
+  @override
+  String get profileLoadingRetry =>
+      'Профиль загружается. Повторите попытку, когда появится информация об энергии.';
+
+  @override
+  String get storeTitle => 'Магазин';
+
+  @override
+  String get storeSubtitle => 'Пакеты энергии и подсказок';
+
+  @override
+  String get energyPacks => 'Пакеты энергии';
+
+  @override
+  String get hintPacks => 'Пакеты подсказок';
+
+  @override
+  String get noEnergyPacks => 'Пакеты энергии пока не видны в RevenueCat.';
+
+  @override
+  String get noHintPacks => 'Пакеты подсказок пока не видны в RevenueCat.';
+
+  @override
+  String get purchaseSuccess => 'Покупка успешна.';
+
+  @override
+  String get purchaseFailed => 'Покупка отменена или не удалась.';
+
+  @override
+  String get serviceIntake => 'Прием в сервис';
+
+  @override
+  String get solved => 'Решено';
+
+  @override
+  String get solvedViewChat => 'Решено · Смотреть чат';
 }

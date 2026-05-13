@@ -7,6 +7,7 @@ import '../../core/services/revenuecat_service.dart';
 import '../../core/services/admob_service.dart';
 import '../settings/settings_screen.dart';
 import '../paywall/paywall_screen.dart';
+import '../../widgets/reward_verification_dialog.dart';
 
 import '../../l10n/app_localizations.dart';
 
@@ -313,12 +314,17 @@ class ProfileScreen extends ConsumerWidget {
                 onTap: () async {
                   final messenger = ScaffoldMessenger.of(context);
                   final adMobService = ref.read(adMobServiceProvider);
-                  final adWatched = await adMobService.showRewardedAd();
+                  final adWatched = await adMobService.showRewardedAd(
+                    rewardType: 'energy',
+                  );
 
                   if (adWatched) {
-                    final success = await ref
-                        .read(userProfileProvider.notifier)
-                        .claimAdReward('energy');
+                    final success = await showRewardVerificationDialog<bool>(
+                      context: context,
+                      task: () => ref
+                          .read(userProfileProvider.notifier)
+                          .claimAdReward('energy'),
+                    );
                     if (context.mounted) {
                       messenger.showSnackBar(
                         SnackBar(
@@ -465,7 +471,7 @@ class ProfileScreen extends ConsumerWidget {
     if (result == AuthResult.success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('✅ Google hesabı bağlandı!'),
+          content: Text(S.of(context)!.signInGoogleSuccess),
           backgroundColor: AppTheme.success,
         ),
       );
@@ -498,7 +504,7 @@ class ProfileScreen extends ConsumerWidget {
     } else if (result == AuthResult.error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Giriş iptal edildi veya hata oluştu.'),
+          content: Text(S.of(context)!.signInCancelled),
           backgroundColor: AppTheme.warning,
         ),
       );
@@ -524,7 +530,7 @@ class ProfileScreen extends ConsumerWidget {
     if (result == AuthResult.success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('✅ Apple hesabı bağlandı!'),
+          content: Text(S.of(context)!.signInAppleSuccess),
           backgroundColor: AppTheme.success,
         ),
       );
@@ -557,7 +563,7 @@ class ProfileScreen extends ConsumerWidget {
     } else if (result == AuthResult.error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Giriş iptal edildi veya hata oluştu.'),
+          content: Text(S.of(context)!.signInCancelled),
           backgroundColor: AppTheme.warning,
         ),
       );
@@ -668,10 +674,8 @@ class ProfileScreen extends ConsumerWidget {
                 if (res['success'] == true) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          '✅ Mevcut cihaz verisiyle birleştirildi!',
-                        ),
+                      SnackBar(
+                        content: Text(S.of(context)!.mergeProfileSuccess),
                         backgroundColor: AppTheme.success,
                       ),
                     );
@@ -681,8 +685,8 @@ class ProfileScreen extends ConsumerWidget {
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Hata oluştu!'),
+                    SnackBar(
+                      content: Text(S.of(context)!.error),
                       backgroundColor: AppTheme.danger,
                     ),
                   );
