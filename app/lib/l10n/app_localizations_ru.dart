@@ -86,7 +86,14 @@ class SRu extends S {
   }
 
   @override
-  String get watchAdContinue => 'Смотреть рекламу → Продолжить';
+  String get cooldownTitle => 'Дело затянулось';
+
+  @override
+  String get cooldownBody =>
+      'Это дело немного затянулось. Когда таймер закончится, откроются ещё 18 сообщений; можно посмотреть рекламу, чтобы сократить ожидание, или вернуться в гараж.';
+
+  @override
+  String get watchAdContinue => 'Смотреть рекламу → -1 час';
 
   @override
   String get cooldownCleared => '🎬 Перерыв сброшен! Продолжайте.';

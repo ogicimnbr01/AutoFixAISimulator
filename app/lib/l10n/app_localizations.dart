@@ -233,10 +233,22 @@ abstract class S {
   /// **'{limit} mesaj limitine ulaştın'**
   String cooldownMessage(Object limit);
 
+  /// No description provided for @cooldownTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vaka uzadı'**
+  String get cooldownTitle;
+
+  /// No description provided for @cooldownBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu vaka biraz fazla dallandı. Süre dolunca 18 mesaj daha açılır; istersen reklam izleyip beklemeyi kısaltabilir veya garaja dönebilirsin.'**
+  String get cooldownBody;
+
   /// No description provided for @watchAdContinue.
   ///
   /// In tr, this message translates to:
-  /// **'Reklam İzle → Devam Et'**
+  /// **'Reklam İzle → 1 Saat Azalt'**
   String get watchAdContinue;
 
   /// No description provided for @cooldownCleared.

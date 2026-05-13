@@ -228,6 +228,12 @@ def handle_message(event, user_id):
         "solved": case_solved,
     }
 
+    if not case_solved and new_count >= message_limit:
+        cooldown_ends_at = now + (2 * 3600)
+        session_updates["cooldownEndsAt"] = cooldown_ends_at
+        response_data["cooldown"] = True
+        response_data["cooldownEndsAt"] = cooldown_ends_at
+
     if case_solved:
         session_updates["status"] = "solved"
         session_updates["solvedAt"] = __import__("datetime").datetime.now(

@@ -169,6 +169,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       setState(() {
         _messages.add({'role': 'assistant', 'content': res['response']});
         _messageCount = res['messageCount'] ?? _messageCount + 1;
+        _messageLimit = res['messageLimit'] ?? _messageLimit;
         _solved = res['solved'] == true;
         if (res['streakCount'] != null) _streakCount = res['streakCount'];
         if (res['bonusEnergy'] == true) _bonusEnergy = true;
@@ -202,12 +203,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         _autoHintGiven = true;
         _showAutoHint();
       }
+
+      if (res['cooldown'] == true && !_solved) {
+        _startCooldownFromServer(res['cooldownEndsAt']);
+      }
     } on ApiException catch (e) {
       if (e.error == 'cooldown') {
-        _startCooldown(
-          e.message,
-          e.statusCode == 403 ? 2 * 60 : 45,
-        ); // just an estimation, we don't have exact yet unless API gives it
+        _startCooldownFromServer(e.data['cooldownEndsAt']);
         setState(() => _isLoading = false);
       } else {
         setState(() {
@@ -235,11 +237,25 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     }
   }
 
-  void _startCooldown(String message, [int minutes = 120]) {
+  void _startCooldownFromServer(dynamic cooldownEndsAt) {
+    DateTime? end;
+    if (cooldownEndsAt is num) {
+      end = DateTime.fromMillisecondsSinceEpoch(
+        (cooldownEndsAt * 1000).round(),
+      );
+    } else if (cooldownEndsAt is String) {
+      end = DateTime.tryParse(cooldownEndsAt);
+    }
+    _startCooldown(end: end);
+  }
+
+  void _startCooldown({DateTime? end, int minutes = 120}) {
     setState(() {
       _isCooldown = true;
-      _cooldownEnd = DateTime.now().add(Duration(minutes: minutes));
+      _cooldownEnd = end ?? DateTime.now().add(Duration(minutes: minutes));
+      _isLoading = false;
     });
+    _cooldownTimer?.cancel();
     _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_cooldownEnd != null && DateTime.now().isAfter(_cooldownEnd!)) {
         timer.cancel();
@@ -254,8 +270,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     if (_cooldownEnd == null) return '';
     final diff = _cooldownEnd!.difference(DateTime.now());
     if (diff.isNegative) return '00:00';
+    final hours = diff.inHours;
     final minutes = diff.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds = diff.inSeconds.remainder(60).toString().padLeft(2, '0');
+    if (hours > 0) return '$hours:$minutes:$seconds';
     return '$minutes:$seconds';
   }
 
@@ -663,18 +681,37 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   const Icon(Icons.timer, color: AppTheme.warning, size: 40),
                   const SizedBox(height: 8),
                   Text(
-                    'Cooldown: $_cooldownRemaining',
+                    S.of(context)?.cooldownTitle ?? 'Vaka uzadı',
                     style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 22,
                       fontWeight: FontWeight.w800,
                       color: AppTheme.warning,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    S.of(context)?.cooldownMessage(_messageLimit) ??
-                        '$_messageLimit mesaj limitine ulaştın',
+                    S.of(context)?.cooldownLabel(_cooldownRemaining) ??
+                        'Cooldown: $_cooldownRemaining',
+                    style: const TextStyle(
+                      color: AppTheme.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    S.of(context)?.cooldownBody ??
+                        'Bu vaka biraz uzadı. Süre dolunca 18 mesaj daha açılır.',
+                    textAlign: TextAlign.center,
                     style: const TextStyle(color: AppTheme.textSecondary),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    S.of(context)?.cooldownMessage(_messageLimit) ??
+                        '$_messageLimit mesaj limitine ulaşıldı',
+                    style: const TextStyle(
+                      color: AppTheme.textMuted,
+                      fontSize: 12,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Row(

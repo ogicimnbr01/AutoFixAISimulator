@@ -85,7 +85,14 @@ class STr extends S {
   }
 
   @override
-  String get watchAdContinue => 'Reklam İzle → Devam Et';
+  String get cooldownTitle => 'Vaka uzadı';
+
+  @override
+  String get cooldownBody =>
+      'Bu vaka biraz fazla dallandı. Süre dolunca 18 mesaj daha açılır; istersen reklam izleyip beklemeyi kısaltabilir veya garaja dönebilirsin.';
+
+  @override
+  String get watchAdContinue => 'Reklam İzle → 1 Saat Azalt';
 
   @override
   String get cooldownCleared => '🎬 Cooldown sıfırlandı! Devam et.';

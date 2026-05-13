@@ -85,7 +85,14 @@ class SZh extends S {
   }
 
   @override
-  String get watchAdContinue => '观看广告 → 继续';
+  String get cooldownTitle => '案件耗时较长';
+
+  @override
+  String get cooldownBody =>
+      '这个案件已经聊得比较久了。计时结束后会再解锁 18 条消息；你也可以观看广告缩短等待，或返回车库。';
+
+  @override
+  String get watchAdContinue => '观看广告 → 减少1小时';
 
   @override
   String get cooldownCleared => '🎬 冷却已重置！继续吧。';

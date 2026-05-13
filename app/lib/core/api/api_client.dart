@@ -191,6 +191,7 @@ class ApiClient {
         statusCode: res.statusCode,
         error: body['error'] as String? ?? 'unknown',
         message: body['message'] as String? ?? 'Something went wrong',
+        data: body,
       );
     }
     return body;
@@ -201,11 +202,13 @@ class ApiException implements Exception {
   final int statusCode;
   final String error;
   final String message;
+  final Map<String, dynamic> data;
 
   ApiException({
     required this.statusCode,
     required this.error,
     required this.message,
+    this.data = const {},
   });
 
   @override

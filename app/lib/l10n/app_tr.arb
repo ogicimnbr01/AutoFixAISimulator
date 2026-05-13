@@ -43,12 +43,14 @@
     }
   },
   "cooldownMessage": "{limit} mesaj limitine ulaştın",
+  "cooldownTitle": "Vaka uzadı",
+  "cooldownBody": "Bu vaka biraz fazla dallandı. Süre dolunca 18 mesaj daha açılır; istersen reklam izleyip beklemeyi kısaltabilir veya garaja dönebilirsin.",
   "@cooldownMessage": {
     "placeholders": {
       "limit": {}
     }
   },
-  "watchAdContinue": "Reklam İzle → Devam Et",
+  "watchAdContinue": "Reklam İzle → 1 Saat Azalt",
   "cooldownCleared": "🎬 Cooldown sıfırlandı! Devam et.",
   "cooldownReduced": "🎬 1 Saat düştü! Kalan: {remaining}",
   "@cooldownReduced": {

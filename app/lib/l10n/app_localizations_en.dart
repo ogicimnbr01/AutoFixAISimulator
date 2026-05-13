@@ -85,7 +85,14 @@ class SEn extends S {
   }
 
   @override
-  String get watchAdContinue => 'Watch Ad → Continue';
+  String get cooldownTitle => 'Case is taking longer';
+
+  @override
+  String get cooldownBody =>
+      'This case has stretched a bit. When the timer ends, 18 more messages unlock; you can watch an ad to shorten the wait or return to the garage.';
+
+  @override
+  String get watchAdContinue => 'Watch Ad → Reduce 1 Hour';
 
   @override
   String get cooldownCleared => '🎬 Cooldown cleared! Continue.';
