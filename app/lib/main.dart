@@ -33,18 +33,18 @@ void main() async {
   // Immersive Mode (Hide OS Navigation Bar)
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
-  runApp(const ProviderScope(child: AutoFixSimulatorApp()));
+  runApp(const ProviderScope(child: AutoRepairAISimulatorApp()));
 }
 
-class AutoFixSimulatorApp extends ConsumerWidget {
-  const AutoFixSimulatorApp({super.key});
+class AutoRepairAISimulatorApp extends ConsumerWidget {
+  const AutoRepairAISimulatorApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
 
     return MaterialApp(
-      title: 'AutoFix AI Simulator',
+      title: 'Auto Fix AI Simulator',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
 

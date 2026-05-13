@@ -1,4 +1,4 @@
-# AutoFix AI Simulator - Proje Fazlari ve Lansman Durumu
+# Auto Fix AI Simulator - Proje Fazlari ve Lansman Durumu
 
 > Son guncelleme: 13 Mayis 2026
 > Platform: Flutter mobil uygulama + AWS Serverless backend
@@ -7,7 +7,7 @@
 
 ## Oyun Nedir?
 
-AutoFix AI Simulator, oyuncuyu bir oto tamir ustasinin yerine koyan chat tabanli ariza teshis oyunudur. Oyuncu, dukkanina gelen arizali araclarin sorununu klasik butonlu testlerle degil, musteri/usta simule eden yapay zeka ile yazarak bulur.
+Auto Fix AI Simulator, oyuncuyu bir oto tamir ustasinin yerine koyan chat tabanli ariza teshis oyunudur. Oyuncu, dukkanina gelen arizali araclarin sorununu klasik butonlu testlerle degil, musteri/usta simule eden yapay zeka ile yazarak bulur.
 
 Oyuncu aracin belirtilerini dinler, sorular sorar, testler ister, parcalari kontrol eder ve en sonunda dogru tamir hamlesini yapmaya calisir. Oyun hissi "Arabanin nesi var?" sorusunu bir dedektiflik bulmacasina cevirmek uzerine kurulu.
 

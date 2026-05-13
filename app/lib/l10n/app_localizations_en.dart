@@ -9,7 +9,7 @@ class SEn extends S {
   SEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'AutoFix AI Simulator';
+  String get appTitle => 'Auto Fix AI Simulator';
 
   @override
   String get tabGarage => 'Garage';
@@ -568,7 +568,7 @@ class SEn extends S {
   String get hintError => 'Hint error';
 
   @override
-  String get splashTitle => 'AUTOFIX AI';
+  String get splashTitle => 'AUTO FIX AI';
 
   @override
   String get splashSubtitle => 'The Garage Awaits You';

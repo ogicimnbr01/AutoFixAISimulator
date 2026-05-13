@@ -1,6 +1,6 @@
 # Pro Early Access Strategy
 
-AutoFix AI Pro sadece sinirsiz enerji veya ipucu paketi gibi hissettirilmemeli. Pro oyuncu, oyunun gelisimine erken dahil olan "usta ekip" hissini almalı.
+Auto Fix AI Pro sadece sinirsiz enerji veya ipucu paketi gibi hissettirilmemeli. Pro oyuncu, oyunun gelisimine erken dahil olan "usta ekip" hissini almalı.
 
 ## Ana Vaat
 
@@ -141,5 +141,5 @@ Frontend kontrolu:
 
 Pro oyuncu sunu hissetmeli:
 
-> Ben sadece enerji satin almiyorum; AutoFix AI'in yeni vakalarini ilk deneyen usta ekibin icindeyim.
+> Ben sadece enerji satin almiyorum; Auto Fix AI'in yeni vakalarini ilk deneyen usta ekibin icindeyim.
 

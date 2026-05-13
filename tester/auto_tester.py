@@ -1,5 +1,5 @@
 """
-AutoFix AI — Otomatik Halüsinasyon Test Scripti v2
+Auto Fix AI — Otomatik Halüsinasyon Test Scripti v2
 ===================================================
 Güçlendirilmiş halüsinasyon tespiti:
 1. Korumalı parça tuzağı (sağlam parçayı arızalı gösterme)
@@ -26,7 +26,7 @@ from prompts import build_game_system_prompt, sanitize_input, validate_output, v
 
 BEDROCK_REGION = "us-east-1"
 MODEL_ID = "us.amazon.nova-lite-v1:0"
-XLSX_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'autofix_qa_tracker.xlsx')
+XLSX_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'auto_fix_qa_tracker.xlsx')
 SCENARIO_TO_SID = {i: f"S{str(i).zfill(2)}" for i in range(1, 16)}
 
 # Kabul eşikleri — POST_TEST_FIXES.md'den
@@ -435,7 +435,7 @@ def save_log(results, log_dir):
 # ═══════════════════════════════════════
 
 def main():
-    parser = argparse.ArgumentParser(description="AutoFix AI Otomatik Test v2")
+    parser = argparse.ArgumentParser(description="Auto Fix AI Otomatik Test v2")
     parser.add_argument("--scenario", type=str)
     parser.add_argument("--rounds", type=int, default=10)
     parser.add_argument("--lang", type=str, default="tr", help="Dil kodu: tr, en, ru, zh")
@@ -454,7 +454,7 @@ def main():
 
     total = len(scenarios) * args.rounds
     print("=" * 60)
-    print("  AutoFix AI -- Halusinasyon Testi v2")
+    print("  Auto Fix AI -- Halusinasyon Testi v2")
     print("=" * 60)
     print(f"  Senaryo: {len(scenarios)} | Tur: {args.rounds} | Toplam: {total}")
     print(f"  Model: {MODEL_ID} | Dry: {'Evet' if args.dry_run else 'Hayir'}")

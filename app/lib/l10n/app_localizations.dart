@@ -104,7 +104,7 @@ abstract class S {
   /// No description provided for @appTitle.
   ///
   /// In tr, this message translates to:
-  /// **'AutoFix AI Simülatör'**
+  /// **'Auto Fix AI Simülatör'**
   String get appTitle;
 
   /// No description provided for @tabGarage.

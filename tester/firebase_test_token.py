@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Create/reuse a Firebase test user token for AutoFix QA scripts.
+Create/reuse a Firebase test user token for Auto Fix QA scripts.
 
 Default mode creates one persistent anonymous Firebase user and stores only its
 refresh token locally in tester/.firebase_test_user.json. Later runs refresh the
@@ -28,7 +28,7 @@ from urllib import error, parse, request
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FIREBASE_CONFIG = ROOT / "app" / "android" / "app" / "google-services.json"
 DEFAULT_STORE = Path(__file__).resolve().parent / ".firebase_test_user.json"
-DEFAULT_PS1 = Path(__file__).resolve().parent / ".autofix_token.ps1"
+DEFAULT_PS1 = Path(__file__).resolve().parent / ".auto_fix_token.ps1"
 
 
 class FirebaseTokenError(Exception):
@@ -158,20 +158,20 @@ def save_store(path: Path, auth: dict[str, Any], account_type: str, email: str |
 
 
 def write_powershell(path: Path, token: str) -> None:
-    path.write_text(f'$env:AUTOFIX_AUTH_TOKEN="{token}"\n', encoding="utf-8")
+    path.write_text(f'$env:AUTO_FIX_AUTH_TOKEN="{token}"\n', encoding="utf-8")
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Get a Firebase ID token for AutoFix prod QA scripts.",
+        description="Get a Firebase ID token for Auto Fix prod QA scripts.",
     )
     parser.add_argument("--config", type=Path, default=DEFAULT_FIREBASE_CONFIG)
     parser.add_argument("--store", type=Path, default=DEFAULT_STORE)
-    parser.add_argument("--email", default=os.environ.get("AUTOFIX_TEST_EMAIL"))
-    parser.add_argument("--password", default=os.environ.get("AUTOFIX_TEST_PASSWORD"))
+    parser.add_argument("--email", default=os.environ.get("AUTO_FIX_TEST_EMAIL"))
+    parser.add_argument("--password", default=os.environ.get("AUTO_FIX_TEST_PASSWORD"))
     parser.add_argument("--create", action="store_true", help="Create email/password user if provided.")
     parser.add_argument("--reset", action="store_true", help="Ignore stored refresh token and create/sign in again.")
-    parser.add_argument("--write-powershell", action="store_true", help="Write tester/.autofix_token.ps1.")
+    parser.add_argument("--write-powershell", action="store_true", help="Write tester/.auto_fix_token.ps1.")
     parser.add_argument("--ps1-path", type=Path, default=DEFAULT_PS1)
     parser.add_argument(
         "--run-smoke",
@@ -213,7 +213,7 @@ def main() -> int:
 
         if args.run_smoke:
             env = os.environ.copy()
-            env["AUTOFIX_AUTH_TOKEN"] = token
+            env["AUTO_FIX_AUTH_TOKEN"] = token
             smoke_script = Path(__file__).resolve().parent / "prod_smoke_qa.py"
             print("Firebase test token ready.")
             print(f"Account type : {account_type}")
@@ -246,7 +246,7 @@ def main() -> int:
                 print(f"PowerShell   : {args.ps1_path}")
                 print(f"Run          : . {args.ps1_path}")
             else:
-                print('PowerShell   : $env:AUTOFIX_AUTH_TOKEN="<token below>"')
+                print('PowerShell   : $env:AUTO_FIX_AUTH_TOKEN="<token below>"')
                 print("\nID token:")
                 print(token)
         return 0

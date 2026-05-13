@@ -5,7 +5,7 @@ import 'package:uuid/uuid.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
-/// API Client for AutoFix AI Simulator backend
+/// API Client for Auto Fix AI Simulator backend
 class ApiClient {
   static const _baseUrl =
       'https://kw9p0x0sz4.execute-api.us-east-1.amazonaws.com';
@@ -22,10 +22,12 @@ class ApiClient {
 
   Future<String> get _installId async {
     final prefs = await SharedPreferences.getInstance();
-    final existing = prefs.getString('autofix_install_id');
+    final existing =
+        prefs.getString('auto_fix_install_id') ??
+        prefs.getString('autofix_install_id');
     if (existing != null && existing.length >= 12) return existing;
     final created = const Uuid().v4();
-    await prefs.setString('autofix_install_id', created);
+    await prefs.setString('auto_fix_install_id', created);
     return created;
   }
 

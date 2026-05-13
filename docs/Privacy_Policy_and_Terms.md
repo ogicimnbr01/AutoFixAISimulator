@@ -4,7 +4,7 @@
 
 **Last Updated:** [Current Date]
 
-Thank you for playing **AutoFix: AI Mechanic Simulator** ("we," "our," "us"). This Privacy Policy explains how we collect, use, and protect your information.
+Thank you for playing **Auto Fix AI Simulator** ("we," "our," "us"). This Privacy Policy explains how we collect, use, and protect your information.
 
 ### 1. Information We Collect
 - **Account Information:** When you sign in (via Google, Apple, or Anonymously), we collect basic profile data (Display Name, User ID) through Firebase Authentication.
@@ -37,10 +37,10 @@ You can request deletion of your account and associated data directly within the
 **Last Updated:** [Current Date]
 
 ### 1. Acceptance of Terms
-By using **AutoFix: AI Mechanic Simulator**, you agree to these Terms. If you do not agree, do not use the app.
+By using **Auto Fix AI Simulator**, you agree to these Terms. If you do not agree, do not use the app.
 
 ### 2. AI Chat and Acceptable Use
-AutoFix uses artificial intelligence to simulate car diagnostic scenarios. You agree to use the chat interface strictly for its intended gameplay purpose. You may not:
+Auto Fix uses artificial intelligence to simulate car diagnostic scenarios. You agree to use the chat interface strictly for its intended gameplay purpose. You may not:
 - Use the chat to generate hate speech, explicit content, or illegal material.
 - Attempt to bypass, manipulate, or "jailbreak" the AI's safety filters (Prompt Injection).
 - Harass or abuse the system.

@@ -11,7 +11,7 @@ import openpyxl
 from openpyxl.worksheet.datavalidation import DataValidation
 from copy import copy
 
-XLSX_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'autofix_qa_tracker.xlsx')
+XLSX_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'auto_fix_qa_tracker.xlsx')
 OLD_MAX_ROW = 54   # Eski son satır
 NEW_MAX_ROW = 204  # Yeni son satır (200 veri satırı)
 DATA_START = 5     # Veri başlangıç satırı

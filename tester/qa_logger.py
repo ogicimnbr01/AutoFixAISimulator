@@ -1,5 +1,5 @@
 """
-AutoFix AI — QA Test Kayıt Scripti
+Auto Fix AI — QA Test Kayıt Scripti
 ===================================
 Bu script, test oturumlarını kolayca xlsx dosyasına kaydetmenizi sağlar.
 Tester vaka çözme chatini kullandıktan sonra bu script ile test sonuçlarını kaydeder.
@@ -26,7 +26,7 @@ import openpyxl
 
 # ─── Sabit Değerler ───
 
-XLSX_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'autofix_qa_tracker.xlsx')
+XLSX_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'auto_fix_qa_tracker.xlsx')
 
 SCENARIOS = {
     "S01": {"ad": "Araç Çalışmıyor (Akü)",       "arac": "2002 Toyota Corolla 1.6, Benzin",       "zorluk": "Kolay", "gercek_ariza": "Ölü akü (ömrünü tamamlamış)"},
@@ -62,7 +62,7 @@ def clear_screen():
 def print_header():
     print()
     print("=" * 60)
-    print("  🔧 AutoFix AI — QA Test Kayıt Sistemi")
+    print("  🔧 Auto Fix AI — QA Test Kayıt Sistemi")
     print("=" * 60)
     print()
 

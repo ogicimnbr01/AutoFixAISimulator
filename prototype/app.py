@@ -1,5 +1,5 @@
 """
-AutoFix AI Simulator — Prototype
+Auto Fix AI Simulator — Prototype
 Streamlit-based test interface using AWS Bedrock.
 Models: Amazon Nova Micro (ultra-cheap) vs Claude Haiku 4.5.
 Region: us-east-1.
@@ -24,7 +24,7 @@ PRICING = {
     "us.anthropic.claude-haiku-4-5-20251001-v1:0": {"input": 0.80, "output": 4.00},
 }
 
-st.set_page_config(page_title="🔧 AutoFix AI Simulator — Prototype", page_icon="🔧", layout="wide")
+st.set_page_config(page_title="🔧 Auto Fix AI Simulator — Prototype", page_icon="🔧", layout="wide")
 
 
 @st.cache_resource
@@ -121,7 +121,7 @@ def update_tokens(usage: dict):
 
 # ============== SIDEBAR ==============
 with st.sidebar:
-    st.title("🔧 AutoFix AI Simulator")
+    st.title("🔧 Auto Fix AI Simulator")
     st.caption("AWS Bedrock — us-east-1")
     st.divider()
 
@@ -160,7 +160,7 @@ with st.sidebar:
 
 # ============== MAIN ==============
 if not st.session_state.game_active:
-    st.title("🔧 AutoFix AI Simulator — Prototype")
+    st.title("🔧 Auto Fix AI Simulator — Prototype")
     st.markdown("""
     ### Prompt Testing Interface — AWS Bedrock
     

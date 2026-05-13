@@ -1,5 +1,5 @@
 """
-autofix_qa_tracker.xlsx dosyasını oyundaki gerçek 15 senaryo ile günceller.
+auto_fix_qa_tracker.xlsx dosyasını oyundaki gerçek 15 senaryo ile günceller.
 Senaryo Analizi sayfasındaki senaryo bilgilerini scenarios.py'deki verilerle eşleştirir.
 
 Kullanım:
@@ -40,7 +40,7 @@ SCENARIO_MAPPING = [
     ("S15", "LPG Arızası (ECU Kalibrasyon)", "LPG Sistemi",              "Hard",  "2010 Hyundai Accent Era 1.5 CRDi"),
 ]
 
-XLSX_PATH = os.path.join(os.path.dirname(__file__), 'autofix_qa_tracker.xlsx')
+XLSX_PATH = os.path.join(os.path.dirname(__file__), 'auto_fix_qa_tracker.xlsx')
 BACKUP_SUFFIX = datetime.now().strftime("_%Y%m%d_%H%M%S")
 
 

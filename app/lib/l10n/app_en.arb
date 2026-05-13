@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appTitle": "AutoFix AI Simulator",
+  "appTitle": "Auto Fix AI Simulator",
   "tabGarage": "Garage",
   "tabLeaderboard": "Leaderboard",
   "tabStore": "Store",
@@ -178,7 +178,7 @@
   "rewardVerifyingTitle": "Verifying reward",
   "rewardVerifyingBody": "We are safely processing your ad reward. This can take a few seconds.",
   "hintError": "Hint error",
-  "splashTitle": "AUTOFIX AI",
+  "splashTitle": "AUTO FIX AI",
   "splashSubtitle": "The Garage Awaits You",
   "fomoTitle": "SECRET OFFER!",
   "fomoBody": "Only available right now! Unlimited energy and all mastery features await you. Don't miss this!",

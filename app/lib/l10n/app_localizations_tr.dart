@@ -9,7 +9,7 @@ class STr extends S {
   STr([String locale = 'tr']) : super(locale);
 
   @override
-  String get appTitle => 'AutoFix AI Simülatör';
+  String get appTitle => 'Auto Fix AI Simülatör';
 
   @override
   String get tabGarage => 'Garaj';

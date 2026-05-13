@@ -18,7 +18,7 @@ translations = {
         "loginCancelled": "Giriş iptal edildi"
     },
     "en": {
-        "splashTitle": "AUTOFIX AI",
+        "splashTitle": "AUTO FIX AI",
         "splashSubtitle": "The Garage Awaits You",
         "fomoTitle": "SECRET OFFER!",
         "fomoBody": "Only available right now! Unlimited energy and all mastery features await you. Don't miss this!",

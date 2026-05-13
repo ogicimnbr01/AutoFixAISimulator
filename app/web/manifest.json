@@ -1,6 +1,6 @@
 {
-    "name": "AutoFix AI Simulator",
-    "short_name": "AutoFix AI",
+    "name": "Auto Fix AI Simulator",
+    "short_name": "Auto Fix AI",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// AutoFix AI Simulator — Dark Garage Theme
+/// Auto Fix AI Simulator — Dark Garage Theme
 class AppTheme {
   // === Automotive Brand-Inspired Colors ===
   static const primary = Color(0xFFEB0A1E); // Toyota red

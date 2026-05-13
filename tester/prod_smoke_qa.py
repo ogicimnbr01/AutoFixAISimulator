@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Production API smoke tester for AutoFix AI Simulator.
+Production API smoke tester for Auto Fix AI Simulator.
 
 This script calls the real game API, so it can consume energy and update the
 test user's stats/leaderboard. Use a Firebase ID token from a test account.
 
 Examples:
-  set AUTOFIX_AUTH_TOKEN=eyJ...
+  set AUTO_FIX_AUTH_TOKEN=eyJ...
   python tester/prod_smoke_qa.py --scenarios 1,2 --yes
   python tester/prod_smoke_qa.py --scenarios 1,2 --dry-run
 """
@@ -282,10 +282,10 @@ def save_log(log: dict[str, Any]) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Run production smoke QA against AutoFix game API.",
+        description="Run production smoke QA against Auto Fix game API.",
     )
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
-    parser.add_argument("--token", default=os.environ.get("AUTOFIX_AUTH_TOKEN"))
+    parser.add_argument("--token", default=os.environ.get("AUTO_FIX_AUTH_TOKEN"))
     parser.add_argument("--scenarios", type=parse_scenarios, default=parse_scenarios("1,2"))
     parser.add_argument("--lang", default="tr")
     parser.add_argument("--delay", type=float, default=0.8)
@@ -308,7 +308,7 @@ def main() -> int:
         return 2
 
     if not args.token:
-        print("\nMissing Firebase ID token. Set AUTOFIX_AUTH_TOKEN or pass --token.")
+        print("\nMissing Firebase ID token. Set AUTO_FIX_AUTH_TOKEN or pass --token.")
         return 2
 
     full_log: dict[str, Any] = {

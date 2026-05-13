@@ -9,7 +9,7 @@ class SRu extends S {
   SRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get appTitle => 'AutoFix AI Симулятор';
+  String get appTitle => 'Auto Fix AI Симулятор';
 
   @override
   String get tabGarage => 'Гараж';

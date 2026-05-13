@@ -1,4 +1,4 @@
-# AutoFix AI — Post-Test Düzeltme Planı
+# Auto Fix AI — Post-Test Düzeltme Planı
 > **Tarih:** 2026-05-06  
 > **Test:** 150 oturum (15 senaryo × 10 tur)  
 > **Model:** Amazon Nova Lite v1  

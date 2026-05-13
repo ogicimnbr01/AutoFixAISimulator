@@ -1,5 +1,5 @@
 """
-System prompts for the AutoFix AI Simulator.
+System prompts for the Auto Fix AI Simulator.
 Three prompt types:
 1. GAME_SYSTEM_PROMPT — Main game AI (car/environment simulation)
 2. HINT_SYSTEM_PROMPT — Consultant Master hint system

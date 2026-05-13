@@ -1,5 +1,5 @@
 """
-15 hardcoded root-cause scenarios for the AutoFix AI Simulator.
+15 hardcoded root-cause scenarios for the Auto Fix AI Simulator.
 Each scenario has: id, difficulty, vehicle, complaint, root_cause, 
 correct_diagnosis_key, and key_clues the AI should reveal during testing.
 """

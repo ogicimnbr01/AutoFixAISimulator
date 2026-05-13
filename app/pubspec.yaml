@@ -1,7 +1,7 @@
-name: autofix_ai_simulator
-description: "AutoFix AI Simulator"
+name: auto_fix_ai_simulator
+description: "Auto Fix AI Simulator"
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.0+3
 
 environment:
   sdk: ^3.11.0

@@ -1,5 +1,5 @@
 """
-DynamoDB helper functions for AutoFix AI Simulator backend.
+DynamoDB helper functions for Auto Fix AI Simulator backend.
 All table operations centralized here.
 """
 import os

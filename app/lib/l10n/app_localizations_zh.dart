@@ -9,7 +9,7 @@ class SZh extends S {
   SZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => 'AutoFix AI 模拟器';
+  String get appTitle => 'Auto Fix AI 模拟器';
 
   @override
   String get tabGarage => '车库';

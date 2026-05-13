@@ -1,4 +1,4 @@
-# AutoFix AI Simulator
+# Auto Fix AI Simulator
 
 A new Flutter project.
 

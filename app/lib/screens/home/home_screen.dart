@@ -162,7 +162,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'AutoFix AI',
+                            'Auto Fix AI',
                             style: Theme.of(context).textTheme.headlineLarge,
                           ),
                           Text(
