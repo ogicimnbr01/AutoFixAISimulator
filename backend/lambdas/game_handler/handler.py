@@ -13,7 +13,8 @@ sys.path.insert(0, "/opt")
 from db import (get_or_create_user, update_user, create_session,
                 get_session, update_session, archive_session, get_daily_reset,
                 update_daily_reset, add_leaderboard_point,
-                get_completed_scenarios, get_solved_session_for_scenario)
+                get_completed_scenarios, get_solved_session_for_scenario,
+                get_active_session_for_scenario)
 from prompts import (build_game_system_prompt, build_hint_system_prompt,
                      build_mastery_feedback_prompt, sanitize_input,
                      validate_output, validate_language)
@@ -69,6 +70,25 @@ def handle_start(event, user_id):
             "scenarioId": int(scenario_id),
             "sessionId": solved_session["sessionId"],
             "solvedAt": solved_session.get("solvedAt"),
+        })
+
+    active_session = get_active_session_for_scenario(user_id, int(scenario_id))
+    if active_session:
+        return api_response(200, {
+            "sessionId": active_session["sessionId"],
+            "scenario": {
+                "id": scenario["id"],
+                "vehicle": scenario["vehicle"],
+                "complaint": scenario["complaint"],
+                "difficulty": scenario["difficulty"],
+            },
+            "energy": user["energy"],
+            "isPro": is_pro,
+            "resumed": True,
+            "messages": active_session.get("messages", []),
+            "messageCount": active_session.get("messageCount", 0),
+            "messageLimit": active_session.get("messageLimit", 18),
+            "cooldownEndsAt": active_session.get("cooldownEndsAt"),
         })
 
     if not is_pro and user["energy"] <= 0:

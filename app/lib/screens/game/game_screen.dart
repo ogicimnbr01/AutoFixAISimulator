@@ -108,17 +108,37 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       setState(() {
         _sessionId = res['sessionId'];
         _scenario = res['scenario'];
+        _messageCount = res['messageCount'] ?? 0;
+        _messageLimit = res['messageLimit'] ?? 18;
         final complaint =
             _getLocalizedComplaint(context, widget.scenarioId) ??
             _scenario!['complaint'];
-        _messages.add({
-          'role': 'system',
-          'content':
-              S.of(context)?.customerComplaint(complaint) ??
-              'Müşteri: "$complaint"',
-        });
+        _messages
+          ..clear()
+          ..add({
+            'role': 'system',
+            'content':
+                S.of(context)?.customerComplaint(complaint) ??
+                'Müşteri: "$complaint"',
+          });
+        final rawMessages = res['messages'] as List? ?? const [];
+        _messages.addAll(
+          rawMessages.map((message) {
+            final item = message as Map;
+            return {
+              'role': item['isHint'] == true ? 'hint' : '${item['role']}',
+              'content': '${item['content'] ?? ''}',
+            };
+          }),
+        );
         _isLoading = false;
       });
+      if (res['cooldownEndsAt'] != null) {
+        _startCooldownFromServer(res['cooldownEndsAt']);
+      }
+      if ((res['resumed'] == true) && mounted) {
+        _scrollToBottom();
+      }
     } on ApiException catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {

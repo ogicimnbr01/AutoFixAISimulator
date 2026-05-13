@@ -180,6 +180,20 @@ def create_session(user_id: str, scenario_id: int) -> dict:
     return session
 
 
+def get_active_session_for_scenario(user_id: str, scenario_id: int) -> dict | None:
+    """Return the latest active session for a scenario, if the player left it unfinished."""
+    table = dynamodb.Table(TABLE_SESSIONS)
+    resp = table.query(
+        IndexName="userId-index",
+        KeyConditionExpression=Key("userId").eq(user_id),
+        FilterExpression=Attr("status").eq("active") & Attr("scenarioId").eq(scenario_id),
+    )
+    items = resp.get("Items", [])
+    if not items:
+        return None
+    return max(items, key=lambda item: str(item.get("startedAt", "")))
+
+
 def get_session(session_id: str) -> dict | None:
     """Get session by ID."""
     table = dynamodb.Table(TABLE_SESSIONS)
